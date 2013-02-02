@@ -9,12 +9,12 @@ class Admin::ImportsController < ApplicationController
   # PUT /admin_settings/1
   # PUT /admin_settings/1.xml
   def update
-    unless params[:import_setting] = nil
+    unless params[:admin_import] == nil
     @import_settings = params[:import_setting]
     end
     
     @nmi = MassImportTool.new()
-    @nmi.populate(@import_settings)
+    @nmi.populate(@admin_import)
     #setflash; flash[:notice] = ts("Running Import Task  #{@import_settings[:import_short_name]}")
     @nmi.perform
       
