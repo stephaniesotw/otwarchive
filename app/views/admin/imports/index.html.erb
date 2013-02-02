@@ -4,7 +4,7 @@
 
 <!--main content-->
 <%= form_for @admin_import, url: admin_imports_path do |f| %>
-  <%= error_messages_for @import_setting %>
+  <%= error_messages_for @admin_import %>
   <dl>
     <dt><%= f.label :import_name, "Name for this import (no spaces)" %> </dt>
     <dd><%= f.text_field :import_name, :size => "30" %></dd>
