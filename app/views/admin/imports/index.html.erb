@@ -8,7 +8,7 @@
   <dl>
     <dt><%= f.label :import_name, "Name for this import (no spaces)" %> </dt>
     <dd><%= f.text_field :import_name, :size => "30" %></dd>
-    <dt><%= f.label :create_archive_record "Create archive import record?" %></dt>
+    <dt><%= f.label :create_archive_record, "Create archive import record?" %></dt>
     <dd><%= f.check_box :create_archive_record %> </dd>
     <dt><%= f.label :source_type, "Source archive type" %> </dt>
     <dd><%= f.text_field :source_type, :size => "30" %></dd>
@@ -50,7 +50,7 @@
     <dt><%= f.label :new_collection_description, "Parent Collection Description" %> </dt>
     <dd><%= f.text_field :new_collection_description, :size => "30" %></dd>
 
-    <dt><%= f.label :categories_as_collections "Convert categories to subcollections of parent?" %></dt>
+    <dt><%= f.label :categories_as_collections, "Convert categories to subcollections of parent?" %></dt>
     <dd><%= f.check_box :categories_as_collections %></dd>
     
     <dt><%= f.label :import_reviews, "Import reviews?" %></dt>
