@@ -3,7 +3,7 @@
 <!--/descriptions-->
 
 <!--main content-->
-<%= form_for @admin_import, url: admin_import_path do |f| %>
+<%= form_for @admin_import, url: admin_imports_path do |f| %>
   <%= error_messages_for @admin_import %>
   <dl>
     <dt><%= f.label :import_name, "Name for this import (no spaces)" %> </dt>
