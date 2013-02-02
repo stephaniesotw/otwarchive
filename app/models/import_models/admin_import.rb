@@ -26,5 +26,7 @@ class AdminImport
   attr_accessor :notify_imported_users
   attr_accessor :existing_notification_message
   attr_accessor :new_notification_message
-  # To change this template use File | Settings | File Templates.
+  def persisted?
+    false
+  end
 end
