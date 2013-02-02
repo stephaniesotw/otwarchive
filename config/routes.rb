@@ -135,7 +135,7 @@ Otwarchive::Application.routes.draw do
   namespace :admin do
     resources :activities, :only => [:index, :show]
     resources :settings
-    resources :imports
+    resources :imports, :only => [:index]
     resources :skins do
       collection do
         get :index_rejected
