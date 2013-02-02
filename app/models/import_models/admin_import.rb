@@ -1,4 +1,9 @@
 class AdminImport
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
+  include ActiveModel::Validations
+  extend ActiveModel::Translation
+
   attr_accessor :import_name
   attr_accessor :create_archive_record
   attr_accessor :source_type
