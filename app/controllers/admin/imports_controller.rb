@@ -1,4 +1,4 @@
-class Admin::ImportController < ApplicationController
+class Admin::ImportsController < ApplicationController
 
   before_filter :admin_only
 
