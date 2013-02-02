@@ -4,6 +4,8 @@ class Admin::ImportsController < ApplicationController
   @admin_import = AdminImport.new
 
   def index
+    @admin_import = AdminImport.new
+
     @nmi = MassImportTool.new()
   end
 
