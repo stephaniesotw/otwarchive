@@ -1,4 +1,4 @@
-class MassImportTool::ImportController < ApplicationController
+class Admin::ImportController < ApplicationController
 
   before_filter :admin_only
 
@@ -15,7 +15,7 @@ class MassImportTool::ImportController < ApplicationController
     
     @nmi = MassImportTool.new()
     @nmi.populate(@import_settings)
-    setflash; flash[:notice] = ts("Running Import Task  #{@import_settings[:import_short_name]}")
+    #setflash; flash[:notice] = ts("Running Import Task  #{@import_settings[:import_short_name]}")
     @nmi.perform
       
   end
