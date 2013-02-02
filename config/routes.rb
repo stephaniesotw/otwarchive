@@ -112,6 +112,7 @@ Otwarchive::Application.routes.draw do
       put :update_multiple
     end
   end
+  #IMPORT
 
   #### ADMIN ####
   resources :admins
