@@ -1,6 +1,7 @@
 class Admin::ImportsController < ApplicationController
 
   before_filter :admin_only
+  @admin_import = AdminImport.new
 
   def index
     @nmi = MassImportTool.new()
