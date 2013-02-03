@@ -1,6 +1,6 @@
 class AdminMailer < ActionMailer::Base
   include Resque::Mailer # see README in this directory
-
+#test
   layout 'mailer'
   default :from => ArchiveConfig.RETURN_ADDRESS
 
