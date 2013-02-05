@@ -352,7 +352,7 @@ class WorksController < ApplicationController
     unless @work.errors.empty?
       render :edit and return
     end
-    
+
     if !@work.invalid_pseuds.blank? || !@work.ambiguous_pseuds.blank?
       @work.valid? ? (render :_choose_coauthor) : (render :new)
     elsif params[:preview_button] || params[:cancel_coauthor_button]
@@ -615,7 +615,7 @@ protected
     end
 
     unless @work && @work.save
-      setflash; flash.now[:error] = ts("We were only partially able to import this work and couldn't save it. Please review below!")
+      setflash; flash[:error] = ts("We were only partially able to import this work and couldn't save it. Please review below!")
       @chapter = @work.chapters.first
       load_pseuds
       @series = current_user.series.uniq
@@ -816,9 +816,7 @@ public
   def load_pseuds
     @allpseuds = (current_user.pseuds + (@work.authors ||= []) + @work.pseuds).uniq
     @pseuds = current_user.pseuds
-    @coauthors = @allpseuds.select do |p|
-      p.user.id != current_user.id
-    end
+    @coauthors = @allpseuds.select{ |p| p.user.id != current_user.id}
     to_select = @work.authors.blank? ? @work.pseuds.blank? ? [current_user.default_pseud] : @work.pseuds : @work.authors
     @selected_pseuds = to_select.collect {|pseud| pseud.id.to_i }.uniq
   end
@@ -847,11 +845,8 @@ public
   # Sets values for @work, @chapter, @coauthor_results, @pseuds, and @selected_pseuds
   # and @tags[category]
   def set_instance_variables
-   if params[:id] # edit, update, preview, manage_chapters
-
-     @work = Work.find(params[:id])
-
-
+    if params[:id] # edit, update, preview, manage_chapters
+      @work ||= Work.find(params[:id])
       @previous_published_at = @work.first_chapter.published_at
       @previous_backdate_setting = @work.backdate
       if params[:work]  # editing, save our changes
