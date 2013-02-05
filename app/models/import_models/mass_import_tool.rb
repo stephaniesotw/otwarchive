@@ -364,7 +364,7 @@ class MassImportTool
               end
               my_tag_list = get_work_class_tags(my_tag_list,ns.classes,"classes")
               my_tag_list = get_work_class_tags(my_tag_list,ns.characters,"characters")
-
+                         #
 
           end
           #debug info
