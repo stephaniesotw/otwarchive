@@ -197,6 +197,10 @@ class WorksController < ApplicationController
   # GET /works/1
   # GET /works/1.xml
   def show
+    #adding snippet for redirect check, stephanies
+    if !@work.redirect_work_id == nil
+     @work = Work.find_by_id(@redirect_work_id)
+    end
     # Users must explicitly okay viewing of adult content
     if params[:view_adult]
       session[:adult] = true
