@@ -181,7 +181,7 @@ class MassImportTool
         #storyline
         when 4
           #categories
-          r = @connection.query("Select caid, caname from #{@source_table_prefix}category; ")
+          r = @connection.query("Select caid, caname from #{@source_category_table_prefix}; ")
           r.each do |r1|
             nt = ImportTag.new()
             nt.tag_type = 1
@@ -190,7 +190,7 @@ class MassImportTool
             taglist.push(nt)
           end
           #subcategories
-          rr = @connection.query("Select subid, subname from #{@source_table_prefix}subcategory; ")
+          rr = @connection.query("Select subid, subname from #{@source_subcategories_table}; ")
           unless rr.num_rows.nil? || rr.num_rows == 0
             rr.each do |r2|
               nt = ImportTag.new()
@@ -204,7 +204,7 @@ class MassImportTool
         #efiction 3
         when 3
           #classes
-          r = @connection.query("Select class_id, class_type, class_name from #{@source_table_prefix}classes; ")
+          r = @connection.query("Select class_id, class_type, class_name from #{@source_classes_table}; ")
           r.each do |r1|
             nt = ImportTag.new()
             if r1[1] == @source_warning_class_id
@@ -217,7 +217,7 @@ class MassImportTool
             taglist.push(nt)
           end
           #categories
-          rr = @connection.query("Select catid, category from #{@source_table_prefix}categories; ")
+          rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
           rr.each do |r2|
             nt = ImportTag.new()
             nt.tag_type = "category"
@@ -226,7 +226,7 @@ class MassImportTool
             taglist.push(nt)
           end
           #characters
-          rrr = @connection.query("Select charid, charname from #{@source_table_prefix}characters; ")
+          rrr = @connection.query("Select charid, charname from #{@source_chareacters_table}; ")
           rrr.each do |r3|
             nt = ImportTag.new()
             nt.tag_type = "character"
@@ -236,7 +236,7 @@ class MassImportTool
           end
         when 2
            #categories
-          rr = @connection.query("Select catid, category from #{@source_table_prefix}categories; ")
+          rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
           rr.each do |r2|
             nt = ImportTag.new()
             nt.tag_type = "category"
@@ -245,7 +245,7 @@ class MassImportTool
             taglist.push(nt)
           end
           #characters
-          rrr = @connection.query("Select charid, charname from #{@source_table_prefix}characters; ")
+          rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
           rrr.each do |r3|
             nt = ImportTag.new()
             nt.tag_type = "character"
@@ -347,15 +347,24 @@ class MassImportTool
               ns.title = row[1]
               ns.summary = row[2]
               ns.old_user_id = row[10]
-              ns.rating_integer = row[4]
+              ns.classes = row[5]
+              ns.categories = row
+              ns.characters = [6]
+              ns.rating_integer = row[7]
               rating_tag = ImportTag.new()
               rating_tag.tag_type =7
               rating_tag.new_id = ns.rating_integer
               tag_list.push(rating_tag)
               ns.published = row[8]
               ns.updated = row[9]
-              ns.completed = row[12]
-              ns.hits = row[10]
+              ns.completed = row[14]
+              ns.hits = row[18]
+              if !@source_warning_class_id == nil
+
+              end
+              my_tag_list = get_work_class_tags(my_tag_list,ns.classes,"classes")
+              my_tag_list = get_work_class_tags(my_tag_list,ns.characters,"characters")
+
 
           end
           #debug info
@@ -466,6 +475,17 @@ class MassImportTool
               #puts "#{chap.title}"
             end
             #new_work.chapters.build
+            
+            #TODO
+            if work
+            collection_names = work_params[:collection_names].split(/,\s?/)
+            Collection.where(:name => collection_names).each do |c|
+            work.collections << c unless work.collections.include?(c)
+            puts "Added existing work #{work.title} to #{c.title}"
+          end
+          work_ids << work.id
+          next # don't recreate the work
+        end      
             new_work.save!
             new_work.chapters.each do |cc|
               puts "attempting to save chapter for #{new_work.id}"
@@ -482,6 +502,7 @@ class MassImportTool
             my_tag_list.each do |t|
               add_work_taggings(new_work.id,t)
             end
+            
             puts "new work created #{new_work.id}"
 
           rescue Exception=>e
@@ -780,6 +801,34 @@ class MassImportTool
       return a
     end
 #TODO
+
+  #used with efiction 3 archives
+  def get_work_class_tags(tl,classstr,mytype)
+  classsplit = nil
+  classplit = classstr.split(",")
+  classsplit.each do |x|
+    a = "Select class_id, class_type, class_name from #{@source_classes_table} where class_id = #{x}"
+    r = @connection.query(a)
+    r.each do |r|
+      nt = ImportTag.new()
+      if mytype = "characters"
+        case mytype
+        when "characters"
+          nt.tag_type = "character"
+        when "classes"
+          nt.tag_type = "freeform"  
+        end
+           
+        
+        
+      end
+      nt.old_id = r1[0]
+      nt.tag = r1[2]
+      tl.push(nt)
+    end
+   end
+   return tl
+  end
 
 
     #return old new id from user_imports table based on old user id & source archive
