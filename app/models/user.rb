@@ -221,6 +221,13 @@ class User < ActiveRecord::Base
     password
   end
 
+  #perform the reset but return the password instead of sending
+  def generate_password_update()
+    temp_password = generate_password(20)
+    User.update_all("activation_code = '#{temp_password}', recently_reset = 1, updated_at = '#{Time.now}'", "id = #{self.id}")
+    return temp_password
+  end
+
   # use update_all to force the update even if the user is invalid
   def reset_user_password
     temp_password = generate_password(20)
