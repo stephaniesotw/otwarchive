@@ -1,0 +1,41 @@
+<h2 class="heading">
+  <% @heading %>
+</h2>
+<p>
+<% @paragraph1
+-part1 %><% @old_archive_url %>, has recently been imported by <% @archivist_link %> in cooperation with <a href="http://opendoors.transformativeworks.org/">Open Doors</a> into the <a href="http://archiveofourown.org/">Archive of Our Own</a>. <% @paragrap1_part2 %>
+</p>
+<p><% @paragraph2 %></p>
+<p>
+  <%@paragraph3 %><strong>If this is a mistake and these are not your stories, please don't delete them!</strong> <a href="http://opendoors.transformativeworks.org/contact/open%20doors">Contact Open Doors</a> and we will whisk them away to wait until someone else comes along to claim them. :)
+</p>
+<p>
+  <% @paragraph4 %>
+</p>
+
+<p>
+  Below is a list of works imported from <% @impor_archive_name %>.  These works were written under the e-mail: <%= @external_email %>
+</p>
+
+<ul>
+  <% @user.imported_works.each do |work| %>
+    <li><%= work.title.html_safe %><br />
+    <%= link_to work_url(work), work_url(work) %></li>
+  <% end %>
+</ul>
+<p><% @Paragraph5 %></p>
+
+<p>To preserve rec lists and bookmarks, the imported archive's web addresses will redirect to the imported copy of these works. If you've already uploaded a copy of these stories, a merge tool is currently in development to combine the hit counts and reviews of both copies, while keeping only one story body (and preserving the redirect link). You may also request that Open Doors reset the redirect to point toward the pre-existing copy on AO3. To do so, please <a href="http://opendoors.transformativeworks.org/contact/open%20doors">contact Open Doors</a> with your AO3 account name, imported archive's account name, and links to both the original archive URL, and the URL of the fanwork designated as the redirect.</p>
+
+<p>If you have other stories on the imported archive under an e-mail address you can no longer access, please <a href="http://opendoors.transformativeworks.org/contact">contact Open Doors</a> with any information that can help verify your identity.</p>
+
+<p><% @paragraph6 %></p>
+
+<p><%	 @paragraph7_part1 %> <%	 @user.login %>   <% @paragraph7_part2 %></p>
+<p><% @paragraph8_part1 %><% @user.activation_code %><% @paragraph8_part2 %></p>
+ <p><% @paragraph9 %> <% @new_url_link %></p>
+<p>For other inquiries, please <a href="http://archiveofourown.org/support">contact support</a>.</p>
+
+<p>Many thanks!</p>
+
+<p>- The Open Doors team</p>

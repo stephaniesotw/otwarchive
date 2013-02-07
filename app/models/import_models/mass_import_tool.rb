@@ -5,9 +5,6 @@ class MassImportTool
     def initialize()
       #Import Class Version Number
       @version = 1
-
-      
-
       #################################################
       #Database Settings
       ###############################################
@@ -269,6 +266,33 @@ class MassImportTool
       return collect.id   
     end
 
+    def convert_categories_to_collections()
+      case @source_archive_type
+        when 3
+          @connection.open
+          rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
+          @connection.close
+
+          rrr.each do |r3|
+            nc_name = r3[2]
+            nc_oldid = r3[0]
+            nc_parentid = r3[1]
+            nc_desc = r3[3]
+            if nc_desc = nil then
+              nc_desc = ""
+            end
+            if nc_parentid = -1
+              nc_parentid = @new_collection_id
+            else
+              nc_parentid = get_single_value_target("Select new_id from collection_imports where old_id = #{nc_oldid} and source_archive_id = #{@source_archive_id}")
+            end
+
+            nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_name)
+            update_record_target("insert into collection_imports (old_id,new_id,source_archive_id) values (#{nc_oldid},#{nc_id},#{@source_archive_id})")
+          end
+        when 4
+      end
+    end
     ##################################################################################################
     # Main Worker Sub
     def import_data()
@@ -593,8 +617,14 @@ class MassImportTool
         p.save
       end
       c.save
+
       @new_collection_id = c.id
       puts "Archivist #{u.login} set up and owns collection #{c.name}."
+      if @categories_as_subcollections = true
+       puts "Creating sub collections"
+        convert_categories_to_collections()
+
+      end
     end
 
     #Post Chapters Fix
