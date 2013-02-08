@@ -14,9 +14,9 @@ namespace :admin do
     puts "Sign-up notification emails resent"
   end
 
-  desc "Purge unvalidated accounts created more than 2 weeks ago"
+  desc "Purge unvalidated accounts created more than 2 weeks ago, and is not an imported user"
   task(:purge_unvalidated_users => :environment) do
-    users = User.find(:all, :conditions => ["activated_at IS NULL AND created_at < ?", 2.weeks.ago])
+    users = User.find(:all, :conditions => ["activated_at IS NULL AND imported_from_url IS NULL AND created_at < ?", 2.weeks.ago])
     puts users.map(&:login).join(", ")
     users.map(&:destroy)
     puts "Unvalidated accounts created more than two weeks ago have been purged"
