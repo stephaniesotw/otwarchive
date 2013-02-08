@@ -44,6 +44,7 @@ class UserSessionsController < ApplicationController
               message = ts("The password or user name you entered doesn't match our records. Please try again or click the 'forgot password' link below.")
             end
           else
+
             message = ts("You'll need to activate your account before you can log in. Please check your email or contact support.")
           end
         else

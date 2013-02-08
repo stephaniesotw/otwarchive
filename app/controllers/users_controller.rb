@@ -211,6 +211,10 @@ class UsersController < ApplicationController
     render "confirmation"
   end
 
+  def finalize_import
+
+  end
+
   def activate
     if params[:id].blank?
       setflash; flash[:error] = ts("Your activation key is missing.")
