@@ -1,16 +1,5 @@
-<<<<<<< HEAD
-Otwarchive::Application.routes.draw do
-  
-  #### ERRORS ####
-  
-  match '/403', :to => 'errors#403'
-  match '/404', :to => 'errors#404'
-  match '/422', :to => 'errors#422'
-  match '/500', :to => 'errors#500'
-=======
 require '../lib/domain'
 Otwarchive::Application.routes.draw do
->>>>>>> da8b9df... updated routes removed index only for imports
 
   #### DOWNLOADS ####
 
@@ -140,11 +129,7 @@ Otwarchive::Application.routes.draw do
   namespace :admin do
     resources :activities, :only => [:index, :show]
     resources :settings
-<<<<<<< HEAD
-    resources :imports, :only => [:index]
-=======
     resources :imports
->>>>>>> da8b9df... updated routes removed index only for imports
     resources :skins do
       collection do
         get :index_rejected
@@ -525,10 +510,6 @@ Otwarchive::Application.routes.draw do
   match 'support' => 'feedbacks#new', :as => 'new_feedback_report', :via => [:get]
   match 'tos' => 'home#tos'
   match 'tos_faq' => 'home#tos_faq'
-<<<<<<< HEAD
-  match 'diversity' => 'home#diversity'
-=======
->>>>>>> da8b9df... updated routes removed index only for imports
   match 'site_map' => 'home#site_map'
   match 'site_pages' => 'home#site_pages'
   match 'first_login_help' => 'home#first_login_help'
@@ -536,14 +517,6 @@ Otwarchive::Application.routes.draw do
   match 'activate/:id' => 'users#activate', :as => 'activate'
   match 'devmode' => 'devmode#index'
   match 'donate' => 'home#donate'
-<<<<<<< HEAD
-  match 'about' => 'home#about'
-	match 'menu/browse' => 'menu#browse'
-	match 'menu/fandoms' => 'menu#fandoms'
-	match 'menu/search' => 'menu#search'	
-	match 'menu/about' => 'menu#about'
-=======
->>>>>>> da8b9df... updated routes removed index only for imports
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -594,14 +567,10 @@ Otwarchive::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-<<<<<<< HEAD
-  root :to => "home#index"
-=======
 
       root :to => 'newredirect#index', :constraints => Domain
 
       root :to => "home#index"
->>>>>>> da8b9df... updated routes removed index only for imports
 
   # See how all your routes lay out with "rake routes"
 
