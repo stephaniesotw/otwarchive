@@ -183,7 +183,6 @@ class UsersController < ApplicationController
   # POST /users.xml
   def create
     @hide_dashboard = true
-
     if params[:cancel_create_account]
       redirect_to root_path
     else
@@ -197,29 +196,19 @@ class UsersController < ApplicationController
       @user.password_confirmation = params[:user][:password_confirmation] if params[:user][:password_confirmation]
       @user.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
       if @user.save
-        notify_and_show_confirmation_screen("normal")
+        notify_and_show_confirmation_screen
       else
         render :action => "new"
       end
     end
   end
 
-  def notify_and_show_confirmation_screen(action_type)
-    if action_type == "normal"
-      UserMailer.signup_notification(@user.id).deliver!
-      setflash; flash[:notice] = ts("During testing you can activate via <a href='%{activation_url}'>your activation url</a>.",
-                                    :activation_url => activate_path(@user.activation_code)).html_safe if Rails.env.development?
-      render "confirmation"
-    else
-
-    end
+  def notify_and_show_confirmation_screen
     # deliver synchronously to avoid getting caught in backed-up mail queue
-
-  end
-
-  def finalize_import
-    @user.age_over_13 = params[:user][:age_over_13]
-    @user.terms_of_service = params[:user][:terms_of_service]
+    UserMailer.signup_notification(@user.id).deliver! 
+    setflash; flash[:notice] = ts("During testing you can activate via <a href='%{activation_url}'>your activation url</a>.",
+                        :activation_url => activate_path(@user.activation_code)).html_safe if Rails.env.development?
+    render "confirmation"
   end
 
   def activate
