@@ -1,4 +1,4 @@
-require '../lib/domain'
+require 'domain'
 Otwarchive::Application.routes.draw do
 
   #### DOWNLOADS ####
