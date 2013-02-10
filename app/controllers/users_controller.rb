@@ -196,19 +196,24 @@ class UsersController < ApplicationController
       @user.password_confirmation = params[:user][:password_confirmation] if params[:user][:password_confirmation]
       @user.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
       if @user.save
-        notify_and_show_confirmation_screen
+        notify_and_show_confirmation_screen("normal")
       else
         render :action => "new"
       end
     end
   end
 
-  def notify_and_show_confirmation_screen
+  def notify_and_show_confirmation_screen(action_type)
+    if action_type == "normal"
+      UserMailer.signup_notification(@user.id).deliver!
+      setflash; flash[:notice] = ts("During testing you can activate via <a href='%{activation_url}'>your activation url</a>.",
+                                    :activation_url => activate_path(@user.activation_code)).html_safe if Rails.env.development?
+      render "confirmation"
+    else
+
+    end
     # deliver synchronously to avoid getting caught in backed-up mail queue
-    UserMailer.signup_notification(@user.id).deliver! 
-    setflash; flash[:notice] = ts("During testing you can activate via <a href='%{activation_url}'>your activation url</a>.",
-                        :activation_url => activate_path(@user.activation_code)).html_safe if Rails.env.development?
-    render "confirmation"
+
   end
 
   def activate
