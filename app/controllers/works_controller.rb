@@ -199,7 +199,7 @@ class WorksController < ApplicationController
   def show
     #adding snippet for redirect check, stephanies
     if !@work.redirect_work_id == nil
-     @work = Work.find_by_id(self.redirect_work_id)
+     @work = Work.find(self.redirect_work_id)
     end
     # Users must explicitly okay viewing of adult content
     if params[:view_adult]
@@ -813,7 +813,9 @@ public
   def load_pseuds
     @allpseuds = (current_user.pseuds + (@work.authors ||= []) + @work.pseuds).uniq
     @pseuds = current_user.pseuds
-    @coauthors = @allpseuds.select{ |p| p.user.id != current_user.id}
+    @coauthors = @allpseuds.select do |p|
+      p.user.id != current_user.id
+    end
     to_select = @work.authors.blank? ? @work.pseuds.blank? ? [current_user.default_pseud] : @work.pseuds : @work.authors
     @selected_pseuds = to_select.collect {|pseud| pseud.id.to_i }.uniq
   end
@@ -833,8 +835,14 @@ public
   # Sets values for @work, @chapter, @coauthor_results, @pseuds, and @selected_pseuds
   # and @tags[category]
   def set_instance_variables
-    if params[:id] # edit, update, preview, manage_chapters
-      @work ||= Work.find(params[:id])
+   if params[:id] # edit, update, preview, manage_chapters
+     @work ||= Work.find(params[:id])
+     if !@work.redirect_work_id == nil
+       tempnumber = @work.redirect_work_id
+
+       @work = Work.find(tempnumber)
+     end
+
       @previous_published_at = @work.first_chapter.published_at
       @previous_backdate_setting = @work.backdate
       if params[:work]  # editing, save our changes
