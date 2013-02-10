@@ -275,7 +275,6 @@ class WorksController < ApplicationController
   # POST /works
   def create
     load_pseuds
-    @work.reset_published_at(@chapter)
     @series = current_user.series.uniq
     @collection = Collection.find_by_name(params[:work][:collection_names])
     if params[:edit_button]
@@ -346,7 +345,6 @@ class WorksController < ApplicationController
   def update
     # Need to get @pseuds and @series values before rendering edit
     load_pseuds
-    @work.reset_published_at(@chapter)
     @series = current_user.series.uniq
     @collection = Collection.find_by_name(params[:work][:collection_names])
     unless @work.errors.empty?
@@ -823,15 +821,6 @@ public
 
   def load_work
     @work = Work.find_by_id(params[:id])
-    puts @work.redirect_work_id
-    Rails.logger.debug @work.redirect_work_id
-
-    if @work.redirect_work_id > 1
-      params[:id] = @work.redirect_work_id
-      @work = Work.find(@work.redirect_work_id)
-
-    end
-
     if @work.nil?
       setflash; flash[:error] = ts("Sorry, we couldn't find the work you were looking for.")
       redirect_to root_path and return
