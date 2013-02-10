@@ -199,7 +199,7 @@ class WorksController < ApplicationController
   def show
     #adding snippet for redirect check, stephanies
     if !@work.redirect_work_id == nil
-     @work = Work.find_by_id(@redirect_work_id)
+     @work = Work.find_by_id(self.redirect_work_id)
     end
     # Users must explicitly okay viewing of adult content
     if params[:view_adult]
