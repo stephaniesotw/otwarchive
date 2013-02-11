@@ -12,9 +12,6 @@
     <dd><%= f.check_box :create_archive_record %> </dd>
     <dt><%= f.label :source_type, "Source archive type" %> </dt>
     <dd><%= f.text_field :source_type, :size => "30" %></dd>
-    
-
- 
     <dt><%= f.label :database_username, "Target database username" %> </dt>
     <dd><%= f.text_field :database_username, :size => "30" %></dd>
     <dt><%= f.label :database_password, "Target database password" %> </dt>
@@ -25,19 +22,12 @@
     <dd><%= f.text_field :database_name, :size => "30" %></dd>
     <dt><%= f.label :temp_table_prefix, "Temporary Table Prefix" %> </dt>
     <dd><%= f.text_field :temp_table_prefix, :size => "30" %></dd>
-     <dt><%= f.label :source_table_prefix, "Source Table Prefix" %> </dt>
+    <dt><%= f.label :source_table_prefix, "Source Table Prefix" %> </dt>
     <dd><%= f.text_field :source_table_prefix, :size => "30" %></dd>
-    
-    
-    
-   
     <dt><%= f.label :import_fandom, "Fandom string for import" %> </dt>
     <dd><%= f.text_field :import_fandom, :size => "40" %></dd>
-    
-         
     <dt><%= f.label :source_warning_class, "if applicable, class id for source warnings" %> </dt>
     <dd><%= f.text_field :source_warning_class, :size => "10" %></dd>
-    
     <dt><%= f.label :create_collection, "Create parent collection for import?" %></dt>
     <dd><%= f.check_box :create_collection %> </dd>
     <dt><%= f.label :new_collection_id, "Parent Collection ID (leave blank)" %> </dt>
@@ -59,11 +49,14 @@
     
     <dt><%= f.label :notify_imported_users, "Notify imported users by email?" %></dt>
     <dd><%= f.check_box :notify_imported_users %></dd>
-    <dt><%= f.label :existing_notification_message, "Message for existing users with new imported stories" %> </dt>
-    <dd><%= f.text_field :existing_notification_message, :size => "500" %></dd>
-    <dt><%= f.label :new_notification_message, "Message for new users with imported stories" %></dt>
-    <dd><%= f.text_field :new_notification_message, :size => "500" %></dd>
-    
+    <dt><%= f.label :existing_user_email_id, "Message for existing users with new imported stories" %> </dt>
+    <dd><%= f.text_field :existing_user_email_id, :size => "8" %></dd>
+    <dt><%= f.label :new_user_email_id, "Message for new users with imported stories" %></dt>
+    <dd><%= f.text_field :new_user_email_id, :size => "8" %></dd>
+    <dt><%= f.label :existing_user_notice_id, "notice for existing users with new imported stories" %> </dt>
+    <dd><%= f.text_field :existing_user_notice_id, :size => "8" %></dd>
+    <dt><%= f.label :new_user_notice_id, "notice for new users with imported stories" %></dt>
+    <dd><%= f.text_field :new_user_notice_id, :size => "8" %></dd>
     
 
 </dl>
