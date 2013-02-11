@@ -829,9 +829,9 @@ public
     Rails.logger.debug @work.redirect_work_id
 
     if @work.redirect_work_id > 1
-
-      @work = Work.find(@work.redirect_work_id)
       params[:id] = @work.redirect_work_id
+      @work = Work.find(@work.redirect_work_id)
+
     end
 
     if @work.nil?
