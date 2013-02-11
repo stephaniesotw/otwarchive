@@ -849,12 +849,8 @@ public
   def set_instance_variables
    if params[:id] # edit, update, preview, manage_chapters
 
-     @work ||= Work.find(params[:id])
-     if !@work.redirect_work_id == nil
-       tempnumber = @work.redirect_work_id
+     @work = Work.find(params[:id])
 
-       @work = Work.find(tempnumber)
-     end
 
       @previous_published_at = @work.first_chapter.published_at
       @previous_backdate_setting = @work.backdate
