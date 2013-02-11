@@ -200,6 +200,7 @@ class WorksController < ApplicationController
     #adding snippet for redirect check, stephanies
     if !@work.redirect_work_id == nil
      @work = Work.find(self.redirect_work_id)
+
     end
     # Users must explicitly okay viewing of adult content
     if params[:view_adult]
@@ -822,6 +823,11 @@ public
 
   def load_work
     @work = Work.find_by_id(params[:id])
+    if !@work.redirect_work_id == nil
+      @work = Work.find(self.redirect_work_id)
+
+    end
+
     if @work.nil?
       setflash; flash[:error] = ts("Sorry, we couldn't find the work you were looking for.")
       redirect_to root_path and return
