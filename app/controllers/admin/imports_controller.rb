@@ -9,8 +9,7 @@ class Admin::ImportsController < ApplicationController
     @nmi = MassImportTool.new()
   end
 
-  # PUT /admin_settings/1
-  # PUT /admin_settings/1.xml
+
   def update
     unless params[:admin_import] == nil
     @import_settings = params[:import_setting]

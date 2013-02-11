@@ -198,6 +198,8 @@ class WorksController < ApplicationController
   # GET /works/1.xml
   def show
     #adding snippet for redirect check, stephanies
+
+    Rails.logger.debug Work.redirect_work_id
     if !@work.redirect_work_id == nil
      @work = Work.find(self.redirect_work_id)
 
@@ -825,7 +827,10 @@ public
 
   def load_work
     @work = Work.find_by_id(params[:id])
+    puts Work.redirect_work_id
+    Rails.logger.debug Work.redirect_work_id
     if !@work.redirect_work_id == nil
+
       @work = Work.find(self.redirect_work_id)
 
     end
