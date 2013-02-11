@@ -51,10 +51,11 @@ class MassImportTool
       #Import reviews t/f
       @import_reviews = true
 
+
       #import categories as subcollections, if false, they will be converted to freeform tags
       @categories_as_subcollections = true
 
-
+      @categories_as_tags = false
       #Message Values
       ####################################
       ##If true, send invites unconditionaly,
@@ -67,11 +68,10 @@ class MassImportTool
       #Send message for each work imported? (or 1 message for all works)
       @send_individual_messages = false
 
-      #Message to send existing authors
-      @existing_notification_message = ""
-
-      #message to be sent to users with no ao3 account
-      @new_notification_message = ""
+      @new_user_email_id = 0
+      @new_user_notice_id = 0
+      @existing_user_email_id = 0
+      @existing_user_notice_id = 0
 
       #New Collection Values
       #####################################
@@ -97,6 +97,9 @@ class MassImportTool
       #=========================================================
       #Destination Options / Settings
       #=========================================================
+      @new_url
+
+      @archivist_user_id
 
       #If using ao3 cats, sort or skip
       @SortForAo3Categories = true
@@ -123,6 +126,8 @@ class MassImportTool
       #========================
       #Source Variables
       #========================
+      @source_base_url = ""
+
 
       #Source Archive Type
       @source_archive_type = 4
@@ -181,7 +186,7 @@ class MassImportTool
           r = @connection.query("Select caid, caname from #{@source_category_table_prefix}; ")
           r.each do |r1|
             nt = ImportTag.new()
-            nt.tag_type = 1
+            nt.tag_type = "category"
             nt.old_id = r1[0]
             nt.tag = r1[1]
             taglist.push(nt)
@@ -255,6 +260,56 @@ class MassImportTool
       return taglist
     end
 
+    #ensure all source tags exist in target in some form
+    def fill_tag_list(tl)
+      i = 0
+      while i <= tl.length - 1
+        temptag = tl[i]
+         @connection.open
+        r = @connection.query("Select id from tags where name = '#{temptag.tag}'; ")
+        @connection.close
+        ##if not found add tag
+        if !temptag.tag_type == "category" || 99
+          if r.num_rows == 0 then
+            # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
+            temp_new_tag = Tag.new()
+            temp_new_tag.type = "#{temptag.tag_type}"
+            temp_new_tag.name = "#{temptag.tag}"
+            temp_new_tag.save
+
+            temptag.new_id = temp_new_tag.id
+          else
+            r.each do |r|
+              temptag.new_id = r[0]
+            end
+          end
+        else
+          if @categories_as_tags == true
+            if r.num_rows == 0 then
+              # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
+              temp_new_tag = Tag.new()
+              temp_new_tag.type = "freeform"
+              temp_new_tag.name = "#{temptag.tag}"
+              temp_new_tag.save
+
+              temptag.new_id = temp_new_tag.id
+            else
+              r.each do |r|
+                temptag.new_id = r[0]
+              end
+            end
+          end
+
+
+        end
+
+        connection.close()
+        #return importtag object with new id and its corresponding data ie old id and tag to array
+        tl[i] = temptag
+        i = i + 1
+      end
+      return tl
+    end
     #create child collection and return id
     def create_child_collection(name,parent_id,description,title)
       collect = Collection.new()
@@ -273,7 +328,7 @@ class MassImportTool
           rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
           @connection.close
 
-          rrr.each do |r3|
+         rr.each do |r3|
             nc_name = r3[2]
             nc_oldid = r3[0]
             nc_parentid = r3[1]
@@ -293,8 +348,16 @@ class MassImportTool
         when 4
       end
     end
+
+
+    def create_import_record
+      update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
+@source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url},#{@archivist_user_id})")
+    end
+
     ##################################################################################################
     # Main Worker Sub
+
     def import_data()
       #create collection & archivist
       self.create_archivist_and_collection
@@ -302,18 +365,20 @@ class MassImportTool
       puts " Setting Import Values "
       self.set_import_strings()
 
-      if @skip_rating_transform == false
-        puts " Tranforming source ratings "
-        self.transform_source_ratings()
-      else
-        puts " Skipping source rating transformation per config "
-      end
+      #create import record
+       create_import_record
 
       #Update Tags and get Taglist
       puts "Updating Tags"
       tag_list = Array.new()
+
+      #create list of all tags used in source
+      tag_list = get_tag_list(tag_list,@source_archive_type)
+
+      #check for tag existance on target archive
       tag_list = self.fill_tag_list(tag_list)
 
+      #pull source stories
       @connection.open
       r = @connection.query("SELECT * FROM #{@source_stories_table} ;")
       @connection.close()
@@ -501,15 +566,17 @@ class MassImportTool
             #new_work.chapters.build
             
             #TODO
+=begin
             if work
             collection_names = work_params[:collection_names].split(/,\s?/)
             Collection.where(:name => collection_names).each do |c|
-            work.collections << c unless work.collections.include?(c)
-            puts "Added existing work #{work.title} to #{c.title}"
-          end
-          work_ids << work.id
+              work.collections << c unless work.collections.include?(c)
+              puts "Added existing work #{work.title} to #{c.title}"
+              end
+
           next # don't recreate the work
-        end      
+            end
+=end
             new_work.save!
             new_work.chapters.each do |cc|
               puts "attempting to save chapter for #{new_work.id}"
@@ -598,6 +665,7 @@ class MassImportTool
         u.email = @archivist_email
         u.save
       end
+      #if user isnt an archivist make it so
       unless u.is_archivist?
         u.roles << Role.find_by_name("archivist")
         u.save
@@ -928,6 +996,7 @@ class MassImportTool
       end
     end
 
+
 #take the settings from the form and pass them into the internal instance specific variables
 #for the mass import object.
 def populate(settings)
@@ -963,7 +1032,7 @@ def populate(settings)
     @new_collection_restricted = settings[:new_collection_restricted]
   #notification values
     @new_notification_message = settings[:new_message]
-    @existing_notification_message = settings[:exisiting_message]
+    @existing_notification_message = settings[:existing_message]
     
    case settings[:archive_type]
    when "efiction3"
@@ -977,6 +1046,8 @@ def populate(settings)
    when "otwarchive"
      set_import_strings(5) 
    end
+
+
   #Overrides for abnormal / non-typical imports (advanced use only)
     if settings[:override_tables] == 1 
        @source_users_table = settings[:source_users_table]

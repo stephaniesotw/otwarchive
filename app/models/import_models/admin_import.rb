@@ -4,6 +4,17 @@ class AdminImport
   include ActiveModel::Validations
   extend ActiveModel::Translation
 
+  attr_accessor :existing_user_notice_id
+  attr_accessor :new_user_notice_id
+  attr_accessor :existing_user_email_id
+  attr_accessor :new_user_email_id
+  attr_accessor :new_url
+  attr_accessor :source_base_url
+
+  attr_accessor :existing_user_notice_id
+  attr_accessor :existing_user_notice_id
+  attr_accessor :existing_user_notice_id
+  attr_accessor :existing_user_notice_id
   attr_accessor :import_name
   attr_accessor :create_archive_record
   attr_accessor :source_type

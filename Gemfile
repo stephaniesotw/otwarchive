@@ -95,9 +95,11 @@ end
 # Deploy with Capistrano
 gem 'capistrano-gitflow_version', '>=0.0.3', :require => false
 
+=begin
 group :production do
   # Use unicorn as the web server
   gem 'unicorn', :require => false
   gem "memcache-client"
   gem 'airbrake'
 end
+=end
