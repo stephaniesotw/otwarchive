@@ -201,7 +201,7 @@ class WorksController < ApplicationController
 
     Rails.logger.debug @work.redirect_work_id
 
-    end
+
     # Users must explicitly okay viewing of adult content
     if params[:view_adult]
       session[:adult] = true
