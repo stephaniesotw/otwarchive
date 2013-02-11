@@ -825,11 +825,11 @@ public
     @work = Work.find_by_id(params[:id])
     puts @work.redirect_work_id
     Rails.logger.debug @work.redirect_work_id
-    params[:id] = @work.redirect_work_id
+
     if !@work.redirect_work_id == nil
 
       @work = Work.find(@work.redirect_work_id)
-
+      params[:id] = @work.redirect_work_id
     end
 
     if @work.nil?
