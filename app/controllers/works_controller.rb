@@ -830,7 +830,7 @@ public
     params[:id] = @work.redirect_work_id
     if !@work.redirect_work_id == nil
 
-      @work = Work.find(self.redirect_work_id)
+      @work = Work.find(@work.redirect_work_id)
 
     end
 
