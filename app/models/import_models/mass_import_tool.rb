@@ -334,7 +334,7 @@ class MassImportTool
       case @source_archive_type
         when 3
 
-          rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
+          rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table}; ")
 
 
          rr.each do |r3|
