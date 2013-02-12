@@ -12,7 +12,7 @@ class Admin::ImportsController < ApplicationController
 
   def create
     @nmi = MassImportTool.new()
-    @nmi.import_Data
+    @nmi.import_data
 =begin
     unless params[:admin_import] == nil
     @import_settings = params[:admin_import]
