@@ -30,9 +30,9 @@ class MassImportTool
       @connection = Mysql.new(@database_host,@database_username,@database_password,@database_name)
       #####################################################
 
-      @archivist_login = nil
-      @archivist_password = nil
-      @archivist_email = nil
+      @archivist_login = "StephanieTest"
+      @archivist_password = "password"
+      @archivist_email = "stephaniesmithstl@gmail.com"
 
       #Match Existing Authors by Email-Address
       @match_existing_authors = true
@@ -97,9 +97,9 @@ class MassImportTool
       #=========================================================
       #Destination Options / Settings
       #=========================================================
-      @new_url
+      @new_url  = ""
 
-      @archivist_user_id
+      @archivist_user_id = nil
 
       #If using ao3 cats, sort or skip
       @SortForAo3Categories = true
@@ -310,6 +310,7 @@ class MassImportTool
       end
       return tl
     end
+
     #create child collection and return id
     def create_child_collection(name,parent_id,description,title)
       collect = Collection.new()
@@ -321,6 +322,7 @@ class MassImportTool
       return collect.id   
     end
 
+    #Convert Categories To Collections
     def convert_categories_to_collections()
       case @source_archive_type
         when 3
@@ -437,7 +439,7 @@ class MassImportTool
               ns.summary = row[2]
               ns.old_user_id = row[10]
               ns.classes = row[5]
-              ns.categories = row
+              ns.categories = row[4]
               ns.characters = [6]
               ns.rating_integer = row[7]
               rating_tag = ImportTag.new()
@@ -563,20 +565,13 @@ class MassImportTool
             new_work.chapters.each do |chap|
               #puts "#{chap.title}"
             end
-            #new_work.chapters.build
-            
-            #TODO
-=begin
-            if work
-            collection_names = work_params[:collection_names].split(/,\s?/)
-            Collection.where(:name => collection_names).each do |c|
-              work.collections << c unless work.collections.include?(c)
-              puts "Added existing work #{work.title} to #{c.title}"
-              end
 
-          next # don't recreate the work
+            collection_array = get_work_collections(ns.categories)
+            collection_array.each do |cobj|
+              new_work.collections << cobj unless work.collections.include?(cobj)
+              puts "Added existing work #{work.title} to #{c.title}"
             end
-=end
+
             new_work.save!
             new_work.chapters.each do |cc|
               puts "attempting to save chapter for #{new_work.id}"
@@ -900,6 +895,24 @@ class MassImportTool
     end
 #TODO
 
+  def get_work_collections(collectionstring)
+
+    tempstring = collectionstring
+    temparray = Array.new
+
+
+
+    collectionstring = tempstring.split(",")
+    collectionstring.each do |c|
+    newcollectionid = get_single_value_target("Select new_id from collection_imports where source_archive_id = #{@archive_import_id} AND old_id = #{c} ")
+    tempcollection = Collection.find(newcollectionid)
+    temparray.push(tempcollection)
+    end
+    collectionstring = temparray
+    return temparray
+
+  end
+
   #used with efiction 3 archives
   def get_work_class_tags(tl,classstr,mytype)
   classsplit = nil
@@ -916,9 +929,6 @@ class MassImportTool
         when "classes"
           nt.tag_type = "freeform"  
         end
-           
-        
-        
       end
       nt.old_id = r1[0]
       nt.tag = r1[2]
