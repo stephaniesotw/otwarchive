@@ -10,7 +10,7 @@ class Admin::ImportsController < ApplicationController
   end
 
 
-  def update
+  def create
     @nmi = MassImportTool.new()
     @nmi.import_Data
 =begin
