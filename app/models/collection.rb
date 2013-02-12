@@ -94,15 +94,12 @@ class Collection < ActiveRecord::Base
     errors.add(:base, ts("Collection has no valid owners.")) if (self.collection_participants + (self.parent ? self.parent.collection_participants : [])).select {|p| p.is_owner?}.empty?
   end
 
-=begin
   validate :collection_depth
   def collection_depth
     if (self.parent && self.parent.parent) || (self.parent && !self.children.empty?) || (!self.children.empty? && !self.children.collect(&:children).flatten.empty?)
-      puts "collection depth errror"
       errors.add(:base, ts("Sorry, but %{name} is a subcollection, so it can't also be a parent collection.", :name => parent.name))
     end
   end
-=end
 
   validate :parent_exists
   def parent_exists
@@ -116,10 +113,8 @@ class Collection < ActiveRecord::Base
     if parent
       if parent == self
         errors.add(:base, ts("You can't make a collection its own parent."))
-=begin
       elsif parent_id_changed? && !parent.user_is_maintainer?(User.current_user)
         errors.add(:base, ts("You have to be a maintainer of %{name} to make a subcollection.", :name => parent.name))
-=end
       end
     end
   end

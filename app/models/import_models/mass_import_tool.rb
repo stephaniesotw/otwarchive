@@ -339,6 +339,8 @@ class MassImportTool
 
          rr.each do |r3|
             nc_name = r3[2]
+            nc_title = r3[2]
+            nc_name = nc_name.gsub(/\s+/, "")
             nc_oldid = r3[0]
             puts "#{nc_oldid} this is old id"
             nc_parentid = r3[1]
@@ -353,7 +355,7 @@ class MassImportTool
               nc_parentid = get_single_value_target("Select new_id from collection_imports where old_id = #{nc_oldid} and source_archive_id = #{@source_archive_id}")
             end
 
-            nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_name)
+            nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_title)
 
             update_record_target("insert into collection_imports (old_id,new_id,source_archive_id) values (#{nc_oldid},#{nc_id},#{@source_archive_id})")
           end
