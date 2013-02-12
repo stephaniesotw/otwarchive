@@ -97,6 +97,7 @@ class Collection < ActiveRecord::Base
   validate :collection_depth
   def collection_depth
     if (self.parent && self.parent.parent) || (self.parent && !self.children.empty?) || (!self.children.empty? && !self.children.collect(&:children).flatten.empty?)
+      puts "collection depth errror"
       errors.add(:base, ts("Sorry, but %{name} is a subcollection, so it can't also be a parent collection.", :name => parent.name))
     end
   end
