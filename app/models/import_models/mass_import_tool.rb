@@ -24,7 +24,7 @@ class MassImportTool
       @database_name = "stephanies_development"
 
       #temporary table prefix to be added to table names during import
-      @temptableprefix = "ODimport"
+      @temptableprefix = ""
       
       #NOTE! change to nil for final version, as there will be no default
       @connection = Mysql.new(@database_host,@database_username,@database_password,@database_name)
@@ -177,7 +177,7 @@ class MassImportTool
     #get all possible tags from source
     def get_tag_list(tl, at)
       taglist = tl
-      @connection.open()
+
 
       case at
         #storyline
@@ -202,7 +202,7 @@ class MassImportTool
               taglist.push(nt)
             end
           end
-          @connection.close
+
         #efiction 3
         when 3
           #classes
@@ -256,7 +256,7 @@ class MassImportTool
             taglist.push(nt)
           end
       end
-      @connection.close()
+
       return taglist
     end
 
@@ -265,9 +265,9 @@ class MassImportTool
       i = 0
       while i <= tl.length - 1
         temptag = tl[i]
-         @connection.open
+
         r = @connection.query("Select id from tags where name = '#{temptag.tag}'; ")
-        @connection.close
+
         ##if not found add tag
         if !temptag.tag_type == "category" || 99
           if r.num_rows == 0 then
@@ -326,9 +326,9 @@ class MassImportTool
     def convert_categories_to_collections()
       case @source_archive_type
         when 3
-          @connection.open
+
           rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
-          @connection.close
+
 
          rr.each do |r3|
             nc_name = r3[2]
@@ -381,9 +381,9 @@ class MassImportTool
       tag_list = self.fill_tag_list(tag_list)
 
       #pull source stories
-      @connection.open
+
       r = @connection.query("SELECT * FROM #{@source_stories_table} ;")
-      @connection.close()
+
       puts "Importing Stories"
       i = 0
       r.each do |row|
@@ -626,7 +626,7 @@ class MassImportTool
       case
         when 4
           puts "1121 == Select * from #{@source_chapters_table} where csid = #{ns.old_work_id} order by id asc"
-          @connection.open
+
           r = @connection.query("Select * from #{@source_chapters_table} where csid = #{ns.old_work_id}")
           puts "333"
           ix = 1
@@ -644,7 +644,7 @@ class MassImportTool
 
       end
 
-      @connection.close()
+
 
 
     end
@@ -741,7 +741,7 @@ class MassImportTool
                #TODO Add efiction3 add chapters
       end
 
-      @connection.close()
+
       return ns
 
     end
@@ -840,9 +840,9 @@ class MassImportTool
     ##return import user object
     def get_import_user_object_from_source(source_user_id)
       a = ImportUser.new()
-      @connection.open
+
       r = @connection.query("#{@get_author_from_source_query} #{source_user_id}")
-      @connection.close
+      @connection
 
       r.each  do |r|
         a.old_user_id = source_user_id
@@ -981,9 +981,9 @@ class MassImportTool
     
     #query and return a single value from database
     def get_single_value_target(query)
-      @connection.open
+
       r = @connection.query(query)
-      @connection.close
+
       if r.num_rows == 0
         return 0
       else
@@ -995,12 +995,12 @@ class MassImportTool
 
     # Update db record takes query as peram (any non returning query)
     def update_record_target(query)
-      @connection.open
+
       begin
         rowsEffected = 0
         rowsEffected = @connection.query(query)
 
-        @connection.close()
+
         return rowsEffected
       rescue Exception => ex
         @connection.close()
