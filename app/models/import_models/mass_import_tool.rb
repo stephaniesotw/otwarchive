@@ -370,11 +370,12 @@ class MassImportTool
     # Main Worker Sub
 
     def import_data()
-      #create collection & archivist
-      self.create_archivist_and_collection
 
       puts " Setting Import Values "
       self.set_import_strings()
+      #create collection & archivist
+      self.create_archivist_and_collection
+
 
       #create import record
        create_import_record
