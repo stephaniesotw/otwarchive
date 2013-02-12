@@ -1,5 +1,38 @@
 #Object for use during mass imports
-class ImportWork <  Struct.new(:old_work_id,:new_work_id,:author_string,:title,:summary,:classes,:old_user_id,:characters,
-             :hits,:new_pseud_id,:new_user_id,:word_count,:completed,:updated,:source_archive_id,:generes,:rating,
-             :rating_integer,:warnings,:chapter_count,:published,:cats,:penname,:chapters)
+class ImportWork
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
+  include ActiveModel::Validations
+  extend ActiveModel::Translation
+
+
+  attr_accessor :old_work_id
+  attr_accessor :new_work_id
+  attr_accessor :author_string
+  attr_accessor :title
+  attr_accessor :summary
+  attr_accessor :classes
+  attr_accessor :old_user_id
+  attr_accessor :new_user_id
+
+  attr_accessor :new_pseud_id
+  attr_accessor :source_archive_id
+  attr_accessor :word_count
+  attr_accessor :categories
+  attr_accessor :rating_integer
+  attr_accessor :penname
+  attr_accessor :published
+  attr_accessor :new_user_id
+  attr_accessor :cats
+  attr_accessor :chapter_count
+  attr_accessor :warnings
+  attr_accessor :updated
+  attr_accessor :completed
+  attr_accessor :chapters
+
+  attr_accessor :characters
+  attr_accessor :hits
+  attr_accessor :rating
+  attr_accessor :generes
+
 end
