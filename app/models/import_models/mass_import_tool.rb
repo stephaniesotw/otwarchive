@@ -318,6 +318,13 @@ class MassImportTool
       collect.description = description
       collect.title = title
       collect.parent_id = parent_id
+      unless collect.owners.include?(u.default_pseud)
+        u = Users.find(@archivist_user_id)
+        p = collect.collection_participants.where(:pseud_id => u.default_pseud.id).first || collect.collection_participants.build(:pseud => u.default_pseud)
+        p.participant_role = "Owner"
+        c.save
+        p.save
+      end
       collect.save
       return collect.id   
     end
@@ -328,11 +335,12 @@ class MassImportTool
         when 3
 
           rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
-           puts
+
 
          rr.each do |r3|
             nc_name = r3[2]
             nc_oldid = r3[0]
+            puts "#{nc_oldid} this is old id"
             nc_parentid = r3[1]
             nc_desc = r3[3]
             if nc_desc == nil then
@@ -345,6 +353,7 @@ class MassImportTool
             end
 
             nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_name)
+
             update_record_target("insert into collection_imports (old_id,new_id,source_archive_id) values (#{nc_oldid},#{nc_id},#{@source_archive_id})")
           end
         when 4
