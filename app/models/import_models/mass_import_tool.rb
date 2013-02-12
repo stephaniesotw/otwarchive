@@ -826,6 +826,7 @@ class MassImportTool
           @source_reviews_table = "#{@temp_table_prefix}#{@source_table_prefix}reviews"
           @source_challenges_table = "#{@temp_table_prefix}#{@source_table_prefix}challenges"
           @source_stories_table = "#{@temp_table_prefix}#{@source_table_prefix}stories"
+          @source_categories_table = "#{@temp_table_prefix}#{@source_table_prefix}categories"
           @source_ratings_table = "#{@temp_table_prefix}#{@source_table_prefix}ratings"
           @source_classes_table = "#{@temp_table_prefix}#{@source_table_prefix}classes"
           @source_class_types_table = "#{@temp_table_prefix}#{@source_table_prefix}class_types"
