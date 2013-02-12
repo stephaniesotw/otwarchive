@@ -1,0 +1,24 @@
+<dl>
+
+  <!-- Password -->
+  <dt>
+    <%= f.label :password, "Password" %>
+  </dt>
+  <dd>
+    <%= f.password_field :password  %>
+    <%= live_validation_for_field('user_password',
+          :maximum_length => User::PASSWORD_LENGTH_MAX, 
+          :minimum_length => User::PASSWORD_LENGTH_MIN,
+          :failureMessage => "Please enter a password! (At least #{User::PASSWORD_LENGTH_MIN} letters long, please.)") %>
+  </dd>
+  <!-- Confirm password -->
+  <dt><%= f.label :password_confirmation, "Confirm Password" %></dt>
+  <dd>
+    <%= f.password_field :password_confirmation %>
+    <%= live_validation_for_field('user_password_confirmation',
+          :maximum_length => User::PASSWORD_LENGTH_MAX, 
+          :minimum_length => User::PASSWORD_LENGTH_MIN,
+          :failureMessage => 'Please enter the same password in both fields.') %>
+  </dd>
+
+</dl>

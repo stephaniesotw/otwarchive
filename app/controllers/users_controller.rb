@@ -183,6 +183,7 @@ class UsersController < ApplicationController
   # POST /users.xml
   def create
     @hide_dashboard = true
+
     if params[:cancel_create_account]
       redirect_to root_path
     else
@@ -217,7 +218,8 @@ class UsersController < ApplicationController
   end
 
   def finalize_import
-
+    @user.age_over_13 = params[:user][:age_over_13]
+    @user.terms_of_service = params[:user][:terms_of_service]
   end
 
   def activate

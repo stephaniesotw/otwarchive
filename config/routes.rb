@@ -175,6 +175,8 @@ Otwarchive::Application.routes.draw do
       get :browse
       get :change_email
       post :change_email
+      get :finalize_import
+      post :finalize_import
       get :change_password
       post :change_password
       get :change_username
@@ -504,7 +506,7 @@ Otwarchive::Application.routes.draw do
       get :about
     end
   end
-
+  match 'support' => 'feedbacks#create', :as => 'feedbacks', :via => [:post]
   match 'search' => 'works#search'
   match 'support' => 'feedbacks#create', :as => 'feedbacks', :via => [:post]
   match 'support' => 'feedbacks#new', :as => 'new_feedback_report', :via => [:get]
