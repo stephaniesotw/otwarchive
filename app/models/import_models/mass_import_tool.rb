@@ -334,7 +334,7 @@ class MassImportTool
       case @source_archive_type
         when 3
 
-          rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table}; ")
+          rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} order by catid asc")
 
 
          rr.each do |r3|
@@ -342,6 +342,7 @@ class MassImportTool
             nc_oldid = r3[0]
             puts "#{nc_oldid} this is old id"
             nc_parentid = r3[1]
+            puts "#{nc_parentid} parent id"
             nc_desc = r3[3]
             if nc_desc == nil then
               nc_desc = ""
