@@ -99,7 +99,7 @@ class MassImportTool
       #=========================================================
       @new_url  = ""
 
-      @archivist_user_id = nil
+      @archivist_user_id = 0
 
       #If using ao3 cats, sort or skip
       @SortForAo3Categories = true
@@ -328,17 +328,17 @@ class MassImportTool
         when 3
 
           rr = @connection.query("Select catid,parentid,category,description from #{@source_categories_table}; ")
-
+           puts
 
          rr.each do |r3|
             nc_name = r3[2]
             nc_oldid = r3[0]
             nc_parentid = r3[1]
             nc_desc = r3[3]
-            if nc_desc = nil then
+            if nc_desc == nil then
               nc_desc = ""
             end
-            if nc_parentid = -1
+            if nc_parentid == -1
               nc_parentid = @new_collection_id
             else
               nc_parentid = get_single_value_target("Select new_id from collection_imports where old_id = #{nc_oldid} and source_archive_id = #{@source_archive_id}")
@@ -354,7 +354,7 @@ class MassImportTool
 
     def create_import_record
       update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
-@source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url},#{@archivist_user_id})")
+@source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url}',#{@archivist_user_id})")
     end
 
     ##################################################################################################
@@ -669,6 +669,8 @@ class MassImportTool
         u.save
 
       end
+      @archivist_user_id = u.id
+
       # make the collection if it doesn't exist already
       c = Collection.find_or_initialize_by_name(@new_collection_name)
       if c.new_record?
@@ -686,7 +688,7 @@ class MassImportTool
 
       @new_collection_id = c.id
       puts "Archivist #{u.login} set up and owns collection #{c.name}."
-      if @categories_as_subcollections = true
+      if @categories_as_subcollections == true
        puts "Creating sub collections"
         convert_categories_to_collections()
 
@@ -925,7 +927,7 @@ class MassImportTool
     r = @connection.query(a)
     r.each do |r|
       nt = ImportTag.new()
-      if mytype = "characters"
+      if mytype == "characters"
         case mytype
         when "characters"
           nt.tag_type = "character"
