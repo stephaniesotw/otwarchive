@@ -130,13 +130,13 @@ class MassImportTool
 
 
       #Source Archive Type
-      @source_archive_type = 4
+      @source_archive_type = 3
 
       #If archivetype being imported is efiction 3 >  then specify what class holds warning information
       @source_warning_class_id = 1
 
       #Holds Value for source table prefix
-      @source_table_prefix = "sl18_"
+      @source_table_prefix = "fanfiction_"
 
       ################# Self Defined based on above
       #Source Ratings Table
