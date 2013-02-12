@@ -656,9 +656,13 @@ class MassImportTool
       # make the archivist user if it doesn't exist already
       u = User.find_or_initialize_by_login(@archivist_login)
       if u.new_record?
-        u.password = @archivist_password
-        u.email = @archivist_email
-        u.save
+              archivist_password = ask("Archivist temp password? ")
+              archivist_email = ask("Archivist email? ")
+              u.password = archivist_password
+              u.email = archivist_email
+              u.age_over_13 = "1"
+              u.terms_of_service = "1"
+              u.password_confirmation = archivist_password
       end
       #if user isnt an archivist make it so
       unless u.is_archivist?
