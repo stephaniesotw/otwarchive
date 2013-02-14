@@ -999,7 +999,7 @@ class MassImportTool
     #query and return a single value from database
     def get_single_value_target(query)
       begin
-        r = @connection.query(query)
+        r = ActiveRecord::Base.execute(query)
 
         if r.num_rows == 0
           return 0
