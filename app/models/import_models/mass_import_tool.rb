@@ -828,12 +828,12 @@ puts "new parent #{ic.new_parent_id}"
         login_temp = login_temp.tr(".","")
         #new user model
         new_user = User.new()
-        new_user.terms_of_service = true
+        new_user.terms_of_service = 1
         new_user.email = a.email
         new_user.login = login_temp
         new_user.password = a.password
         new_user.password_confirmation = a.password
-        new_user.age_over_13 = true
+        new_user.age_over_13 = 1
         new_user.save!
 
         #Create Default Pseud / Profile
