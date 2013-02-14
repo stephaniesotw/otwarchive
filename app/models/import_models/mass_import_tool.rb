@@ -86,7 +86,7 @@ class MassImportTool
 
       @new_collection_owner_pseud = "1010"
 
-      @new_collection_title = "This is a title"
+      @new_collection_title = "Imported Archive Name"
 
 
       @new_collection_name = "shortname"
