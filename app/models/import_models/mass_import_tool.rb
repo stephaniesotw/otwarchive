@@ -871,6 +871,8 @@ puts "new parent #{ic.new_parent_id}"
           @source_challenges_table = "#{@temp_table_prefix}#{@source_table_prefix}challenges"
           @source_stories_table = "#{@temp_table_prefix}#{@source_table_prefix}stories"
           @source_categories_table = "#{@temp_table_prefix}#{@source_table_prefix}categories"
+          @source_characters_table = "#{@temp_table_prefix}#{@source_table_prefix}characters"
+
           @source_ratings_table = "#{@temp_table_prefix}#{@source_table_prefix}ratings"
           @source_classes_table = "#{@temp_table_prefix}#{@source_table_prefix}classes"
           @source_class_types_table = "#{@temp_table_prefix}#{@source_table_prefix}class_types"
