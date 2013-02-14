@@ -1048,7 +1048,7 @@ class MassImportTool
             return rr[0]
           end
         end
-      rescue
+      rescue Exception => ex
         @connection.close()
         puts ex.message
       end
