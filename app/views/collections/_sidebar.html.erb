@@ -12,6 +12,10 @@
   
     <% if @collection.parent %>
       <li><%= link_to ts("Parent Collection"), collection_path(@collection.parent) %></li>
+
+        <% if @collection.children.count > 1 %>
+            <li><%= span_if_current ts("Subcollections (%{count})", :count => @collection.children.count), collection_collections_path(@collection) %></li>
+            <%	 end %>
     <% else %>
       <li><%= span_if_current ts("Subcollections (%{count})", :count => @collection.children.count), collection_collections_path(@collection) %></li>
     <% end %>
