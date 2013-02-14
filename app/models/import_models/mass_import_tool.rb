@@ -336,30 +336,30 @@ class MassImportTool
 
 
          rr.each do |r3|
-            nc_name = r3[2]
-            nc_title = r3[2]
-            nc_name = nc_name.gsub(/\s+/, "")
-            nc_oldid = r3[0]
-            puts "#{nc_oldid} this is old id"
-            nc_parentid = r3[1]
-            puts "#{nc_parentid} parent id"
-            nc_desc = r3[3]
-            if nc_desc == nil then
-              nc_desc = ""
-            end
-            if nc_parentid == -1
-              nc_parentid = @new_collection_id
-            else
-tmpqry = "Select new_id from collection_imports where old_id = #{nc_oldid} and source_archive_id = #{@import_archive_id}"
-              puts "32345 - #{tmpqry}"
+           ic = ImportCategory.new
+           ic.category_name=r3[2].gsub(/\s+/, "")
+           ic.new_id=
+           ic.old_id=r3[0]
+           ic.new_parent_id=@new_collection_id
+           ic.old_parent_id=r3[1]
+           ic.title=r3[2]
+           ic.description=r3[3]
+           if nc_desc == nil then
+             nc_desc = ""
+           end
+           if !ic.new_parent_id == -1
+             query = "Select new_id from collection_imports where (old_id = #{nc_oldid}) and (source_archive_id = #{@import_archive_id})"
+             puts "32345 - #{query}"
+             ic.new_parent_id=get_single_value_target(tmpqry)
+           end
 
-              nc_parentid = get_single_value_target(tmpqry)
-            end
-
-            nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_title)
-
-            update_record_target("insert into collection_imports (old_id,new_id,source_archive_id) values (#{nc_oldid},#{nc_id},#{@import_archive_id})")
-          end
+           ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
+           nci = CollectionImport.new
+           nci.old_id = ic.old_id
+           nci.new_id = ic.new_id
+           nci.source_archive_id = @import_archive_id
+           nci.save!
+           end
         when 4
       end
     end
