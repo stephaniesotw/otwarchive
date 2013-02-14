@@ -983,7 +983,7 @@ puts "new parent #{ic.new_parent_id}"
 
   #used with efiction 3 archives
   def get_work_class_tags(tl,classstr,mytype)
-  classsplit = nil
+  classsplit = Array.new
   classplit = classstr.split(",")
   classsplit.each do |x|
     a = "Select class_id, class_type, class_name from #{@source_classes_table} where class_id = #{x}"
