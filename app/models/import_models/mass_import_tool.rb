@@ -382,10 +382,12 @@ puts "new parent #{ic.new_parent_id}"
                 end
                 puts "old parent #{ic.old_parent_id}"
 
-                ic.new_parent_id = CollectionImport.select("new_id").where(
+
+                    tempparentcat = CollectionImport.select("new_id").where(
                     old_id: ic.old_parent_id,
                     source_archive_id: @archive_import_id
                 )
+                ic.new_parent_id = tempparentcat.new_id
                   puts "new parent #{ic.new_parent_id}"
 
 
