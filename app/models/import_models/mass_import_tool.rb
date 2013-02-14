@@ -228,7 +228,7 @@ class MassImportTool
             taglist.push(nt)
           end
           #characters
-          rrr = @connection.query("Select charid, charname from #{@source_chareacters_table}; ")
+          rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
           rrr.each do |r3|
             nt = ImportTag.new()
             nt.tag_type = "character"
