@@ -263,15 +263,16 @@ class MassImportTool
     #ensure all source tags exist in target in some form
     def fill_tag_list(tl)
       i = 0
+      while i <= tl.length - 1
         temptag = tl[i]
-      escaped_tag_name = Mysql.escape_string(temptag.tag)
+        escaped_tag_name = @connection.escape_string(temptag.tag)
 
 
         r = @connection.query("Select id from tags where name = '#{escaped_tag_name}'; ")
 
         ##if not found add tag
         if !temptag.tag_type == "category" || 99
-          if r.num_rows == 0 then
+          if r.num_rows == 0
             # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
             temp_new_tag = Tag.new()
             temp_new_tag.type = "#{temptag.tag_type}"
@@ -286,7 +287,7 @@ class MassImportTool
           end
         else
           if @categories_as_tags == true
-            if r.num_rows == 0 then
+            if r.num_rows == 0
               # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
               temp_new_tag = Tag.new()
               temp_new_tag.type = "freeform"
