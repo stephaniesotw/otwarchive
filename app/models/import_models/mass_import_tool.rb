@@ -1,3 +1,4 @@
+# encoding=utf-8
 class MassImportTool
     require "mysql"
 
@@ -290,7 +291,7 @@ class MassImportTool
             if r.num_rows == 0
               # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
               temp_new_tag = Tag.new()
-              temp_new_tag.type = "freeform"
+              temp_new_tag.type = "Freeform"
               temp_new_tag.name = "#{temptag.tag}"
               temp_new_tag.save
 
