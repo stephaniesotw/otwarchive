@@ -263,10 +263,11 @@ class MassImportTool
     #ensure all source tags exist in target in some form
     def fill_tag_list(tl)
       i = 0
-      while i <= tl.length - 1
         temptag = tl[i]
+      escaped_tag_name = Mysql.escape_string(temptag.tag)
 
-        r = @connection.query("Select id from tags where name = '#{temptag.tag}'; ")
+
+        r = @connection.query("Select id from tags where name = '#{escaped_tag_name}'; ")
 
         ##if not found add tag
         if !temptag.tag_type == "category" || 99
