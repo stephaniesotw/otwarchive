@@ -350,7 +350,7 @@ class MassImportTool
                   ic.description = ""
                 end
                 puts "old parent #{ic.old_parent_id}"
-
+puts "new parent #{ic.new_parent_id}"
                 ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
                 nci = CollectionImport.new
                 nci.old_id = ic.old_id
