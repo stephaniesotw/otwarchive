@@ -505,7 +505,7 @@ puts "new parent #{ic.new_parent_id}"
               rating_tag = ImportTag.new()
               rating_tag.tag_type =7
               rating_tag.new_id = ns.rating_integer
-              tag_list.push(rating_tag)
+              my_tag_list.push(rating_tag)
               ns.published = row[8]
               ns.updated = row[9]
               ns.completed = row[14]
