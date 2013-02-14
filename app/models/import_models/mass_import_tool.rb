@@ -303,7 +303,7 @@ class MassImportTool
 
         end
 
-        connection.close()
+
         #return importtag object with new id and its corresponding data ie old id and tag to array
         tl[i] = temptag
         i = i + 1
