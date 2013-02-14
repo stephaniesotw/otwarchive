@@ -882,7 +882,7 @@ puts "new parent #{ic.new_parent_id}"
           @source_ratings_table = "#{@temp_table_prefix}#{@source_table_prefix}ratings"
           @source_classes_table = "#{@temp_table_prefix}#{@source_table_prefix}classes"
           @source_class_types_table = "#{@temp_table_prefix}#{@source_table_prefix}class_types"
-          @source_users_table = "#{@temp_table_prefix}#{@source_table_prefix} authors"
+          @source_users_table = "#{@temp_table_prefix}#{@source_table_prefix}authors"
           @get_author_from_source_query = "Select realname, penname, email, bio, date, pass from #{@source_users_table} where uid ="
         
         when 4 #storyline
