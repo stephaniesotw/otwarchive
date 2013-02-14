@@ -116,8 +116,10 @@ class Collection < ActiveRecord::Base
     if parent
       if parent == self
         errors.add(:base, ts("You can't make a collection its own parent."))
+=begin
       elsif parent_id_changed? && !parent.user_is_maintainer?(User.current_user)
         errors.add(:base, ts("You have to be a maintainer of %{name} to make a subcollection.", :name => parent.name))
+=end
       end
     end
   end
