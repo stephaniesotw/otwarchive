@@ -351,7 +351,7 @@ class MassImportTool
            unless ic.old_parent_id == -1
              query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
              puts "32345 - #{query}"
-             ic.new_parent_id=get_single_value_target(tmpqry)
+             ic.new_parent_id=get_single_value_target(query)
              puts "new parent #{ic.new_parent_id}"
            end
 
