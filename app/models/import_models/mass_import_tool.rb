@@ -1040,7 +1040,7 @@ puts "new parent #{ic.new_parent_id}"
     def get_single_value_target(query)
       begin
         r = @connection.query(query)
-
+        puts "single val query = #{query}"
         if r.num_rows == 0
           return 0
         else
