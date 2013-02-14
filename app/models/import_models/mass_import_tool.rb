@@ -344,11 +344,11 @@ class MassImportTool
            ic.old_parent_id=r3[1]
            ic.title=r3[2]
            ic.description=r3[3]
-           if nc_desc == nil then
-             nc_desc = ""
+           if ic.description == nil then
+             ic.description = ""
            end
-           if !ic.new_parent_id == -1
-             query = "Select new_id from collection_imports where (old_id = #{nc_oldid}) and (source_archive_id = #{@import_archive_id})"
+           if !ic.old_parent_id == -1
+             query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
              puts "32345 - #{query}"
              ic.new_parent_id=get_single_value_target(tmpqry)
            end
