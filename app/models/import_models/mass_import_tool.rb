@@ -400,7 +400,7 @@ class MassImportTool
 
         end
 
-      end
+
 
     end
 
