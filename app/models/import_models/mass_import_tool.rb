@@ -311,22 +311,20 @@ class MassImportTool
       return tl
     end
 
-    #create child collection and return id
-    def create_child_collection(name,parent_id,description,title)
-      collect = Collection.new()
-      collect.name = name
-      collect.description = description
-      collect.title = title
-      collect.parent_id = parent_id
-      unless collect.owners.include?(u.default_pseud)
-        u = Users.find(@archivist_user_id)
-        p = collect.collection_participants.where(:pseud_id => u.default_pseud.id).first || collect.collection_participants.build(:pseud => u.default_pseud)
-        p.participant_role = "Owner"
-        c.save
-        p.save
-      end
-      collect.save
-      return collect.id   
+    def create_child_collection(name, parent_id, description, title)
+      collection = Collection.new(
+          name: name,
+          description: description,
+          title: title,
+          parent_id: parent_id
+      )
+      user = Users.find(@archivist_user_id)
+      collection.collection_participants.build(
+          pseud: user.default_pseud,
+          participant_role: "Owner"
+      )
+      collection.save
+      return collection.id
     end
 
     #Convert Categories To Collections
