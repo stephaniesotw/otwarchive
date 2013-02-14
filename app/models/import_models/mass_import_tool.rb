@@ -998,16 +998,21 @@ class MassImportTool
     
     #query and return a single value from database
     def get_single_value_target(query)
+      begin
+        r = @connection.query(query)
 
-      r = @connection.query(query)
-
-      if r.num_rows == 0
-        return 0
-      else
-        r.each do |rr|
-          return rr[0]
+        if r.num_rows == 0
+          return 0
+        else
+          r.each do |rr|
+            return rr[0]
+          end
         end
+      rescue
+        @connection.close()
+        puts ex.message
       end
+
     end
 
     # Update db record takes query as peram (any non returning query)
