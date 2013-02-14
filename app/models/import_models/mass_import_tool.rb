@@ -365,7 +365,7 @@ puts "new parent #{ic.new_parent_id}"
           case @source_archive_type
             when 3
 
-              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} order by catid asc")
+              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid > 0")
 
 
               rr.each do |r3|
