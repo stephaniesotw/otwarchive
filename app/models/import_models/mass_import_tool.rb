@@ -382,9 +382,10 @@ puts "new parent #{ic.new_parent_id}"
                 end
                 puts "old parent #{ic.old_parent_id}"
 
-                  query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
-                  puts "32345 - #{query}"
-                  ic.new_parent_id=get_single_value_target(query)
+                ic.new_parent_id = CollectionImport.select("new_id").where(
+                    old_id: ic.old_id,
+                    source_archive_id: @archive_import_id
+                )
                   puts "new parent #{ic.new_parent_id}"
 
 
