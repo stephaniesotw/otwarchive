@@ -328,42 +328,80 @@ class MassImportTool
     end
 
     #Convert Categories To Collections
-    def convert_categories_to_collections()
-      case @source_archive_type
-        when 3
+    def convert_categories_to_collections(level)
+      case level
+        when 0
+          case @source_archive_type
+            when 3
 
-          rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} order by catid asc")
+              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid = -1")
 
 
-         rr.each do |r3|
-           ic = ImportCategory.new
-           ic.category_name=r3[2].gsub(/\s+/, "")
-           ic.new_id=
-           ic.old_id=r3[0]
-           ic.new_parent_id=@new_collection_id
-           ic.old_parent_id=r3[1]
-           ic.title=r3[2]
-           ic.description=r3[3]
-           if ic.description == nil then
-             ic.description = ""
-           end
-           puts "old parent #{ic.old_parent_id}"
-           unless ic.old_parent_id == -1
-             query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
-             puts "32345 - #{query}"
-             ic.new_parent_id=get_single_value_target(query)
-             puts "new parent #{ic.new_parent_id}"
-           end
+              rr.each do |r3|
+                ic = ImportCategory.new
+                ic.category_name=r3[2].gsub(/\s+/, "")
+                ic.new_id=
+                    ic.old_id=r3[0]
+                ic.new_parent_id=@new_collection_id
+                ic.old_parent_id=r3[1]
+                ic.title=r3[2]
+                ic.description=r3[3]
+                if ic.description == nil then
+                  ic.description = ""
+                end
+                puts "old parent #{ic.old_parent_id}"
 
-           ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
-           nci = CollectionImport.new
-           nci.old_id = ic.old_id
-           nci.new_id = ic.new_id
-           nci.source_archive_id = @import_archive_id
-           nci.save!
-           end
-        when 4
+                ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
+                nci = CollectionImport.new
+                nci.old_id = ic.old_id
+                nci.new_id = ic.new_id
+                nci.source_archive_id = @import_archive_id
+                nci.save!
+              end
+              convert_categories_to_collections(1)
+            when 4
+          end
+        else
+          case @source_archive_type
+            when 3
+
+              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} order by catid asc")
+
+
+              rr.each do |r3|
+                ic = ImportCategory.new
+                ic.category_name=r3[2].gsub(/\s+/, "")
+                ic.new_id=
+                    ic.old_id=r3[0]
+
+                ic.old_parent_id=r3[1]
+                ic.title=r3[2]
+                ic.description=r3[3]
+                if ic.description == nil then
+                  ic.description = ""
+                end
+                puts "old parent #{ic.old_parent_id}"
+
+                  query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
+                  puts "32345 - #{query}"
+                  ic.new_parent_id=get_single_value_target(query)
+                  puts "new parent #{ic.new_parent_id}"
+
+
+                ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
+                nci = CollectionImport.new
+                nci.old_id = ic.old_id
+                nci.new_id = ic.new_id
+                nci.source_archive_id = @import_archive_id
+                nci.save!
+              end
+            when 4
+          end
+
+        end
+
       end
+
     end
 
 
@@ -706,7 +744,7 @@ class MassImportTool
       puts "Archivist #{u.login} set up and owns collection #{c.name}."
       if @categories_as_subcollections == true
        puts "Creating sub collections"
-        convert_categories_to_collections()
+        convert_categories_to_collections(0)
 
       end
     end
