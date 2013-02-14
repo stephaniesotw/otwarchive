@@ -500,7 +500,7 @@ puts "new parent #{ic.new_parent_id}"
               ns.old_user_id = row[10]
               ns.classes = row[5]
               ns.categories = row[4]
-              ns.characters = [6]
+              ns.characters = row[6]
               ns.rating_integer = row[7]
               rating_tag = ImportTag.new()
               rating_tag.tag_type =7
