@@ -351,6 +351,7 @@ class MassImportTool
              query = "Select new_id from collection_imports where (old_id = #{ic.old_id}) and (source_archive_id = #{@import_archive_id})"
              puts "32345 - #{query}"
              ic.new_parent_id=get_single_value_target(tmpqry)
+             puts "new parent #{ic.new_parent_id}"
            end
 
            ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
