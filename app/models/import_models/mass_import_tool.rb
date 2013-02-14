@@ -383,11 +383,8 @@ puts "new parent #{ic.new_parent_id}"
                 puts "old parent #{ic.old_parent_id}"
 
 
-                    tempparentcat = CollectionImport.select("new_id").where(
-                    old_id: ic.old_parent_id,
-                    source_archive_id: @archive_import_id
-                )
-                ic.new_parent_id = tempparentcat.new_id
+
+                ic.new_parent_id = get_single_value_target("Select new_id from collection_imports where old_id = #{ic.old_parent_id} and source_archive_id = #{@import_archive_id}")
                   puts "new parent #{ic.new_parent_id}"
 
 
