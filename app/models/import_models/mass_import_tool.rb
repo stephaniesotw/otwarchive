@@ -448,8 +448,10 @@ puts "new parent #{ic.new_parent_id}"
         #create new ImportWork Object
         ns = ImportWork.new()
         #create new importuser object
+        puts "ns created"
         a = ImportUser.new()
         #Create Taglisit for this story
+                        puts "a created"
         my_tag_list = Array.new()
         begin
           case @source_archive_type
@@ -491,6 +493,7 @@ puts "new parent #{ic.new_parent_id}"
               ns.hits = row[10]
             #efiction 3
             when 3
+              puts "got the when3"
               ns.old_work_id = row[0]
               ns.title = row[1]
               ns.summary = row[2]
