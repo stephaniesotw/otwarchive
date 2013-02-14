@@ -318,7 +318,7 @@ class MassImportTool
           title: title,
           parent_id: parent_id
       )
-      user = Users.find(@archivist_user_id)
+      user = User.find(@archivist_user_id)
       collection.collection_participants.build(
           pseud: user.default_pseud,
           participant_role: "Owner"
