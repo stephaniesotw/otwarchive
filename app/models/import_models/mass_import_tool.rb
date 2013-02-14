@@ -353,7 +353,7 @@ class MassImportTool
 tmpqry = "Select new_id from collection_imports where old_id = #{nc_oldid} and source_archive_id = #{@source_archive_id}"
               puts "32345 - #{tmpqry}"
 
-              nc_parentid = get_single_value_target(tempqry)
+              nc_parentid = get_single_value_target(tmpqry)
             end
 
             nc_id = create_child_collection(nc_name,nc_parentid,nc_desc, nc_title)
