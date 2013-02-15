@@ -1,6 +1,6 @@
-class Admin::ImportsController < ApplicationController
+class Opendoors::ImportsController < ApplicationController
 
-  before_filter :admin_only
+  before_filter :opendoors_only
   @admin_import = AdminImport.new
 
   def index
