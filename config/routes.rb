@@ -19,6 +19,7 @@ Otwarchive::Application.routes.draw do
   
   #### OPEN DOORS ####
   namespace :opendoors do
+    resources :imports
     resources :tools, :only => [:index] do
       collection do 
         post :url_update
@@ -129,7 +130,7 @@ Otwarchive::Application.routes.draw do
   namespace :admin do
     resources :activities, :only => [:index, :show]
     resources :settings
-    resources :imports
+
     resources :skins do
       collection do
         get :index_rejected
