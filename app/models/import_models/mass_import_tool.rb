@@ -562,7 +562,7 @@ puts "new parent #{ic.new_parent_id}"
               rescue Exception=>e
                 puts "Error: 777: #{e}"
               end
-
+              ns.new_pseud_id = new_pseud_id
 
             else
               #user exists, but is being imported
@@ -582,7 +582,7 @@ puts "new parent #{ic.new_parent_id}"
                   new_pseud.description = "Imported"
                   new_pseud.save!
                   temp_pseud_id = new_pseud.id
-
+                ns.new_pseud_id = temp_pseud_id
                 rescue Exception=>e
                   puts "Error: 111: #{e}"
                 end
@@ -603,6 +603,7 @@ puts "new parent #{ic.new_parent_id}"
                 puts "====A"
                 ns.new_user_id = temp_pseud_id
                 a.pseud_id = temp_pseud_id
+                ns.new_pseud_id = temp_pseud_id
               end
             end
 
@@ -621,8 +622,8 @@ puts "new parent #{ic.new_parent_id}"
             new_work.title_to_sort_on = ns.title
             new_work.restricted = true
             new_work.posted = true
-            puts "looking for pseud #{a.pseud_id}"
-            new_work.pseuds << Pseud.find_by_id(a.pseud_id)
+            puts "looking for pseud #{ns.new_pseud_id}"
+            new_work.pseuds << Pseud.find_by_id(ns.new_pseud_id)
             new_work.revised_at = ns.updated
             new_work.created_at = ns.published
             new_work.fandom_string = @import_fandom
