@@ -13,7 +13,6 @@ class ImportWork
   attr_accessor :summary
   attr_accessor :classes
   attr_accessor :old_user_id
-  attr_accessor :new_user_id
 
   attr_accessor :new_pseud_id
   attr_accessor :source_archive_id
