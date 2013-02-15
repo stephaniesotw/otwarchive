@@ -640,7 +640,7 @@ puts "new parent #{ic.new_parent_id}"
 
             collection_array = get_work_collections(ns.categories)
             collection_array.each do |cobj|
-              new_work.collections << cobj unless work.collections.include?(cobj)
+              new_work.collections << cobj unless new_work.collections.include?(cobj)
               puts "Added existing work #{new_work.title} to #{cobj.title}"
             end
 
