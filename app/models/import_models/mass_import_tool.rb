@@ -694,7 +694,7 @@ puts "new parent #{ic.new_parent_id}"
 
 
     def add_chapters2(ns,new_id)
-      case
+      case @source_archive_type
         when 4
           puts "1121 == Select * from #{@source_chapters_table} where csid = #{ns.old_work_id} order by id asc"
 
@@ -733,7 +733,9 @@ puts "new parent #{ic.new_parent_id}"
 
 
 
+      end
     end
+
 
 #copied and modified from mass import rake, stephanies 1/22/2012
 #Create archivist and collection if they don't already exist"
