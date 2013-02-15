@@ -519,6 +519,7 @@ puts "new parent #{ic.new_parent_id}"
 
           end
           #debug info
+          ns.source_archive_id = @import_archive_id
           puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
 
           a = ImportUser.new
@@ -551,9 +552,18 @@ puts "new parent #{ic.new_parent_id}"
 
               #set the penname on newly created pseud to proper value
               update_record_target("update pseuds set name = '#{ns.penname}' where id = #{new_pseud_id}")
-              a = new_a
-              a.pseud_id = new_pseud_id
-              update_record_target("insert into user_imports (user_id, pseud_id,source_archive_id,source_user_id) values (#{new_a.new_user_id},#{a.pseud_id},#{ns.source_archive_id},#{ns.old_user_id})")
+              begin
+                new_ui = UserImport.new
+                new_ui.user_id = new_a.new_user_id
+                new_ui.pseud_id = new_pseud_id
+                new_ui.source_user_id = ns.old_user_id
+                new_ui.source_archive_id = @import_archive_id
+                new_ui.save!
+              rescue Exception=>e
+                puts "Error: 777: #{e}"
+              end
+
+
             else
               #user exists, but is being imported
               #insert the mapping value
@@ -581,7 +591,7 @@ puts "new parent #{ic.new_parent_id}"
                   new_ui.user_id = temp_author_id
                   new_ui.pseud_id = temp_pseud_id
                   new_ui.source_user_id = ns.old_user_id
-                  new_ui.source_archive_id = ns.source_archive_id
+                  new_ui.source_archive_id = @import_archive_id
                   new_ui.save!
                 rescue Exception=>e
                   puts "Error: 777: #{e}"
