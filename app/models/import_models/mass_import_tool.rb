@@ -712,7 +712,22 @@ puts "new parent #{ic.new_parent_id}"
             self.post_chapters(c, @source_archive_type)
           end
         when 3
+          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}")
+          puts "333"
 
+          r.each do |rr|
+            c = ImportChapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            c.body = rr[4]
+            c.position = rr[2]
+            c.summary = rr[3]
+
+            ns.chapters << c
+            self.post_chapters(c, @source_archive_type)
       end
 
 
@@ -783,7 +798,18 @@ puts "new parent #{ic.new_parent_id}"
           puts "New chapter id #{new_c.id}"
           add_new_creatorship(new_c.id,"chapter",c.pseud_id)
         when 3 #efiction
-               #TODO Add efiction3 add chapters
+          new_c = Chapter.new
+          new_c.work_id =  c.new_work_id
+          new_c.created_at = c.date_posted
+          new_c.updated_at = c.date_posted
+          new_c.posted = 1
+          new_c.position = c.position
+          new_c.title = c.title
+          new_c.summary = c.summary
+          new_c.content = c.body
+          new_c.save!
+          add_new_creatorship(new_c.id,"chapter",c.pseud_id)
+
       end
     end
 
@@ -811,7 +837,26 @@ puts "new parent #{ic.new_parent_id}"
             #self.post_chapters(c, @source_archive_type)
           end
         when 3 #efiction 3
-               #TODO Add efiction3 add chapters
+
+          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
+          puts "333"
+
+          r.each do |rr|
+            c = Chapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            c.content = rr[4]
+            c.position = rr[2]
+            c.summary = rr[3]
+            c.posted = 1
+            ns.chapters << c
+
+            #self.post_chapters(c, @source_archive_type)
+          end
       end
 
 
