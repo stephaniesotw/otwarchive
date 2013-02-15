@@ -740,8 +740,8 @@ puts "new parent #{ic.new_parent_id}"
     end
 
 
-#copied and modified from mass import rake, stephanies 1/22/2012
-#Create archivist and collection if they don't already exist"
+    #copied and modified from mass import rake, stephanies 1/22/2012
+    #Create archivist and collection if they don't already exist"
     def create_archivist_and_collection
 
       # make the archivist user if it doesn't exist already
@@ -880,9 +880,19 @@ puts "new parent #{ic.new_parent_id}"
       puts "New creatorship #{new_creation.id}"
     end
 
+    #take tag from mytaglist and add to taggings
+    def add_work_taggings(work_id,new_tag)
+      mytagging = Tagging.new
+      temptag = tag.find_by_name(:name)
+      mytagging.taggable_id = work_id
+      mytagging.tagger_id = temptag.id
+      mytagging.taggable_type="Work"
+      mytagging.save!
 
 
-#Add User
+    end
+
+    #Add User
     def add_user(a)
       begin
         login_temp = a.email.tr("@", "")
@@ -1042,8 +1052,8 @@ puts "new parent #{ic.new_parent_id}"
 
   end
 
-  #used with efiction 3 archives
-  def get_work_class_tags(tl,classstr,mytype)
+   #used with efiction 3 archives
+    def get_work_class_tags(tl,classstr,mytype)
   classsplit = Array.new
   classplit = classstr.split(",")
   classsplit.each do |x|
