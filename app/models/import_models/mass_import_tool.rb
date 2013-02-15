@@ -656,6 +656,7 @@ puts "new parent #{ic.new_parent_id}"
               #cc.save!
               cc.errors.full_messages
             end
+            puts "chapter saved"
             add_chapters2(ns,new_work.id)
             puts "taglist count = #{my_tag_list.count}"
             my_tag_list.each do |t|
