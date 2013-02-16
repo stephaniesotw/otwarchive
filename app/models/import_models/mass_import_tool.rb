@@ -330,82 +330,7 @@ class MassImportTool
       return collection.id
     end
 
-    #Convert Categories To Collections
-    def convert_categories_to_collections(level)
-      case level
-        when 0
-          case @source_archive_type
-            when 3
 
-              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid = -1")
-
-
-              rr.each do |r3|
-                ic = ImportCategory.new
-                ic.category_name=r3[2].gsub(/\s+/, "")
-                ic.new_id=
-                    ic.old_id=r3[0]
-                ic.new_parent_id=@new_collection_id
-                ic.old_parent_id=r3[1]
-                ic.title=r3[2]
-                ic.description=r3[3]
-                if ic.description == nil then
-                  ic.description = ""
-                end
-                puts "old parent #{ic.old_parent_id}"
-puts "new parent #{ic.new_parent_id}"
-                ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
-                nci = CollectionImport.new
-                nci.old_id = ic.old_id
-                nci.new_id = ic.new_id
-                nci.source_archive_id = @import_archive_id
-                nci.save!
-              end
-              convert_categories_to_collections(1)
-            when 4
-          end
-        else
-          case @source_archive_type
-            when 3
-
-              rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid > 0")
-
-
-              rr.each do |r3|
-                ic = ImportCategory.new
-                ic.category_name=r3[2].gsub(/\s+/, "")
-                ic.new_id=
-                    ic.old_id=r3[0]
-
-                ic.old_parent_id=r3[1]
-                ic.title=r3[2]
-                ic.description=r3[3]
-                if ic.description == nil then
-                  ic.description = ""
-                end
-                puts "old parent #{ic.old_parent_id}"
-
-
-
-                ic.new_parent_id = get_single_value_target("Select new_id from collection_imports where old_id = #{ic.old_parent_id} and source_archive_id = #{@import_archive_id}")
-                  puts "new parent #{ic.new_parent_id}"
-
-
-                ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
-                nci = CollectionImport.new
-                nci.old_id = ic.old_id
-                nci.new_id = ic.new_id
-                nci.source_archive_id = @import_archive_id
-                nci.save!
-              end
-            when 4
-          end
-
-        end
-
-
-
-    end
 
 
     def create_import_record
@@ -460,7 +385,6 @@ puts "new parent #{ic.new_parent_id}"
               ns.source_archive_id = @import_archive_id
               ns.old_work_id = row[0]
               puts ns.old_work_id
-
               ns.title = row[1]
               #debug info
               puts ns.title
@@ -515,8 +439,6 @@ puts "new parent #{ic.new_parent_id}"
               end
               my_tag_list = get_work_class_tags(my_tag_list,ns.classes,"classes")
               my_tag_list = get_work_class_tags(my_tag_list,ns.characters,"characters")
-                         #
-
           end
           #debug info
           ns.source_archive_id = @import_archive_id
@@ -637,6 +559,8 @@ puts "new parent #{ic.new_parent_id}"
             new_work.chapters.each do |chap|
               #puts "#{chap.title}"
             end
+
+
 
             collection_array = get_work_collections(ns.categories)
             collection_array.each do |cobj|
@@ -1032,26 +956,89 @@ puts "new parent #{ic.new_parent_id}"
       end
       return a
     end
-#TODO
-
-  def get_work_collections(collectionstring)
-
-    tempstring = collectionstring
-    temparray = Array.new
 
 
-
-    collectionstring = tempstring.split(",")
-    collectionstring.each do |c|
-    newcollectionid = get_single_value_target("Select new_id from collection_imports where source_archive_id = #{@import_archive_id} AND old_id = #{c} ")
-    tempcollection = Collection.find(newcollectionid)
-    temparray.push(tempcollection)
+  ####Reserved####
+  #gets the collections that the work is supposed to be in based on old cat id's
+  #note: until notice, this function will not be used.
+  def get_work_collections(collection_string)
+    temp_string = collection_string
+    temp_array = Array.new
+    collection_string = temp_string.split(",")
+    collection_string.each do |c|
+    new_collection_id = get_single_value_target("Select new_id from collection_imports where source_archive_id = #{@import_archive_id} AND old_id = #{c} ")
+    temp_collection = Collection.find(new_collection_id)
+    temp_array.push(temp_collection)
     end
-    collectionstring = temparray
+    collection_string = temp_array
     return temparray
-
   end
 
+  #Convert Categories To Collections
+  def convert_categories_to_collections(level)
+    case level
+      when 0
+        case @source_archive_type
+          when 3
+            rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid = -1")
+            rr.each do |r3|
+              ic = ImportCategory.new
+              ic.category_name=r3[2].gsub(/\s+/, "")
+              ic.new_id=
+                  ic.old_id=r3[0]
+              ic.new_parent_id=@new_collection_id
+              ic.old_parent_id=r3[1]
+              ic.title=r3[2]
+              ic.description=r3[3]
+              if ic.description == nil then
+                ic.description = ""
+              end
+              puts "old parent #{ic.old_parent_id}"
+              puts "new parent #{ic.new_parent_id}"
+              ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
+              nci = CollectionImport.new
+              nci.old_id = ic.old_id
+              nci.new_id = ic.new_id
+              nci.source_archive_id = @import_archive_id
+              nci.save!
+            end
+            convert_categories_to_collections(1)
+          when 4
+        end
+      else
+        case @source_archive_type
+          when 3
+            rr = @connection.query("Select catid,parentcatid,category,description from #{@source_categories_table} where parentcatid > 0")
+            rr.each do |r3|
+              ic = ImportCategory.new
+              ic.category_name=r3[2].gsub(/\s+/, "")
+              ic.new_id=
+                  ic.old_id=r3[0]
+              ic.old_parent_id=r3[1]
+              ic.title=r3[2]
+              ic.description=r3[3]
+              if ic.description == nil then
+                ic.description = ""
+              end
+              puts "old parent #{ic.old_parent_id}"
+              ic.new_parent_id = get_single_value_target("Select new_id from collection_imports where old_id = #{ic.old_parent_id} and source_archive_id = #{@import_archive_id}")
+              puts "new parent #{ic.new_parent_id}"
+              ic.new_id= create_child_collection(ic.category_name,ic.new_parent_id,ic.description,ic.title)
+              nci = CollectionImport.new
+              nci.old_id = ic.old_id
+              nci.new_id = ic.new_id
+              nci.source_archive_id = @import_archive_id
+              nci.save!
+            end
+          when 4
+        end
+
+    end
+
+
+
+  end
+  ####
    #used with efiction 3 archives
     def get_work_class_tags(tl,classstr,mytype)
   classsplit = Array.new
