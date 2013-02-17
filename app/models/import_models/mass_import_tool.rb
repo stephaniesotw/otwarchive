@@ -550,44 +550,55 @@ class MassImportTool
   end
 
   def add_chapters2(ns, new_id)
-    case @source_archive_type
+      query = ""
+      begin
+        case @source_archive_type
       when 4
-        puts "1121 == Select * from #{@source_chapters_table} where csid = #{ns.old_work_id} order by id asc"
+      puts "1121 == Select * from #{@source_chapters_table} where csid = #{ns.old_work_id} order by id asc"
+      query =  "Select * from #{@source_chapters_table} where csid = #{ns.old_work_id}"
+      r = @connection.query(query)
+      puts "333"
+      ix = 1
+      r.each do |rr|
+        c = ImportChapter.new()
+        c.new_work_id = new_id
 
-        r = @connection.query("Select * from #{@source_chapters_table} where csid = #{ns.old_work_id}")
-        puts "333"
-        ix = 1
-        r.each do |rr|
-          c = ImportChapter.new()
-          c.new_work_id = new_id
+        c.title = rr[1]
+        c.date_posted = rr[4]
+        c.body = rr[3]
+        c.position = ix
+        self.post_chapters(c, @source_archive_type)
+      end
+          when 3
+            query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}"
+      r = @connection.query(query)
+      puts "333"
 
-          c.title = rr[1]
-          c.date_posted = rr[4]
-          c.body = rr[3]
-          c.position = ix
-          self.post_chapters(c, @source_archive_type)
-        end
-      when 3
-        r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}")
-        puts "333"
+      r.each do |rr|
+        c = ImportChapter.new()
+        #c.new_work_id = ns.new_work_id     will be made automatically
+        #c.pseud_id = ns.pseuds[0]
+        c.title = rr[1]
+        #c.created_at  = rr[4]
+        #c.updated_at = rr[4]
+        c.body = rr[4]
+        c.position = rr[2]
+        c.summary = rr[3]
 
-        r.each do |rr|
-          c = ImportChapter.new()
-          #c.new_work_id = ns.new_work_id     will be made automatically
-          #c.pseud_id = ns.pseuds[0]
-          c.title = rr[1]
-          #c.created_at  = rr[4]
-          #c.updated_at = rr[4]
-          c.body = rr[4]
-          c.position = rr[2]
-          c.summary = rr[3]
-
-          ns.chapters << c
-          self.post_chapters(c, @source_archive_type)
-        end
+        ns.chapters << c
+        self.post_chapters(c, @source_archive_type)
+      end
 
 
-    end
+      endend
+
+    rescue Exception => ex
+      puts " Error : " + ex.message
+            puts "query = #{query}"
+      @connection.close()
+
+      end
+
   end
 
   #copied and modified from mass import rake, stephanies 1/22/2012
