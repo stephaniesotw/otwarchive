@@ -575,7 +575,7 @@ class MassImportTool
             query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}"
             puts query
             r = @connection.query(query)
-      puts "333"
+      puts "333 #{r.num_rows}"
 
       r.each do |rr|
         c = ImportChapter.new()
@@ -598,7 +598,7 @@ class MassImportTool
     rescue Exception => ex
       puts " Error : " + ex.message
             puts "query = #{query}"
-      @connection.close()
+
 
 
 
