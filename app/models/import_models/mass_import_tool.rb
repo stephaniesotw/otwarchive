@@ -763,10 +763,11 @@ class MassImportTool
     begin
       mytagging = Tagging.new
       puts "looking for tag with name #{new_tag.tag}"
+      temptag = Tag.new
       temptag = Tag.find_by_name(new_tag.tag)
       puts "found tag with name #{temptag.name} and id #{temptag.id}"
       mytagging.taggable_id = work_id
-      mytagging.tagger_id = temptag.id
+      mytagging.tagger = temptag
       mytagging.taggable_type="Work"
       mytagging.save!
     rescue Exception => ex
