@@ -590,14 +590,14 @@ class MassImportTool
       end
 
 
-      endend
 
+        end
     rescue Exception => ex
       puts " Error : " + ex.message
             puts "query = #{query}"
       @connection.close()
 
-      end
+
 
   end
   end
