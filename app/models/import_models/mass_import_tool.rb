@@ -743,7 +743,7 @@ class MassImportTool
   #take tag from mytaglist and add to taggings
   def add_work_taggings(work_id, new_tag)
     mytagging = Tagging.new
-    temptag = tag.find_by_name(new_tag.tag)
+    temptag = Tag.find_by_name(new_tag.tag)
     mytagging.taggable_id = work_id
     mytagging.tagger_id = temptag.id
     mytagging.taggable_type="Work"
