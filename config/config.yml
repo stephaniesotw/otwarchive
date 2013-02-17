@@ -304,6 +304,8 @@ PAGES_TO_CACHE: 5
 # Turn this off in local.yml to keep the development footer/profiling code from running
 DEVELOPMENT_PROFILING_ENABLED: true
 
+# Collection Depth Limit
+COLLECTION_DEPTH_LIMIT: 2
 
 # These are the actions logged in the user history - the log_items table
 ACTION_ACTIVATE: 0
