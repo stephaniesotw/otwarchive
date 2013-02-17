@@ -600,7 +600,7 @@ class MassImportTool
       end
 
   end
-
+  end
   #copied and modified from mass import rake, stephanies 1/22/2012
   #Create archivist and collection if they don't already exist"
   def create_archivist_and_collection
