@@ -48,8 +48,8 @@ class MassImportTool
 
     #category mapping
     #================
-    @categories_as_subcollections = true
-    @categories_as_tags = false
+    @categories_as_subcollections = false
+    @categories_as_tags = true
     @subcategory_depth = 1
     #values "merge_top" "move_top" "drop" "merge all" "custom"
     @subcategory_remap_method = "merge_top"
