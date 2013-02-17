@@ -569,11 +569,12 @@ class MassImportTool
         c.date_posted = rr[4]
         c.body = rr[3]
         c.position = ix
-        self.post_chapters(c, @source_archive_type)
+        self.post_chapters2(c, @source_archive_type)
       end
           when 3
             query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}"
-      r = @connection.query(query)
+            puts query
+            r = @connection.query(query)
       puts "333"
 
       r.each do |rr|
@@ -588,7 +589,7 @@ class MassImportTool
         c.summary = rr[3]
 
         ns.chapters << c
-        self.post_chapters(c, @source_archive_type)
+        self.post_chapters2(c, @source_archive_type)
       end
 
 
@@ -665,7 +666,7 @@ class MassImportTool
           new_c.content = c.body
           new_c.save!
           puts "New chapter id #{new_c.id}"
-          add_new_creatorship(new_c.id, "chapter", c.pseud_id)
+          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
         when 3 #efiction
           new_c = Chapter.new
           new_c.work_id = c.new_work_id
@@ -677,7 +678,7 @@ class MassImportTool
           new_c.summary = c.summary
           new_c.content = c.body
           new_c.save!
-          add_new_creatorship(new_c.id, "chapter", c.pseud_id)
+          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
 
       end
     rescue Exception => ex
