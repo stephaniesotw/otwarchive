@@ -651,105 +651,129 @@ class MassImportTool
 
   #Post Chapters Fix
   def post_chapters2(c, sourceType)
-    case sourceType
-      when 4 #storyline
-        new_c = Chapter.new
-        new_c.work_id = c.new_work_id
-        new_c.created_at = c.date_posted
-        new_c.updated_at = c.date_posted
-        new_c.posted = 1
-        new_c.position = c.position
-        new_c.title = c.title
-        new_c.summary = c.summary
-        new_c.content = c.body
-        new_c.save!
-        puts "New chapter id #{new_c.id}"
-        add_new_creatorship(new_c.id, "chapter", c.pseud_id)
-      when 3 #efiction
-        new_c = Chapter.new
-        new_c.work_id = c.new_work_id
-        new_c.created_at = c.date_posted
-        new_c.updated_at = c.date_posted
-        new_c.posted = 1
-        new_c.position = c.position
-        new_c.title = c.title
-        new_c.summary = c.summary
-        new_c.content = c.body
-        new_c.save!
-        add_new_creatorship(new_c.id, "chapter", c.pseud_id)
+    begin
+      case sourceType
+        when 4 #storyline
+          new_c = Chapter.new
+          new_c.work_id = c.new_work_id
+          new_c.created_at = c.date_posted
+          new_c.updated_at = c.date_posted
+          new_c.posted = 1
+          new_c.position = c.position
+          new_c.title = c.title
+          new_c.summary = c.summary
+          new_c.content = c.body
+          new_c.save!
+          puts "New chapter id #{new_c.id}"
+          add_new_creatorship(new_c.id, "chapter", c.pseud_id)
+        when 3 #efiction
+          new_c = Chapter.new
+          new_c.work_id = c.new_work_id
+          new_c.created_at = c.date_posted
+          new_c.updated_at = c.date_posted
+          new_c.posted = 1
+          new_c.position = c.position
+          new_c.title = c.title
+          new_c.summary = c.summary
+          new_c.content = c.body
+          new_c.save!
+          add_new_creatorship(new_c.id, "chapter", c.pseud_id)
 
+      end
+    rescue Exception => ex
+      puts "error in post chapters 2 #{ex}"
     end
+
   end
 
   #add chapters    takes chapters and adds them to import work object
   def add_chapters(ns, old_work_id)
-    case @source_archive_type
-      when 4 #Storyline
-        puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
-        r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
-        puts "333"
-        ix = 1
-        r.each do |rr|
-          c = Chapter.new()
-          #c.new_work_id = ns.new_work_id     will be made automatically
-          #c.pseud_id = ns.pseuds[0]
-          c.title = rr[1]
-          c.created_at = rr[4]
-          #c.updated_at = rr[4]
-          c.content = rr[3]
-          c.position = ix
-          c.summary = ""
-          c.posted = 1
-          ns.chapters << c
-          ix = ix + 1
-          #self.post_chapters(c, @source_archive_type)
-        end
-      when 3 #efiction 3
+    begin
+      case @source_archive_type
+        when 4 #Storyline
+          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
+          r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
+          puts "333"
+          ix = 1
+          r.each do |rr|
+            c = Chapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            c.created_at = rr[4]
+            #c.updated_at = rr[4]
+            c.content = rr[3]
+            c.position = ix
+            c.summary = ""
+            c.posted = 1
+            ns.chapters << c
+            ix = ix + 1
+            #self.post_chapters(c, @source_archive_type)
+          end
+        when 3 #efiction 3
 
-        puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
-        r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-        puts "333"
+          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
+          puts "333"
 
-        r.each do |rr|
-          c = Chapter.new()
-          #c.new_work_id = ns.new_work_id     will be made automatically
-          #c.pseud_id = ns.pseuds[0]
-          c.title = rr[1]
-          #c.created_at  = rr[4]
-          #c.updated_at = rr[4]
-          c.content = rr[4]
-          c.position = rr[2]
-          c.summary = rr[3]
-          c.posted = 1
-          ns.chapters << c
+          r.each do |rr|
+            c = Chapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            c.content = rr[4]
+            c.position = rr[2]
+            c.summary = rr[3]
+            c.posted = 1
+            ns.chapters << c
 
-          #self.post_chapters(c, @source_archive_type)
-        end
+            #self.post_chapters(c, @source_archive_type)
+          end
+      end
+
+
+      return ns
+    rescue Exception => ex
+      puts "error in add chapters #{ex}"
+      return ns
     end
 
-
-    return ns
 
   end
 
   #adds new creatorship
   def add_new_creatorship(creation_id, creation_type, pseud_id)
-    new_creation = Creatorship.new()
-    new_creation.creation_type = creation_type
-    new_creation.pseud_id = pseud_id
-    new_creation.creation_id = chapter_id
-    new_creation.save!
-    puts "New creatorship #{new_creation.id}"
+    begin
+      new_creation = Creatorship.new()
+      new_creation.creation_type = creation_type
+      new_creation.pseud_id = pseud_id
+      new_creation.creation_id = chapter_id
+      new_creation.save!
+      puts "New creatorship #{new_creation.id}"
+    rescue Exception => ex
+      puts "error in add new creatorship #{ex}"
+    end
+
   end
 
   #take tag from mytaglist and add to taggings
   def add_work_taggings(work_id, new_tag)
-    mytagging = Tagging.new
-    temptag = Tag.find_by_name(new_tag.tag)
-    mytagging.taggable_id = work_id
-    mytagging.tagger_id = temptag.id
-    mytagging.taggable_type="Work"
-    mytagging.save!
+    begin
+      mytagging = Tagging.new
+      puts "looking for tag with name #{new_tag.tag}"
+      temptag = Tag.find_by_name(new_tag.tag)
+      puts "found tag with name #{temptag.name} and id #{temptag.id}"
+      mytagging.taggable_id = work_id
+      mytagging.tagger_id = temptag.id
+      mytagging.taggable_type="Work"
+      mytagging.save!
+    rescue Exception => ex
+       puts "error add work taggings #{ex}"
+
+    end
+
   end
 
   #Add User
