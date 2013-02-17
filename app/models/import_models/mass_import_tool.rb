@@ -976,25 +976,25 @@ class MassImportTool
     query = ""
     new_tag_type = ""
     classsplit = Array.new
-    classplit = classstr.split(",")
+    classsplit = classstr.split(",")
     classsplit.each do |x|
       case mytype
         when "characters"
           new_tag_type = "character"
           query = "Select charid, charname from #{@source_characters_table} where charid = #{x}"
         when "classes"
-          query = "Select class_id, class_type, class_name from #{@source_classes_table} where class_id = #{x}"
+          query = "Select class_id,  class_name, class_type from #{@source_classes_table} where class_id = #{x}"
           new_tag_type = "freeform"
         when "categories"
           new_tag_type = "freeform"
-          query = "Select catid, parentcatid,category from #{@source_categories_table} where catid = #{x}"
+          query = "Select catid, category, parentcatid from #{@source_categories_table} where catid = #{x}"
       end
       r = @connection.query(query)
       r.each do |r|
         nt = ImportTag.new()
         nt.tag_type= new_tag_type
-        nt.old_id = r1[0]
-        nt.tag = r1[2]
+        nt.old_id = r[0]
+        nt.tag = r[1]
         tl.push(nt)
       end
     end
