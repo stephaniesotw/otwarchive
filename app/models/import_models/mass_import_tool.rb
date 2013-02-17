@@ -141,7 +141,7 @@ class MassImportTool
         r = @connection.query("Select caid, caname from #{@source_category_table_prefix}; ")
         r.each do |r1|
           nt = ImportTag.new()
-          nt.tag_type = "category"
+          nt.tag_type = "Category"
           nt.old_id = r1[0]
           nt.tag = r1[1]
           taglist.push(nt)
@@ -166,7 +166,7 @@ class MassImportTool
           if r1[1] == @source_warning_class_id
             nt.tag_type = 6
           else
-            nt.tag_type = "freeform"
+            nt.tag_type = "Freeform"
           end
           nt.old_id = r1[0]
           nt.tag = r1[2]
@@ -176,7 +176,7 @@ class MassImportTool
         rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
         rr.each do |r2|
           nt = ImportTag.new()
-          nt.tag_type = "category"
+          nt.tag_type = "Category"
           nt.old_id = r2[0]
           nt.tag = r2[1]
           taglist.push(nt)
@@ -185,7 +185,7 @@ class MassImportTool
         rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
         rrr.each do |r3|
           nt = ImportTag.new()
-          nt.tag_type = "character"
+          nt.tag_type = "Character"
           nt.old_id = r3[0]
           nt.tag = r3[1]
           taglist.push(nt)
@@ -195,7 +195,7 @@ class MassImportTool
         rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
         rr.each do |r2|
           nt = ImportTag.new()
-          nt.tag_type = "category"
+          nt.tag_type = "Category"
           nt.old_id = r2[0]
           nt.tag = r2[1]
           taglist.push(nt)
@@ -204,7 +204,7 @@ class MassImportTool
         rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
         rrr.each do |r3|
           nt = ImportTag.new()
-          nt.tag_type = "character"
+          nt.tag_type = "Character"
           nt.old_id = r3[0]
           nt.tag = r3[1]
           taglist.push(nt)
@@ -221,7 +221,7 @@ class MassImportTool
       escaped_tag_name = @connection.escape_string(temptag.tag)
       r = @connection.query("Select id from tags where name = '#{escaped_tag_name}'; ")
       ##if not found add tag
-      if !temptag.tag_type == "category" || 99
+      if !temptag.tag_type == "Category" || 99
         if r.num_rows == 0
           # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
           temp_new_tag = Tag.new()
@@ -333,11 +333,11 @@ class MassImportTool
             cattag = ImportTag.new()
             subcattag = ImportTag.new()
             if @use_proper_categories == true
-              cattag.tag_type = 1
-              subcattag.tag_type = 1
+              cattag.tag_type = Category
+              subcattag.tag_type = "Category"
             else
-              subcattag.tag_type = 3
-              cattag.tag_type = 3
+              subcattag.tag_type = "Freeform"
+              cattag.tag_type = "Freeform"
             end
             cattag.new_id = row[6]
             subcattag.new_id =row[11]
@@ -1005,13 +1005,13 @@ class MassImportTool
     classsplit.each do |x|
       case mytype
         when "characters"
-          new_tag_type = "character"
+          new_tag_type = "Character"
           query = "Select charid, charname from #{@source_characters_table} where charid = #{x}"
         when "classes"
           query = "Select class_id,  class_name, class_type from #{@source_classes_table} where class_id = #{x}"
-          new_tag_type = "freeform"
+          new_tag_type = "Freeform"
         when "categories"
-          new_tag_type = "freeform"
+          new_tag_type = "Freeform"
           query = "Select catid, category, parentcatid from #{@source_categories_table} where catid = #{x}"
       end
       r = @connection.query(query)
