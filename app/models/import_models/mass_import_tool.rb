@@ -504,7 +504,7 @@ class MassImportTool
           new_work = add_chapters(new_work, ns.old_work_id)
 
           new_work.chapters.each do |chap|
-            #puts "#{chap.title}"
+            puts "#{chap.title}"
           end
 
           #assign to main import collection
