@@ -533,7 +533,7 @@ class MassImportTool
             cc.errors.full_messages
           end
           puts "chapter saved"
-          add_chapters2(new_work, new_work.id)
+          add_chapters2(new_work, new_work.id,ns.old_work_id)
           puts "taglist count = #{my_tag_list.count}"
           my_tag_list.each do |t|
             add_work_taggings(new_work.id, t)
@@ -565,13 +565,13 @@ class MassImportTool
     @connection.close()
   end
 
-  def add_chapters2(ns, new_id)
+  def add_chapters2(ns, new_id,old_id)
       query = ""
       begin
         case @source_archive_type
       when 4
-      puts "1121 == Select * from #{@source_chapters_table} where csid = #{ns.old_work_id} order by id asc"
-      query =  "Select * from #{@source_chapters_table} where csid = #{ns.old_work_id}"
+      puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_id} order by id asc"
+      query =  "Select * from #{@source_chapters_table} where csid = #{old_id}"
       r = @connection.query(query)
       puts "333"
       ix = 1
