@@ -384,7 +384,7 @@ class MassImportTool
         num_source_chapters = 0
         num_source_chapters = get_single_value_target("Select chapid  from #{@source_chapters_table} where sid = #{ns.old_work_id} limit 1")
         puts num_source_chapters
-        next if num_source_chapters < 1
+        next if num_source_chapters  0
 
         a = ImportUser.new
         #see if user / author exists for this import already
