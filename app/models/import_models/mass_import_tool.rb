@@ -737,7 +737,9 @@ class MassImportTool
              c.title = rr[1]
              #c.created_at  = rr[4]
              #c.updated_at = rr[4]
-             c.content = rr[4]
+             ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+             valid_string = ic.iconv(rr[4] + ' ')[0..-2]
+             c.content = valid_string
              c.position = rr[2]
              c.summary = rr[3]
              c.posted = 1
