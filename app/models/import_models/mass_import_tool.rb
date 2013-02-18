@@ -525,7 +525,7 @@ class MassImportTool
             puts cc.work_id
             puts cc.position
             cc.work_id = new_work.id
-            #cc.save!
+            cc.save!
             cc.errors.full_messages
           end
           puts "chapter saved"
@@ -725,7 +725,7 @@ class MassImportTool
 
           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-          puts " chapterocunt #{r.num_rows}333"
+          puts " chapterocunt #{r.num_rows} 333"
 
           r.each do |rr|
             c = Chapter.new()
@@ -1078,7 +1078,8 @@ class MassImportTool
   #query and return a single value from database
   def get_single_value_target(query)
     begin
-      r = @connection.query(query)
+      connection = Mysql.new(@database_host, @database_username, @database_password, @database_name)
+      r = connection.query(query)
       if r.num_rows == 0
         return 0
       else
@@ -1087,7 +1088,7 @@ class MassImportTool
         end
       end
     rescue Exception => ex
-      @connection.close()
+      connection.close()
       puts ex.message
       puts "Error with #{query} : get_single_value_target"
     end
@@ -1096,11 +1097,13 @@ class MassImportTool
   # Update db record takes query as peram (any non returning query)
   def update_record_target(query)
     begin
+      connection2 = Mysql.new(@database_host, @database_username, @database_password, @database_name)
       rowsEffected = 0
-      rowsEffected = @connection.query(query)
+      rowsEffected = connection2.query(query)
+      connection2.close
       return rowsEffected
     rescue Exception => ex
-      @connection.close()
+      connection2.close()
       puts ex.message
       puts "Error with #{query} : update_record_target"
     ensure
