@@ -532,7 +532,7 @@ class MassImportTool
             cc.errors.full_messages
           end
           puts "chapter saved"
-          #add_chapters2(ns, new_work.id)
+          add_chapters2(new_work, new_work.id)
           puts "taglist count = #{my_tag_list.count}"
           my_tag_list.each do |t|
             add_work_taggings(new_work.id, t)
