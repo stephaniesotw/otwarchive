@@ -382,7 +382,8 @@ class MassImportTool
         puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
         #goto next if no chapters
         num_source_chapters = 0
-        num_source_chapters = get_single_value_target("Select count(*) as num_chapters from #{@source_chapters_table} where sid = #{ns.old_work_id}")
+        num_source_chapters = get_single_value_target("Select count(*)  from #{@source_chapters_table} where sid = #{ns.old_work_id}")
+        puts num_source_chapters
         next if num_source_chapters < 1
 
         a = ImportUser.new
