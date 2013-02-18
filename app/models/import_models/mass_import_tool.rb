@@ -502,11 +502,8 @@ class MassImportTool
           new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
          new_work = add_chapters(new_work,ns.old_work_id)
 
-            return ns
-          rescue Exception => ex
-            puts "error in add chapters #{ex}"
-            return ns
-          end
+
+
           new_work = add_chapters(new_work, ns.old_work_id)
 
           new_work.chapters.each do |chap|
