@@ -161,6 +161,7 @@ class Chapter < ActiveRecord::Base
     return if self.new_record? && self.position == 1
     if self.authors.blank? && self.pseuds.empty?
       errors.add(:base, ts("Chapter must have at least one author."))
+
       return false
     end
   end
