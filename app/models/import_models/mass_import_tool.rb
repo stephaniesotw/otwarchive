@@ -138,7 +138,7 @@ class MassImportTool
       #storyline
       when 4
         #categories
-        r = @connection.query("Select caid, caname from #{@source_category_table_prefix}; ")
+        r = @connection.query("Select caid, caname from #{@source_category_table}; ")
         r.each do |r1|
           nt = ImportTag.new()
           nt.tag_type = "Category"
@@ -235,7 +235,7 @@ class MassImportTool
           end
         end
       else
-        if @categories_as_tags == true
+        if @categories_as_tags
           if r.num_rows == 0
             # '' self.update_record_target("Insert into tags (name, type) values ('#{temptag.tag}','#{temptag.tag_type}');")
             temp_new_tag = Tag.new()
@@ -332,7 +332,8 @@ class MassImportTool
             ns.published = row[5]
             cattag = ImportTag.new()
             subcattag = ImportTag.new()
-            if @use_proper_categories == true
+            #noinspection RubySimplifyBooleanInspection
+            if @use_proper_categories
               cattag.tag_type = Category
               subcattag.tag_type = "Category"
             else
@@ -372,7 +373,7 @@ class MassImportTool
             my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
             puts "Getting class tags: tag count = #{my_tag_list.count}"
             my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
-            if @categories_as_tags == true
+            if @categories_as_tags
               my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
               puts "Getting category tags: tag count = #{my_tag_list.count}"
             end
@@ -386,7 +387,7 @@ class MassImportTool
         puts num_source_chapters
         next if num_source_chapters ==  0
 
-        a = ImportUser.new
+
         #see if user / author exists for this import already
         ns.new_user_id = self.get_new_user_id_from_imported(ns.old_user_id, @archive_import_id)
         puts "The New user id!!!! ie value at this point #{ns.new_user_id}"
@@ -398,7 +399,7 @@ class MassImportTool
           #see if user account exists in main archive by checking email,
           temp_author_id = get_user_id_from_email(a.email)
 
-          if temp_author_id == 0 then
+          if temp_author_id == 0
             #if not exist , add new user with user object, passing old author object
             new_a = ImportUser.new
             new_a = self.add_user(a)
@@ -512,7 +513,7 @@ class MassImportTool
 
           #assign to main import collection
           new_work.collections << Collection.find(@new_collection_id)
-          if @categories_as_subcollections == true
+          if @categories_as_subcollections
             collection_array = get_work_collections(ns.categories)
             collection_array.each do |cobj|
               new_work.collections << cobj unless new_work.collections.include?(cobj)
@@ -656,7 +657,7 @@ class MassImportTool
 
     @new_collection_id = c.id
     puts "Archivist #{u.login} set up and owns collection #{c.name}."
-    if @categories_as_subcollections == true
+    if @categories_as_subcollections
       puts "Creating sub collections"
       convert_categories_to_collections(0)
 
@@ -765,7 +766,7 @@ class MassImportTool
       new_creation = Creatorship.new()
       new_creation.creation_type = creation_type
       new_creation.pseud_id = pseud_id
-      new_creation.creation_id = chapter_id
+      new_creation.creation_id = creation_id
       new_creation.save!
       puts "New creatorship #{new_creation.id}"
     rescue Exception => ex
@@ -898,7 +899,7 @@ class MassImportTool
         a.yahoo = ""
         if @source_archive_type == 2
           a.yahoo = r[10]
-          a.isadult = r[11]
+          a.is_adult = r[11]
         end
       end
     end
@@ -946,7 +947,7 @@ class MassImportTool
       temp_array.push(temp_collection)
     end
     collection_string = temp_array
-    return temparray
+    return temp_array
   end
 
   #Convert Categories To Collections
@@ -1153,13 +1154,13 @@ class MassImportTool
 
     case settings[:archive_type]
       when "efiction3"
-        set_import_stringts(3)
+        set_import_strings(3)
       when "storyline18"
         set_import_strings(4)
       when "efiction1"
         set_import_strings(1)
       when "efiction2"
-        set_import_string(2)
+        set_import_strings(2)
       when "otwarchive"
         set_import_strings(5)
     end
