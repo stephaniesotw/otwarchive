@@ -715,7 +715,7 @@ class MassImportTool
 
           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-          puts "333"
+          puts " chapterocunt #{r.num_rows}333"
 
           r.each do |rr|
             c = Chapter.new()
@@ -741,7 +741,7 @@ class MassImportTool
       return ns
     end
 
-
+     return ns
   end
 
   #adds new creatorship
