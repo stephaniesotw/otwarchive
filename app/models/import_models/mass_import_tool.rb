@@ -549,10 +549,10 @@ class MassImportTool
         rescue Exception => e
           puts "Error: 888: #{e}"
         end
-        @connection.close()
+
       rescue Exception => ex
         puts " Error : " + ex.message
-        @connection.close()
+
       ensure
       end
       i = i + 1
