@@ -593,7 +593,7 @@ class MassImportTool
         self.post_chapters2(c, @source_archive_type)
       end
           when 3
-            query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}"
+            query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_id}"
             puts query
             r = @connection.query(query)
       puts "333 #{r.num_rows}"
