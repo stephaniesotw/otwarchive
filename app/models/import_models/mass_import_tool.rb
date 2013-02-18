@@ -609,7 +609,7 @@ class MassImportTool
         c.position = rr[2]
         c.summary = rr[3]
 
-        ns.chapters << c
+        #ns.chapters << c
         self.post_chapters2(c, @source_archive_type)
       end
 
