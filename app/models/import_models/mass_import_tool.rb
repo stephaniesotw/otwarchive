@@ -750,7 +750,7 @@ class MassImportTool
       end
 
 
-      return ns
+      return new_work
   end
 
   #adds new creatorship
