@@ -500,7 +500,59 @@ class MassImportTool
 
 
           new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
+          begin
+            case @source_archive_type
+              when 4 #Storyline
+                puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
+                r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
+                puts "333"
+                ix = 1
+                r.each do |rr|
+                  c = Chapter.new()
+                  #c.new_work_id = ns.new_work_id     will be made automatically
+                  #c.pseud_id = ns.pseuds[0]
+                  c.title = rr[1]
+                  c.created_at = rr[4]
+                  #c.updated_at = rr[4]
+                  c.content = rr[3]
+                  c.position = ix
+                  c.summary = ""
+                  c.posted = 1
+                  ns.chapters << c
+                  ix = ix + 1
+                  #self.post_chapters(c, @source_archive_type)
+                end
+              when 3 #efiction 3
 
+                puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+                r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
+                puts " chapterocunt #{r.num_rows} 333"
+
+                r.each do |rr|
+                  c = Chapter.build()
+                  #c.new_work_id = ns.new_work_id     will be made automatically
+                  #c.pseud_id = ns.pseuds[0]
+                  c.title = rr[1]
+                  #c.created_at  = rr[4]
+                  #c.updated_at = rr[4]
+                  c.content = rr[4]
+                  c.position = rr[2]
+                  c.summary = rr[3]
+                  c.posted = 1
+
+
+                  new_work.chapters << c
+
+                  #self.post_chapters(c, @source_archive_type)
+                end
+            end
+
+
+            return ns
+          rescue Exception => ex
+            puts "error in add chapters #{ex}"
+            return ns
+          end
           new_work = add_chapters(new_work, ns.old_work_id)
 
           new_work.chapters.each do |chap|
@@ -699,57 +751,7 @@ class MassImportTool
 
   #add chapters    takes chapters and adds them to import work object
   def add_chapters(ns, old_work_id)
-    begin
-      case @source_archive_type
-        when 4 #Storyline
-          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
-          r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
-          puts "333"
-          ix = 1
-          r.each do |rr|
-            c = Chapter.new()
-            #c.new_work_id = ns.new_work_id     will be made automatically
-            #c.pseud_id = ns.pseuds[0]
-            c.title = rr[1]
-            c.created_at = rr[4]
-            #c.updated_at = rr[4]
-            c.content = rr[3]
-            c.position = ix
-            c.summary = ""
-            c.posted = 1
-            ns.chapters << c
-            ix = ix + 1
-            #self.post_chapters(c, @source_archive_type)
-          end
-        when 3 #efiction 3
 
-          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
-          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-          puts " chapterocunt #{r.num_rows} 333"
-
-          r.each do |rr|
-            c = Chapter.new()
-            #c.new_work_id = ns.new_work_id     will be made automatically
-            #c.pseud_id = ns.pseuds[0]
-            c.title = rr[1]
-            #c.created_at  = rr[4]
-            #c.updated_at = rr[4]
-            c.content = rr[4]
-            c.position = rr[2]
-            c.summary = rr[3]
-            c.posted = 1
-            ns.chapters << c
-
-            #self.post_chapters(c, @source_archive_type)
-          end
-      end
-
-
-      return ns
-    rescue Exception => ex
-      puts "error in add chapters #{ex}"
-      return ns
-    end
 
      return ns
   end
