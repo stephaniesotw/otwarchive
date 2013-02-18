@@ -504,7 +504,7 @@ class MassImportTool
 
 
 
-          new_work = add_chapters(new_work, ns.old_work_id)
+
 
           new_work.chapters.each do |chap|
             puts "#{chap.title}"
@@ -720,14 +720,14 @@ class MassImportTool
             c.position = ix
             c.summary = ""
             c.posted = 1
-            ns.chapters << c
+            #ns.chapters << c
             ix = ix + 1
             #self.post_chapters(c, @source_archive_type)
           end
         when 3 #efiction 3
 
-          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{ns.old_work_id}"
-          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{ns.old_work_id}")
+          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
           puts " chapterocunt #{r.num_rows} 333"
 
           r.each do |rr|
