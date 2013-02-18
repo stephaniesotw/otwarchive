@@ -521,18 +521,25 @@ class MassImportTool
           end
 
           new_work.save!
-          new_work.chapters.each do |cc|
-            puts "attempting to save chapter for #{new_work.id}"
-            puts cc.content
-            puts cc.title
-            puts cc.posted
-            puts cc.work_id
-            puts cc.position
-            cc.work_id = new_work.id
 
-            cc.errors.full_messages
-          end
-          puts "chapter saved"
+          puts new_work.chapters.count
+         begin
+           new_work.chapters.each do |cc|
+             puts "attempting to save chapter for #{new_work.id}"
+             puts cc.content
+             puts cc.title
+             puts cc.posted
+             puts cc.work_id
+             puts cc.position
+             cc.work_id = new_work.id
+
+             cc.errors.full_messages
+           end
+           puts "chapter saved"
+         rescue Exception => ex
+           puts error "3318: saving chapter #{ex}"
+         end
+
           add_chapters2(new_work, new_work.id,ns.old_work_id)
           puts "taglist count = #{my_tag_list.count}"
           my_tag_list.each do |t|
