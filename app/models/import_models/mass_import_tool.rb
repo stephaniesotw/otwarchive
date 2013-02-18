@@ -491,8 +491,15 @@ class MassImportTool
           new_work.warning_strings = "None"
           new_work.errors.full_messages
           puts "old work id = #{ns.old_work_id}"
+          num_source_chapters = 0
+          num_source_chapters = get_single_value_target("Select count(*) as num_chapters from #{@source_chapters_table} where sid = #{ns.old_work_id}")
+          next if num_source_chapters < 1
+
+
           new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
+          if
           new_work = add_chapters(new_work, ns.old_work_id)
+
           new_work.chapters.each do |chap|
             #puts "#{chap.title}"
           end
