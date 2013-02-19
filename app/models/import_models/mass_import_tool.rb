@@ -758,7 +758,7 @@ class MassImportTool
             c.posted = 1
 
 
-            new_work.chapters << c
+            #new_work.chapters << c
 
             #self.post_chapters(c, @source_archive_type)
           end
