@@ -257,6 +257,7 @@ class MassImportTool
     return tl
   end
 
+  #create child collection, set archivist as owner
   def create_child_collection(name, parent_id, description, title)
     collection = Collection.new(
         name: name,
@@ -273,6 +274,7 @@ class MassImportTool
     return collection.id
   end
 
+  #create import record
   def create_import_record
     update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
     @source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url}',#{@archivist_user_id})")
@@ -294,7 +296,7 @@ class MassImportTool
     puts "Updating Tags"
     tag_list = Array.new()
     #create list of all tags used in source
-    tag_list = get_tag_list(tag_list,@source_archive_type)
+    tag_list = get_tag_list(tag_list, @source_archive_type)
     #check for tag existance on target archive
     tag_list = self.fill_tag_list(tag_list)
 
@@ -385,7 +387,7 @@ class MassImportTool
         num_source_chapters = 0
         num_source_chapters = get_single_value_target("Select chapid  from #{@source_chapters_table} where sid = #{ns.old_work_id} limit 1")
         puts num_source_chapters
-        next if num_source_chapters ==  0
+        next if num_source_chapters == 0
 
 
         #see if user / author exists for this import already
@@ -497,16 +499,10 @@ class MassImportTool
           new_work.warning_strings = "None"
           new_work.errors.full_messages
           puts "old work id = #{ns.old_work_id}"
-
-
-
           new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
-         new_work = add_chapters(new_work,ns.old_work_id)
+          new_work = add_chapters(new_work, ns.old_work_id)
 
-
-
-
-
+          #debug info
           new_work.chapters.each do |chap|
             puts "#{chap.title}"
           end
@@ -521,26 +517,28 @@ class MassImportTool
           end
 
           new_work.save!
+        rescue Exception => ex
+          puts "error in new work save: #{ex}"
+        end
+        puts new_work.chapters.count
+        begin
+          new_work.chapters.each do |cc|
+            puts "attempting to save chapter for #{new_work.id}"
+            puts cc.content
+            puts cc.title
+            puts cc.posted
+            puts cc.work_id
+            puts cc.position
+            cc.work_id = new_work.id
 
-          puts new_work.chapters.count
-         begin
-           new_work.chapters.each do |cc|
-             puts "attempting to save chapter for #{new_work.id}"
-             puts cc.content
-             puts cc.title
-             puts cc.posted
-             puts cc.work_id
-             puts cc.position
-             cc.work_id = new_work.id
-
-             cc.errors.full_messages
-           end
-           puts "chapter saved"
-         rescue Exception => ex
-           puts error "3318: saving chapter #{ex}"
-         end
-
-          add_chapters2(new_work, new_work.id,ns.old_work_id)
+            cc.errors.full_messages
+          end
+          puts "chapter saved"
+        rescue Exception => ex
+          puts error "3318: saving chapter #{ex}"
+        end
+        begin
+          add_chapters2(new_work, new_work.id, ns.old_work_id)
           puts "taglist count = #{my_tag_list.count}"
           my_tag_list.each do |t|
             add_work_taggings(new_work.id, t)
@@ -572,59 +570,57 @@ class MassImportTool
     @connection.close()
   end
 
-  def add_chapters2(ns, new_id,old_id)
-      query = ""
-      begin
-        case @source_archive_type
-      when 4
-      puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_id} order by id asc"
-      query =  "Select * from #{@source_chapters_table} where csid = #{old_id}"
-      r = @connection.query(query)
-      puts "333"
-      ix = 1
-      r.each do |rr|
-        c = ImportChapter.new()
-        c.new_work_id = new_id
+  def add_chapters2(ns, new_id, old_id)
+    query = ""
+    begin
+      case @source_archive_type
+        when 4
+          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_id} order by id asc"
+          query = "Select * from #{@source_chapters_table} where csid = #{old_id}"
+          r = @connection.query(query)
+          puts "333"
+          ix = 1
+          r.each do |rr|
+            c = ImportChapter.new()
+            c.new_work_id = new_id
 
-        c.title = rr[1]
-        c.date_posted = rr[4]
-        c.body = rr[3]
-        c.position = ix
-        self.post_chapters2(c, @source_archive_type)
+            c.title = rr[1]
+            c.date_posted = rr[4]
+            c.body = rr[3]
+            c.position = ix
+            self.post_chapters2(c, @source_archive_type)
+          end
+        when 3
+          query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_id}"
+          puts query
+          r = @connection.query(query)
+          puts "333 #{r.num_rows}"
+
+          r.each do |rr|
+            c = ImportChapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            c.body = rr[4]
+            c.position = rr[2]
+            c.summary = rr[3]
+
+            #ns.chapters << c
+            self.post_chapters2(c, @source_archive_type)
+          end
+
+
       end
-          when 3
-            query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_id}"
-            puts query
-            r = @connection.query(query)
-      puts "333 #{r.num_rows}"
-
-      r.each do |rr|
-        c = ImportChapter.new()
-        #c.new_work_id = ns.new_work_id     will be made automatically
-        #c.pseud_id = ns.pseuds[0]
-        c.title = rr[1]
-        #c.created_at  = rr[4]
-        #c.updated_at = rr[4]
-        c.body = rr[4]
-        c.position = rr[2]
-        c.summary = rr[3]
-
-        #ns.chapters << c
-        self.post_chapters2(c, @source_archive_type)
-      end
-
-
-
-        end
     rescue Exception => ex
       puts " Error : " + ex.message
-            puts "query = #{query}"
+      puts "query = #{query}"
 
 
-
-
+    end
   end
-  end
+
   #copied and modified from mass import rake, stephanies 1/22/2012
   #Create archivist and collection if they don't already exist"
   def create_archivist_and_collection
@@ -710,60 +706,60 @@ class MassImportTool
 
   #add chapters    takes chapters and adds them to import work object
   def add_chapters(new_work, old_work_id)
-     begin
-       case @source_archive_type
-         when 4 #Storyline
-           puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
-           r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
-           puts "333"
-           ix = 1
-           r.each do |rr|
-             c = new_work.chapters.build
-             #c.new_work_id = ns.new_work_id     will be made automatically
-             #c.pseud_id = ns.pseuds[0]
-             c.title = rr[1]
-             c.created_at = rr[4]
-             #c.updated_at = rr[4]
-             c.content = rr[3]
-             c.position = ix
-             c.summary = ""
-             c.posted = 1
-             #ns.chapters << c
-             ix = ix + 1
-             #self.post_chapters(c, @source_archive_type)
-           end
-         when 3 #efiction 3
+    begin
+      case @source_archive_type
+        when 4 #Storyline
+          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_work_id}"
+          r = @connection.query("Select * from #{@source_chapters_table} where csid = #{old_work_id}")
+          puts "333"
+          ix = 1
+          r.each do |rr|
+            c = new_work.chapters.build
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            c.created_at = rr[4]
+            #c.updated_at = rr[4]
+            c.content = rr[3]
+            c.position = ix
+            c.summary = ""
+            c.posted = 1
+            #ns.chapters << c
+            ix = ix + 1
+            #self.post_chapters(c, @source_archive_type)
+          end
+        when 3 #efiction 3
 
-           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
-           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-           puts " chapterocunt #{r.num_rows} 333"
+          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
+          puts " chapterocunt #{r.num_rows} 333"
 
-           r.each do |rr|
-             c = new_work.chapters.build
-             #c.new_work_id = ns.new_work_id     will be made automatically
-             #c.pseud_id = ns.pseuds[0]
-             c.title = rr[1]
-             #c.created_at  = rr[4]
-             #c.updated_at = rr[4]
-             ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-             valid_string = ic.iconv(rr[4] + ' ')[0..-2]
-             c.content = valid_string
-             c.position = rr[2]
-             c.summary = rr[3]
-             c.posted = 1
-
-
-             new_work.chapters << c
-
-             #self.post_chapters(c, @source_archive_type)
-           end
-       end
+          r.each do |rr|
+            c = new_work.chapters.build
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+            valid_string = ic.iconv(rr[4] + ' ')[0..-2]
+            c.content = valid_string
+            c.position = rr[2]
+            c.summary = rr[3]
+            c.posted = 1
 
 
-       return new_work
-     rescue Exception => ex
-       puts "error in add chapters : #{ex}"
-     end
+            new_work.chapters << c
+
+            #self.post_chapters(c, @source_archive_type)
+          end
+      end
+
+
+      return new_work
+    rescue Exception => ex
+      puts "error in add chapters : #{ex}"
+    end
 
   end
 
@@ -795,10 +791,8 @@ class MassImportTool
       mytagging.taggable_type="Work"
       mytagging.save!
     rescue Exception => ex
-       puts "error add work taggings #{ex}"
-
+      puts "error add work taggings #{ex}"
     end
-
   end
 
   #Add User
@@ -819,12 +813,10 @@ class MassImportTool
       #Create Default Pseud / Profile
       new_user.create_default_associateds
       a.new_user_id = new_user.id
-
       return a
     rescue Exception => e
       puts "error 1010: #{e}"
     end
-
   end
 
   # Set Archive Strings and values basedo on archive type, based on the predinined values used
