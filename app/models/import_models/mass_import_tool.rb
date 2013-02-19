@@ -540,8 +540,9 @@ class MassImportTool
         rescue Exception => ex
           puts error "3318: saving chapter #{ex}"
         end
+        #add_chapters2(new_work, new_work.id, ns.old_work_id)
         begin
-          add_chapters2(new_work, new_work.id, ns.old_work_id)
+
           puts "taglist count = #{my_tag_list.count}"
           my_tag_list.each do |t|
             add_work_taggings(new_work.id, t)
