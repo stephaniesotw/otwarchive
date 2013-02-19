@@ -519,7 +519,9 @@ class MassImportTool
 
           new_work.save!
         rescue Exception => ex
-          puts "error in new work save: #{ex}"
+          puts "error in new work save!"
+          puts "message is #{ex}"
+          puts "backtrace is: #{ex.backtrace}"
           exit
         end
         puts new_work.chapters.count
