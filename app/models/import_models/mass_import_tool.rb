@@ -532,6 +532,7 @@ class MassImportTool
             puts cc.work_id
             puts cc.position
             cc.work_id = new_work.id
+               cc.save
 
             cc.errors.full_messages
           end
