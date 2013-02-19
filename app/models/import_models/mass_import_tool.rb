@@ -328,7 +328,7 @@ class MassImportTool
             ns.old_user_id = row[3]
             ns.rating_integer = row[4]
             rating_tag = ImportTag.new()
-            rating_tag.tag_type = 7
+            rating_tag.tag_type = "Freeform"
             rating_tag.new_id = ns.rating_integer
             my_tag_list.push(rating_tag)
             ns.published = row[5]
@@ -383,12 +383,13 @@ class MassImportTool
         #debug info
         ns.source_archive_id = @archive_import_id
         puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
+
         #goto next if no chapters
         num_source_chapters = 0
         num_source_chapters = get_single_value_target("Select chapid  from #{@source_chapters_table} where sid = #{ns.old_work_id} limit 1")
         puts num_source_chapters
         next if num_source_chapters == 0
-
+        #todo log oldsid / story name to error log with unimportable error , reason no source chapters
 
         #see if user / author exists for this import already
         ns.new_user_id = self.get_new_user_id_from_imported(ns.old_user_id, @archive_import_id)
@@ -519,6 +520,7 @@ class MassImportTool
           new_work.save!
         rescue Exception => ex
           puts "error in new work save: #{ex}"
+          exit
         end
         puts new_work.chapters.count
         begin
@@ -548,6 +550,9 @@ class MassImportTool
           puts "Error: 222: #{e}"
         end
 
+        if @import_reviews
+          #TODO Add import review code, convert to anon comments, when possible, if no email as some archive types support for anon comments then assign generic non existant email for comment
+        end
         begin
           new_wi = WorkImport.new
           new_wi.work_id = new_work.id
