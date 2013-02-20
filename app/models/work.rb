@@ -521,7 +521,12 @@ class Work < ActiveRecord::Base
         c.save(:validate=>false)
       end
     else
-      self.chapters.first.save(:validate => false)
+      begin
+        self.chapters.first.save
+      rescue Exception => ex
+        puts "error saving chapter #{ex}"
+      end
+
     end
 
   end
