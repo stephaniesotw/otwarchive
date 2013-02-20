@@ -200,7 +200,7 @@ class Work < ActiveRecord::Base
 
   before_save :post_first_chapter, :set_word_count
 
-  after_save :save_chapters, :save_parents, :save_new_recipients
+  after_save :save_chapters, :save_parents
   before_create :set_anon_unrevealed, :set_author_sorting
   before_update :set_author_sorting
 
@@ -356,36 +356,32 @@ class Work < ActiveRecord::Base
   # Only allow a work to fulfill an assignment assigned to one of this work's authors
   def challenge_assignment_ids=(ids)
     self.challenge_assignments = ids.map {|id| id.blank? ? nil : ChallengeAssignment.find(id)}.compact.
-      select {|assign| ((self.authors.blank? ? [] : self.authors.collect(&:user)) + (self.users + [User.current_user])).compact.include?(assign.offering_user)}
+      select {|assign| (self.authors.collect(&:user) + self.users + [User.current_user]).include?(assign.offering_user)}
   end
 
   def recipients=(recipient_names)
-    names = []
+    new_gifts = []
     recipient_names.split(',').each do |name|
-      name.strip!
-      gift = self.gifts.for_name_or_byline(name).first
-      names << name unless (gift && self.posted) # all recipients are new if work isn't posted
+      gift = self.gifts.for_name_or_byline(name.strip).first
+      if gift
+        new_gifts << gift
+      else
+        new_gifts << Gift.new(:recipient => name.strip)
+      end
     end
-    self.new_recipients = names.join(",")
+    set_new_recipients(new_gifts)
+    self.gifts = new_gifts
   end
-  
+
   def recipients
-    names = self.gifts.collect(&:recipient)
-    unless self.new_recipients.blank?
-      self.new_recipients.split(",").each do |name|
-        names << name unless names.include? name
-      end
-    end
-    names.join(",")
+    self.gifts.collect(&:recipient).join(",")
   end
   
-  def save_new_recipients
-    unless self.new_recipients.blank?
-      self.new_recipients.split(',').each do |name|
-        gift = self.gifts.for_name_or_byline(name).first
-        self.gifts << Gift.new(:recipient => name) unless gift
-      end
-    end
+  def set_new_recipients(gifts)
+    current_gifts = self.gifts.collect(&:recipient)
+    new_gifts = gifts.collect(&:recipient)
+    diff = new_gifts - current_gifts
+    self.new_recipients = diff.join(",")
   end
   
   ########################################################################
@@ -526,16 +522,31 @@ class Work < ActiveRecord::Base
   ########################################################################
 
   # Save chapter data when the work is updated
+  #added ability to save multiple chapters upon creation
   def save_chapters
-    self.chapters.first.save(:validate => false)
+    if self.chapters.count > 1
+      self.chapters.each do |c|
+        c.save(:validate => false)
+      end
+    else
+      self.chapters.first.save(:validate => false)
+    end
+
   end
 
   # If the work is posted, the first chapter should be posted too
   def post_first_chapter
     if self.posted_changed?
-      self.chapters.first.published_at = Date.today unless self.backdate
-      self.chapters.first.posted = self.posted
-      self.chapters.first.save
+      if self.chapters.count > 1
+        self.chapters.each do |c|
+          c.posted = self.posted
+          c.save
+        end
+      else
+        self.chapters.first.posted = self.posted
+        self.chapters.first.save
+      end
+
     end
   end
 
