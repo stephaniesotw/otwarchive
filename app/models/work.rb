@@ -192,13 +192,13 @@ class Work < ActiveRecord::Base
   ########################################################################
   before_save :validate_authors, :clean_and_validate_title, :validate_published_at, :ensure_revised_at
 
-  before_save :post_first_chapter, :set_word_count
+  #before_save :post_first_chapter, :set_word_count
 
   after_save :save_chapters, :save_parents
   before_create :set_anon_unrevealed, :set_author_sorting
   before_update :set_author_sorting
 
-  before_save :check_for_invalid_tags
+  #before_save :check_for_invalid_tags
   before_update :validate_tags
   after_update :adjust_series_restriction
 
