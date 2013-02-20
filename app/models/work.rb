@@ -168,9 +168,9 @@ class Work < ActiveRecord::Base
   end
 
   def validate_published_at
-    if !self.first_chapter.published_at
-      self.first_chapter.published_at = Date.today
-    elsif self.first_chapter.published_at > Date.today
+    if !self.chapters.first.published_at
+      self.chapters.first.published_at = Date.today
+    elsif self.chapters.first.published_at > Date.today
       errors.add(:base, ts("Publication date can't be in the future."))
       return false
     end
@@ -190,7 +190,7 @@ class Work < ActiveRecord::Base
   # These are methods that run before/after saves and updates to ensure
   # consistency and that associated variables are updated.
   ########################################################################
-  before_save :validate_authors, :clean_and_validate_title, :validate_published_at, :ensure_revised_at
+  before_save :validate_authors, :clean_and_validate_title
 
   #before_save :post_first_chapter, :set_word_count
 
