@@ -47,7 +47,7 @@ class Work < ActiveRecord::Base
   has_many :challenge_claims, :as => :creation
   accepts_nested_attributes_for :challenge_claims
 
-  has_many :filter_taggings, :as => :filterable
+  has_many :filter_taggings, :as => :filterable, :dependent => :destroy
   has_many :filters, :through => :filter_taggings
   has_many :direct_filter_taggings, :class_name => "FilterTagging", :as => :filterable, :conditions => "inherited = 0"
   has_many :direct_filters, :source => :filter, :through => :direct_filter_taggings
@@ -55,48 +55,20 @@ class Work < ActiveRecord::Base
   has_many :taggings, :as => :taggable, :dependent => :destroy
   has_many :tags, :through => :taggings, :source => :tagger, :source_type => 'Tag'
 
-  has_many :ratings, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Rating'"
-  has_many :categories, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Category'"
-  has_many :warnings, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Warning'"
-  has_many :fandoms, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Fandom'"
-  has_many :relationships, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_taggingg,
-    :conditions => "tags.type = 'Relationship'"
-  has_many :characters, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Character'"
-  has_many :freeforms, 
-    :through => :taggings, 
-    :source => :tagger, 
-    :source_type => 'Tag',
-    :before_remove => :remove_filter_tagging,
-    :conditions => "tags.type = 'Freeform'"
+  has_many :ratings, :through => :taggings, :source => :tagger, :source_type => 'Rating',
+    :before_remove => :remove_filter_tagging
+  has_many :categories, :through => :taggings, :source => :tagger, :source_type => 'Category',
+    :before_remove => :remove_filter_tagging
+  has_many :warnings, :through => :taggings, :source => :tagger, :source_type => 'Warning',
+    :before_remove => :remove_filter_tagging
+  has_many :fandoms, :through => :taggings, :source => :tagger, :source_type => 'Fandom',
+    :before_remove => :remove_filter_tagging
+  has_many :relationships, :through => :taggings, :source => :tagger, :source_type => 'Relationship',
+    :before_remove => :remove_filter_tagging
+  has_many :characters, :through => :taggings, :source => :tagger, :source_type => 'Character',
+    :before_remove => :remove_filter_tagging
+  has_many :freeforms, :through => :taggings, :source => :tagger, :source_type => 'Freeform',
+    :before_remove => :remove_filter_tagging
 
   acts_as_commentable
   has_many :total_comments, :class_name => 'Comment', :through => :chapters
@@ -245,11 +217,6 @@ class Work < ActiveRecord::Base
   def clean_up_creatorships
     self.creatorships.each{ |c| c.destroy }
   end
-
-  after_destroy :clean_up_filter_taggings
-  def clean_up_filter_taggings
-    FilterTagging.destroy_all("filterable_type = 'Work' AND filterable_id = #{self.id}")
-  end
   
   after_destroy :clean_up_assignments
   def clean_up_assignments
@@ -393,16 +360,13 @@ class Work < ActiveRecord::Base
   end
 
   def recipients=(recipient_names)
-    new_recipients = [] # collect names of new recipients
-    gifts = [] # rebuild the list of associated gifts using the new list of names
+    names = []
     recipient_names.split(',').each do |name|
       name.strip!
       gift = self.gifts.for_name_or_byline(name).first
-      new_recipients << name unless (gift && self.posted) # all recipients are new if work isn't posted
-      gifts << gift unless !gift # new gifts are added after saving, not now
+      names << name unless (gift && self.posted) # all recipients are new if work isn't posted
     end
-    self.new_recipients = new_recipients.uniq.join(",")
-    self.gifts = gifts
+    self.new_recipients = names.join(",")
   end
   
   def recipients
@@ -627,11 +591,7 @@ class Work < ActiveRecord::Base
 
   # Gets the current first chapter
   def first_chapter
-    if self.new_record?
-      self.chapters.first || self.chapters.build
-    else
-      self.chapters.order('position ASC').first
-    end
+    self.chapters.order('position ASC').first || self.chapters.first
   end
 
   # Gets the current last chapter
