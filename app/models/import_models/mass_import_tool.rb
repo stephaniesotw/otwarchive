@@ -517,7 +517,7 @@ class MassImportTool
             end
           end
 
-          new_work.save!
+          new_work.save(:validate=>false)
         rescue Exception => ex
           puts "error in new work save!"
           puts "full error is #{new_work.errors.full_messages}"
