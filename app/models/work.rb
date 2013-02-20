@@ -24,7 +24,7 @@ class Work < ActiveRecord::Base
   has_many :external_authors, :through => :external_author_names, :uniq => true
 
   has_many :chapters # we do NOT use dependent => destroy here because we want to destroy chapters in REVERSE order
-  validates_associated :chapters
+  #validates_associated :chapters
 
   has_many :serial_works, :dependent => :destroy
   has_many :series, :through => :serial_works
@@ -116,7 +116,7 @@ class Work < ActiveRecord::Base
   validates_length_of :title,
     :maximum => ArchiveConfig.TITLE_MAX,
     :too_long=> ts("must be less than %{max} characters long.", :max => ArchiveConfig.TITLE_MAX)
-  puts "title to long error"
+
 
   validates_length_of :summary,
     :allow_blank => true,
