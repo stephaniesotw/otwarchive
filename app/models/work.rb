@@ -513,7 +513,7 @@ class Work < ActiveRecord::Base
       end
     else
       begin
-        self.chapters.first.save
+        self.chapters.first.save(:false)
       rescue Exception => ex
         puts "error saving chapter #{ex}"
       end
