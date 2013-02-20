@@ -361,7 +361,7 @@ class MassImportTool
             ns.characters = row[6]
             ns.rating_integer = row[7]
             rating_tag = ImportTag.new()
-            rating_tag.tag_type =7
+            rating_tag.tag_type = "Freeform"
             rating_tag.new_id = ns.rating_integer
             my_tag_list.push(rating_tag)
             ns.published = row[8]
@@ -794,11 +794,16 @@ class MassImportTool
       puts "looking for tag with name #{new_tag.tag}"
       temptag = Tag.new
       temptag = Tag.find_by_name(new_tag.tag)
-      puts "found tag with name #{temptag.name} and id #{temptag.id}"
-      mytagging.taggable_id = work_id
-      mytagging.tagger = temptag
-      mytagging.taggable_type="Work"
-      mytagging.save!
+      unless temptag.name == nil
+        puts "found tag with name #{temptag.name} and id #{temptag.id}"
+        mytagging.taggable_id = work_id
+        mytagging.tagger = temptag
+        mytagging.taggable_type="Work"
+        mytagging.save!
+      end
+
+
+
     rescue Exception => ex
       puts "error add work taggings #{ex}"
     end
