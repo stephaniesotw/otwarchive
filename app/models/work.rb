@@ -193,7 +193,7 @@ class Work < ActiveRecord::Base
 
   #before_save :post_first_chapter, :set_word_count
 
-  after_save :save_chapters, :save_parents
+  #after_save :save_chapters, :save_parents
   before_create :set_anon_unrevealed, :set_author_sorting
   before_update :set_author_sorting
 
