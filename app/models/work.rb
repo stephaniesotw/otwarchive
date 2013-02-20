@@ -1,5 +1,3 @@
-require 'iconv'
-
 class Work < ActiveRecord::Base
 
   include Taggable
@@ -25,9 +23,8 @@ class Work < ActiveRecord::Base
   has_many :external_author_names, :through => :external_creatorships, :inverse_of => :works
   has_many :external_authors, :through => :external_author_names, :uniq => true
 
-  # we do NOT use dependent => destroy here because we want to destroy chapters in REVERSE order
-  has_many :chapters, conditions: "work_id IS NOT NULL"
-  validates_associated :chapters
+  has_many :chapters # we do NOT use dependent => destroy here because we want to destroy chapters in REVERSE order
+  #validates_associated :chapters
 
   has_many :serial_works, :dependent => :destroy
   has_many :series, :through => :serial_works
