@@ -77,6 +77,7 @@ class Work < ActiveRecord::Base
   def work_skin_allowed
     unless self.users.include?(self.work_skin.author) || (self.work_skin.public? && self.work_skin.official?)
       errors.add(:base, ts("You do not have permission to use that custom work stylesheet."))
+      puts "errror with work skin"
     end
   end
   
@@ -115,11 +116,14 @@ class Work < ActiveRecord::Base
   validates_length_of :title,
     :maximum => ArchiveConfig.TITLE_MAX,
     :too_long=> ts("must be less than %{max} characters long.", :max => ArchiveConfig.TITLE_MAX)
+  puts "title to long error"
 
   validates_length_of :summary,
     :allow_blank => true,
     :maximum => ArchiveConfig.SUMMARY_MAX,
     :too_long => ts("must be less than %{max} characters long.", :max => ArchiveConfig.SUMMARY_MAX)
+     puts "summary too long error!"
+
 
   validates_length_of :notes,
     :allow_blank => true,
