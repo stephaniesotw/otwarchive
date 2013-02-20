@@ -756,8 +756,8 @@ class MassImportTool
             c.position = rr[2]
             c.summary = rr[3]
             c.posted = 1
-
-
+            c.published_at = Date.today
+            c.created_at =  Date.today
             #new_work.chapters << c
 
             #self.post_chapters(c, @source_archive_type)
