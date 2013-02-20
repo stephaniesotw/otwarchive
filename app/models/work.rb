@@ -189,7 +189,7 @@ class Work < ActiveRecord::Base
   # These are methods that run before/after saves and updates to ensure
   # consistency and that associated variables are updated.
   ########################################################################
-  before_save :validate_authors, :clean_and_validate_title
+ # before_save :validate_authors, :clean_and_validate_title
 
   #before_save :post_first_chapter, :set_word_count
 
