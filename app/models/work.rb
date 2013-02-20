@@ -201,7 +201,7 @@ class Work < ActiveRecord::Base
   before_create :set_anon_unrevealed, :set_author_sorting
   before_update :set_author_sorting
 
-  before_save :check_for_invalid_tags
+  #before_save :check_for_invalid_tags
   before_update :validate_tags
   after_update :adjust_series_restriction
 
