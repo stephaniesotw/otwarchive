@@ -746,7 +746,7 @@ class MassImportTool
           puts " chapterocunt #{r.num_rows} 333"
 
           r.each do |rr|
-            c = Chapter.new
+            c = new_work.chapters.build
             #c.new_work_id = ns.new_work_id     will be made automatically
             #c.pseud_id = ns.pseuds[0]
             c.title = rr[1]
