@@ -484,9 +484,9 @@ class MassImportTool
         #insert work object
           puts "Making new work!!!!"
          new_work = create_save_work(ns)
-        #TODO CALL CREATE SAVE WORK
+        new_work = add_chapters(new_work,ns.old_work_id)
 
-=begin
+
         puts new_work.chapters.count
         begin
           new_work.chapters.each do |cc|
@@ -512,7 +512,7 @@ class MassImportTool
           my_tag_list.each do |t|
             add_work_taggings(new_work.id, t)
           end
-          puts "new work created #{new_work.id}"
+
         rescue Exception => e
           puts "Error: 222: #{e}"
         end
@@ -531,7 +531,7 @@ class MassImportTool
         rescue Exception => e
           puts "Error: 888: #{e}"
         end
-=end
+
 
 
       i = i + 1
@@ -600,6 +600,8 @@ class MassImportTool
     puts "New Work ID = #{new_work.id}"
     return new_work
   end
+
+
 
   def add_chapters2(ns, new_id, old_id)
     query = ""
