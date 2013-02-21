@@ -334,7 +334,6 @@ class MassImportTool
             ns.published = row[5]
             cattag = ImportTag.new()
             subcattag = ImportTag.new()
-            #noinspection RubySimplifyBooleanInspection
             if @use_proper_categories
               cattag.tag_type = Category
               subcattag.tag_type = "Category"
@@ -530,9 +529,9 @@ class MassImportTool
             end
           end
 
-          new_work.save
-         puts "this is start new work errors:  #{new_work.errors} ===end new work errors"
-        pause
+          new_work.save(:validate => false)
+
+         puts "New Work ID = #{new_work.id}"
 
 =begin
         puts new_work.chapters.count
