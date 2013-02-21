@@ -501,11 +501,13 @@ class MassImportTool
             puts "pseud id = #{pseud.id} name = #{pseud.name}"
           end
           new_work.revised_at = ns.updated
+      puts "revised = #{new_work.revised_at}"
           new_work.created_at = ns.published
+      puts "crated at  = #{new_work.created_at}"
           new_work.fandom_string = @import_fandom
           new_work.rating_string = "Not Rated"
           new_work.warning_strings = "None"
-          new_work.errors.full_messages
+
           puts "old work id = #{ns.old_work_id}"
           new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
           new_work = add_chapters(new_work, ns.old_work_id)
@@ -528,6 +530,7 @@ class MassImportTool
          puts "this is start new work errors:  #{new_work.errors} ===end new work errors"
         pause
 
+=begin
         puts new_work.chapters.count
         begin
           new_work.chapters.each do |cc|
@@ -572,6 +575,7 @@ class MassImportTool
         rescue Exception => e
           puts "Error: 888: #{e}"
         end
+=end
 
 
       i = i + 1
