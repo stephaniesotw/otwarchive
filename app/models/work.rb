@@ -77,7 +77,6 @@ class Work < ActiveRecord::Base
   def work_skin_allowed
     unless self.users.include?(self.work_skin.author) || (self.work_skin.public? && self.work_skin.official?)
       errors.add(:base, ts("You do not have permission to use that custom work stylesheet."))
-      puts "errror with work skin"
     end
   end
 
@@ -190,7 +189,7 @@ class Work < ActiveRecord::Base
   # These are methods that run before/after saves and updates to ensure
   # consistency and that associated variables are updated.
   ########################################################################
-  before_save :validate_authors, :clean_and_validate_title
+ # before_save :validate_authors, :clean_and_validate_title
 
   #before_save :post_first_chapter, :set_word_count
 
@@ -517,34 +516,14 @@ class Work < ActiveRecord::Base
 
   # Save chapter data when the work is updated
   def save_chapters
-    if self.chapters.count > 1
-      self.chapters.each do |c|
-        c.save(:validate => false)
-      end
-    else
-      begin
-        self.chapters.first.save(:false)
-      rescue Exception => ex
-        puts "error saving chapter #{ex}"
-      end
-
-    end
-
+    self.chapters.first.save(:validate => false)
   end
 
   # If the work is posted, the first chapter should be posted too
   def post_first_chapter
     if self.posted_changed?
-      if self.chapters.count > 1
-        self.chapters.each do |c|
-          c.posted = self.posted
-          c.save
-        end
-      else
-        self.chapters.first.posted = self.posted
-        self.chapters.first.save
-      end
-
+      self.chapters.first.posted = self.posted
+      self.chapters.first.save
     end
   end
 
