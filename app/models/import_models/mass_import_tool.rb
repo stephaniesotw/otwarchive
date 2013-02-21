@@ -483,16 +483,23 @@ class MassImportTool
         end
 
         #insert work object
-
+          puts "Making new work!!!!"
           new_work = Work.new
+
           new_work.title = ns.title
+          puts "Title to be = #{new_work.title}"
           new_work.summary = ns.summary
+
+          puts "summary to be = #{new_work.summary}"
           new_work.authors_to_sort_on = ns.penname
           new_work.title_to_sort_on = ns.title
           new_work.restricted = true
           new_work.posted = true
           puts "looking for pseud #{ns.new_pseud_id}"
           new_work.pseuds << Pseud.find_by_id(ns.new_pseud_id)
+          new_work.pseuds.each do |pseud|
+            puts "pseud id = #{pseud.id} name = #{pseud.name}"
+          end
           new_work.revised_at = ns.updated
           new_work.created_at = ns.published
           new_work.fandom_string = @import_fandom
