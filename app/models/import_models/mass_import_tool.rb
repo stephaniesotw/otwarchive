@@ -529,7 +529,7 @@ class MassImportTool
             end
           end
 
-          new_work.save!
+          new_work.save
          puts "this is start new work errors:  #{new_work.errors} ===end new work errors"
         pause
 
