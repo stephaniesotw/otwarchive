@@ -132,9 +132,9 @@ class MassImportTool
   end
 
   #get all possible tags from source
-  def get_tag_list(tl, at)
+  def get_tag_list(tl)
     taglist = tl
-    case at
+    case @source_archive_type
       #storyline
       when 4
         #categories
@@ -214,6 +214,7 @@ class MassImportTool
   end
 
   #ensure all source tags exist in target in some form
+  #uses array of ImportTag created from get_tag_list
   def fill_tag_list(tl)
     i = 0
     while i <= tl.length - 1
@@ -257,7 +258,7 @@ class MassImportTool
     return tl
   end
 
-  #create child collection, set archivist as owner
+  #create child collection, set archivist as owner, takes name, parentid, descrip,title
   def create_child_collection(name, parent_id, description, title)
     collection = Collection.new(
         name: name,
@@ -285,7 +286,7 @@ class MassImportTool
 
   def import_data()
 
-    puts " Setting Import Values "
+    puts "1) Setting Import Values"
     self.set_import_strings()
     #create collection & archivist
     self.create_archivist_and_collection
@@ -296,7 +297,7 @@ class MassImportTool
     puts "Updating Tags"
     tag_list = Array.new()
     #create list of all tags used in source
-    tag_list = get_tag_list(tag_list, @source_archive_type)
+    tag_list = get_tag_list(tag_list)
     #check for tag existance on target archive
     tag_list = self.fill_tag_list(tag_list)
 
@@ -315,223 +316,199 @@ class MassImportTool
       puts "a created"
       my_tag_list = Array.new()
 
-        case @source_archive_type
-          #storyline
-          when 4
-            ns.source_archive_id = @archive_import_id
-            ns.old_work_id = row[0]
-            puts ns.old_work_id
-            ns.title = row[1]
-            #debug info
-            puts ns.title
-            ns.summary = row[2]
-            ns.old_user_id = row[3]
-            ns.rating_integer = row[4]
-            rating_tag = ImportTag.new()
-            rating_tag.tag_type = "Freeform"
-            rating_tag.new_id = ns.rating_integer
-            my_tag_list.push(rating_tag)
-            ns.published = row[5]
-            cattag = ImportTag.new()
-            subcattag = ImportTag.new()
-            if @use_proper_categories
-              cattag.tag_type = Category
-              subcattag.tag_type = "Category"
-            else
-              subcattag.tag_type = "Freeform"
-              cattag.tag_type = "Freeform"
+      case @source_archive_type
+        #storyline
+        when 4
+          ns.source_archive_id = @archive_import_id
+          ns.old_work_id = row[0]
+          puts ns.old_work_id
+          ns.title = row[1]
+          #debug info
+          puts ns.title
+          ns.summary = row[2]
+          ns.old_user_id = row[3]
+          ns.rating_integer = row[4]
+          rating_tag = ImportTag.new()
+          rating_tag.tag_type = "Freeform"
+          rating_tag.new_id = ns.rating_integer
+          my_tag_list.push(rating_tag)
+          ns.published = row[5]
+          cattag = ImportTag.new()
+          subcattag = ImportTag.new()
+          if @use_proper_categories
+            cattag.tag_type = Category
+            subcattag.tag_type = "Category"
+          else
+            subcattag.tag_type = "Freeform"
+            cattag.tag_type = "Freeform"
+          end
+          cattag.new_id = row[6]
+          subcattag.new_id =row[11]
+          my_tag_list.push(cattag)
+          my_tag_list.push(subcattag)
+          ns.updated = row[9]
+          ns.completed = row[12]
+          ns.hits = row[10]
+        #efiction 3
+        when 3
+          puts "got the when3"
+          ns.old_work_id = row[0]
+          ns.title = row[1]
+          ns.summary = row[2]
+          ns.old_user_id = row[10]
+          ns.classes = row[5]
+          ns.categories = row[4]
+          ns.characters = row[6]
+          ns.rating_integer = row[7]
+          rating_tag = ImportTag.new()
+          rating_tag.tag_type = "Freeform"
+          rating_tag.new_id = ns.rating_integer
+          my_tag_list.push(rating_tag)
+          ns.published = row[8]
+          ns.updated = row[9]
+          ns.completed = row[14]
+          ns.hits = row[18]
+          if !@source_warning_class_id == nil
+
+          end
+          #fill taglist with import tags to be added
+          my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
+          puts "Getting class tags: tag count = #{my_tag_list.count}"
+          my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
+          if @categories_as_tags
+            my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
+            puts "Getting category tags: tag count = #{my_tag_list.count}"
+          end
+      end
+      #debug info
+      ns.source_archive_id = @archive_import_id
+      puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
+
+      #goto next if no chapters
+      num_source_chapters = 0
+      num_source_chapters = get_single_value_target("Select chapid  from #{@source_chapters_table} where sid = #{ns.old_work_id} limit 1")
+      puts num_source_chapters
+      next if num_source_chapters == 0
+      #todo log oldsid / story name to error log with unimportable error , reason no source chapters
+
+      #see if user / author exists for this import already
+      ns.new_user_id = self.get_new_user_id_from_imported(ns.old_user_id, @archive_import_id)
+      puts "The New user id!!!! ie value at this point #{ns.new_user_id}"
+
+      ##get import user object from source database
+      a = self.get_import_user_object_from_source(ns.old_user_id)
+      if ns.new_user_id == 0
+        puts "didnt exist in this import"
+        #see if user account exists in main archive by checking email,
+        temp_author_id = get_user_id_from_email(a.email)
+
+        if temp_author_id == 0
+          #if not exist , add new user with user object, passing old author object
+          new_a = ImportUser.new
+          new_a = self.add_user(a)
+
+          #pass values to new story object
+          ns.penname = new_a.penname
+          ns.new_user_id = new_a.new_user_id
+
+          #debug info
+          puts "newu 1"
+          puts "newid = #{new_a.new_user_id}"
+
+          #get newly created pseud id
+          new_pseud_id = get_default_pseud_id(ns.new_user_id)
+
+          #set the penname on newly created pseud to proper value
+          update_record_target("update pseuds set name = '#{ns.penname}' where id = #{new_pseud_id}")
+          begin
+            new_ui = UserImport.new
+            new_ui.user_id = new_a.new_user_id
+            new_ui.pseud_id = new_pseud_id
+            new_ui.source_user_id = ns.old_user_id
+            new_ui.source_archive_id = @archive_import_id
+            new_ui.save!
+          rescue Exception => e
+            puts "Error: 777: #{e}"
+          end
+          ns.new_pseud_id = new_pseud_id
+
+        else
+          #user exists, but is being imported
+          #insert the mapping value
+          puts "---existed"
+          ns.penname = a.penname
+
+          #check to see if penname exists as pseud for existing user
+          temp_pseud_id = get_pseud_id_for_penname(temp_author_id, ns.penname)
+          if temp_pseud_id == 0
+            #add pseud if not exist
+            begin
+              new_pseud = Pseud.new
+              new_pseud.user_id = temp_author_id
+              new_pseud.name = a.penname
+              new_pseud.is_default = true
+              new_pseud.description = "Imported"
+              new_pseud.save!
+              temp_pseud_id = new_pseud.id
+              ns.new_pseud_id = temp_pseud_id
+            rescue Exception => e
+              puts "Error: 111: #{e}"
             end
-            cattag.new_id = row[6]
-            subcattag.new_id =row[11]
-            my_tag_list.push(cattag)
-            my_tag_list.push(subcattag)
-            ns.updated = row[9]
-            ns.completed = row[12]
-            ns.hits = row[10]
-          #efiction 3
-          when 3
-            puts "got the when3"
-            ns.old_work_id = row[0]
-            ns.title = row[1]
-            ns.summary = row[2]
-            ns.old_user_id = row[10]
-            ns.classes = row[5]
-            ns.categories = row[4]
-            ns.characters = row[6]
-            ns.rating_integer = row[7]
-            rating_tag = ImportTag.new()
-            rating_tag.tag_type = "Freeform"
-            rating_tag.new_id = ns.rating_integer
-            my_tag_list.push(rating_tag)
-            ns.published = row[8]
-            ns.updated = row[9]
-            ns.completed = row[14]
-            ns.hits = row[18]
-            if !@source_warning_class_id == nil
-
-            end
-            #fill taglist with import tags to be added
-            my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
-            puts "Getting class tags: tag count = #{my_tag_list.count}"
-            my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
-            if @categories_as_tags
-              my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
-              puts "Getting category tags: tag count = #{my_tag_list.count}"
-            end
-        end
-        #debug info
-        ns.source_archive_id = @archive_import_id
-        puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
-
-        #goto next if no chapters
-        num_source_chapters = 0
-        num_source_chapters = get_single_value_target("Select chapid  from #{@source_chapters_table} where sid = #{ns.old_work_id} limit 1")
-        puts num_source_chapters
-        next if num_source_chapters == 0
-        #todo log oldsid / story name to error log with unimportable error , reason no source chapters
-
-        #see if user / author exists for this import already
-        ns.new_user_id = self.get_new_user_id_from_imported(ns.old_user_id, @archive_import_id)
-        puts "The New user id!!!! ie value at this point #{ns.new_user_id}"
-
-        ##get import user object from source database
-        a = self.get_import_user_object_from_source(ns.old_user_id)
-        if ns.new_user_id == 0
-          puts "didnt exist in this import"
-          #see if user account exists in main archive by checking email,
-          temp_author_id = get_user_id_from_email(a.email)
-
-          if temp_author_id == 0
-            #if not exist , add new user with user object, passing old author object
-            new_a = ImportUser.new
-            new_a = self.add_user(a)
-
-            #pass values to new story object
-            ns.penname = new_a.penname
-            ns.new_user_id = new_a.new_user_id
-
-            #debug info
-            puts "newu 1"
-            puts "newid = #{new_a.new_user_id}"
-
-            #get newly created pseud id
-            new_pseud_id = get_default_pseud_id(ns.new_user_id)
-
-            #set the penname on newly created pseud to proper value
-            update_record_target("update pseuds set name = '#{ns.penname}' where id = #{new_pseud_id}")
             begin
               new_ui = UserImport.new
-              new_ui.user_id = new_a.new_user_id
-              new_ui.pseud_id = new_pseud_id
+              new_ui.user_id = temp_author_id
+              new_ui.pseud_id = temp_pseud_id
               new_ui.source_user_id = ns.old_user_id
               new_ui.source_archive_id = @archive_import_id
               new_ui.save!
             rescue Exception => e
               puts "Error: 777: #{e}"
             end
-            ns.new_pseud_id = new_pseud_id
 
-          else
-            #user exists, but is being imported
-            #insert the mapping value
-            puts "---existed"
-            ns.penname = a.penname
+            # 'temp_pseud_id = get_pseud_id_for_penname(ns.new_user_id,ns.penname)
 
-            #check to see if penname exists as pseud for existing user
-            temp_pseud_id = get_pseud_id_for_penname(temp_author_id, ns.penname)
-            if temp_pseud_id == 0
-              #add pseud if not exist
-              begin
-                new_pseud = Pseud.new
-                new_pseud.user_id = temp_author_id
-                new_pseud.name = a.penname
-                new_pseud.is_default = true
-                new_pseud.description = "Imported"
-                new_pseud.save!
-                temp_pseud_id = new_pseud.id
-                ns.new_pseud_id = temp_pseud_id
-              rescue Exception => e
-                puts "Error: 111: #{e}"
-              end
-              begin
-                new_ui = UserImport.new
-                new_ui.user_id = temp_author_id
-                new_ui.pseud_id = temp_pseud_id
-                new_ui.source_user_id = ns.old_user_id
-                new_ui.source_archive_id = @archive_import_id
-                new_ui.save!
-              rescue Exception => e
-                puts "Error: 777: #{e}"
-              end
-
-              # 'temp_pseud_id = get_pseud_id_for_penname(ns.new_user_id,ns.penname)
-
-              update_record_target("update user_imports set pseud_id = #{temp_pseud_id} where user_id = #{ns.new_user_id} and source_archive_id = #{@archive_import_id}")
-              puts "====A"
-              ns.new_user_id = temp_pseud_id
-              a.pseud_id = temp_pseud_id
-              ns.new_pseud_id = temp_pseud_id
-            end
+            update_record_target("update user_imports set pseud_id = #{temp_pseud_id} where user_id = #{ns.new_user_id} and source_archive_id = #{@archive_import_id}")
+            puts "====A"
+            ns.new_user_id = temp_pseud_id
+            a.pseud_id = temp_pseud_id
+            ns.new_pseud_id = temp_pseud_id
           end
-
-        else
-          ns.penname = a.penname
-          a.pseud_id = get_pseud_id_for_penname(ns.new_user_id, ns.penname)
-          puts "#{a.pseud_id} this is the matching pseud id"
-          ns.new_pseud_id = a.pseud_id
         end
 
-        #insert work object
-          puts "Making new work!!!!"
-         new_work = create_save_work(ns)
-        new_work = add_chapters(new_work,ns.old_work_id)
+      else
+        ns.penname = a.penname
+        a.pseud_id = get_pseud_id_for_penname(ns.new_user_id, ns.penname)
+        puts "#{a.pseud_id} this is the matching pseud id"
+        ns.new_pseud_id = a.pseud_id
+      end
+
+      #insert work object
+      puts "Making new work!!!!"
+      new_work = create_save_work(ns)
+
+      #add all chapters to work
+      new_work = add_chapters(new_work, ns.old_work_id)
+
+      #save all chapters for work
+      save_chapters(new_work)
+
+      #add_chapters2(new_work, new_work.id, ns.old_work_id)
 
 
-        puts new_work.chapters.count
-        begin
-          new_work.chapters.each do |cc|
-            puts "attempting to save chapter for #{new_work.id}"
-            puts cc.content
-            puts cc.title
-            puts cc.posted
-            puts cc.work_id
-            puts cc.position
-            cc.work_id = new_work.id
-               cc.save
-
-            cc.errors.full_messages
-          end
-          puts "chapter saved"
-        rescue Exception => ex
-          puts error "3318: saving chapter #{ex}"
-        end
-        #add_chapters2(new_work, new_work.id, ns.old_work_id)
-        begin
-
-          puts "taglist count = #{my_tag_list.count}"
-          my_tag_list.each do |t|
-            add_work_taggings(new_work.id, t)
-          end
-
-        rescue Exception => e
-          puts "Error: 222: #{e}"
+        puts "taglist count = #{my_tag_list.count}"
+        my_tag_list.each do |t|
+          sleep 3
+          add_work_taggings(new_work.id, t)
         end
 
-        if @import_reviews
-          #TODO Add import review code, convert to anon comments, when possible, if no email as some archive types support for anon comments then assign generic non existant email for comment
-        end
-        begin
-          new_wi = WorkImport.new
-          new_wi.work_id = new_work.id
-          new_wi.pseud_id = ns.new_user_id
-          new_wi.source_archive_id = @archive_import_id
-          new_wi.source_work_id = ns.old_work_id
-          new_wi.source_user_id = ns.old_user_id
-          new_wi.save!
-        rescue Exception => e
-          puts "Error: 888: #{e}"
-        end
 
+
+      if @import_reviews
+        #TODO Add import review code, convert to anon comments, when possible, if no email as some archive types support for anon comments then assign generic non existant email for comment
+      end
+
+      #create new work import
+      create_new_work_import(new_work,ns)
 
 
       i = i + 1
@@ -539,7 +516,46 @@ class MassImportTool
     @connection.close()
   end
 
-  #Create work and return once saved
+
+  #Create new work import, takes Work , ImportWork
+   def create_new_work_import(new_work,ns)
+     begin
+       new_wi = WorkImport.new
+       new_wi.work_id = new_work.id
+       new_wi.pseud_id = ns.new_user_id
+       new_wi.source_archive_id = @archive_import_id
+       new_wi.source_work_id = ns.old_work_id
+       new_wi.source_user_id = ns.old_user_id
+       new_wi.save!
+     rescue Exception => e
+       puts "Error creating new work import: #{e}"
+     end
+   end
+
+  #save chapters, takes Work
+  def save_chapters(new_work)
+    puts "number of chapters: #{new_work.chapters.count} "
+    begin
+      new_work.chapters.each do |cc|
+        puts "attempting to save chapter for #{new_work.id}"
+        puts cc.content
+        puts cc.title
+        puts cc.posted
+        puts cc.work_id
+        puts cc.position
+        cc.work_id = new_work.id
+        cc.save
+
+        cc.errors.full_messages
+      end
+      puts "chapter saved"
+    rescue Exception => ex
+      puts error "3318: saving chapter #{ex}"
+    end
+  end
+
+
+  #Create work and return once saved, takes ImportWork
   def create_save_work(import_work)
     new_work = Work.new
 
@@ -600,7 +616,6 @@ class MassImportTool
     puts "New Work ID = #{new_work.id}"
     return new_work
   end
-
 
 
   def add_chapters2(ns, new_id, old_id)
@@ -738,7 +753,7 @@ class MassImportTool
 
   end
 
-  #add chapters    takes chapters and adds them to import work object
+  #add chapters    takes chapters and adds them to import work object  , takes Work, old_work_id
   def add_chapters(new_work, old_work_id)
     begin
       case @source_archive_type
@@ -782,7 +797,7 @@ class MassImportTool
             c.summary = rr[3]
             c.posted = 1
             c.published_at = Date.today
-            c.created_at =  Date.today
+            c.created_at = Date.today
             new_work.chapters << c
 
             #self.post_chapters(c, @source_archive_type)
@@ -797,7 +812,7 @@ class MassImportTool
 
   end
 
-  #adds new creatorship
+  #adds new creatorship, takes creationid, creation type, pseud_id
   def add_new_creatorship(creation_id, creation_type, pseud_id)
     begin
       new_creation = Creatorship.new()
@@ -828,13 +843,12 @@ class MassImportTool
       end
 
 
-
     rescue Exception => ex
       puts "error add work taggings #{ex}"
     end
   end
 
-  #Add User
+  #Add User, takes ImportUser
   def add_user(a)
     begin
       #TODO Switch to split on @ and use non domain portion + @archive_import_id for new username
@@ -944,7 +958,7 @@ class MassImportTool
     return a
   end
 
-# Consolidate Author Fields into User About Me String
+# Consolidate Author Fields into User About Me String, takes Import User
   def build_bio(a)
     if a.yahoo == nil
       a.yahoo = " "
