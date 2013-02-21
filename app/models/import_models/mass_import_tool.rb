@@ -483,7 +483,7 @@ class MassImportTool
         end
 
         #insert work object
-        begin
+
           new_work = Work.new
           new_work.title = ns.title
           new_work.summary = ns.summary
@@ -517,13 +517,8 @@ class MassImportTool
             end
           end
 
-          new_work.save(:validate=>false)
-        rescue Exception => ex
-          puts "error in new work save!"
-          puts "full error is #{new_work.errors.full_messages}"
-          puts "backtrace is: #{ex.backtrace}"
-          exit
-        end
+          new_work.save!
+
         puts new_work.chapters.count
         begin
           new_work.chapters.each do |cc|
