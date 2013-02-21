@@ -483,55 +483,8 @@ class MassImportTool
 
         #insert work object
           puts "Making new work!!!!"
-          new_work = Work.new
-
-          new_work.title = ns.title
-          puts "Title to be = #{new_work.title}"
-          new_work.summary = ns.summary
-
-          puts "summary to be = #{new_work.summary}"
-          new_work.authors_to_sort_on = ns.penname
-          new_work.title_to_sort_on = ns.title
-          new_work.restricted = true
-          new_work.posted = true
-          puts "looking for pseud #{ns.new_pseud_id}"
-          new_work.pseuds << Pseud.find_by_id(ns.new_pseud_id)
-          new_work.pseuds.each do |pseud|
-            puts "pseud id = #{pseud.id} name = #{pseud.name}"
-          end
-
-          #new_work.revised_at = ns.updated
-      new_work.revised_at =  Date.today
-      new_work.created_at =  Date.today
-      puts "revised = #{new_work.revised_at}"
-          #new_work.created_at = ns.published
-      puts "crated at  = #{new_work.created_at}"
-          new_work.fandom_string = @import_fandom
-          new_work.rating_string = "Not Rated"
-          new_work.warning_strings = "None"
-
-          puts "old work id = #{ns.old_work_id}"
-          new_work.imported_from_url = "#{@archive_import_id}~~#{ns.old_work_id}"
-          new_work = add_chapters(new_work, ns.old_work_id)
-
-          #debug info
-          new_work.chapters.each do |chap|
-            puts "#{chap.title}"
-            puts "#{chap.content}"
-          end
-
-          #assign to main import collection
-          new_work.collections << Collection.find(@new_collection_id)
-          if @categories_as_subcollections
-            collection_array = get_work_collections(ns.categories)
-            collection_array.each do |cobj|
-              new_work.collections << cobj unless new_work.collections.include?(cobj)
-            end
-          end
-
-          new_work.save(:validate => false)
-
-         puts "New Work ID = #{new_work.id}"
+         new_work = create_save_work(ns)
+        #TODO CALL CREATE SAVE WORK
 
 =begin
         puts new_work.chapters.count
@@ -586,6 +539,68 @@ class MassImportTool
     @connection.close()
   end
 
+  #Create work and return once saved
+  def create_save_work(import_work)
+    new_work = Work.new
+
+    new_work.title = import_work.title
+    puts "Title to be = #{new_work.title}"
+    new_work.summary = import_work.summary
+
+    puts "summary to be = #{new_work.summary}"
+    new_work.authors_to_sort_on = import_work.penname
+    new_work.title_to_sort_on = import_work.title
+    new_work.restricted = true
+    new_work.posted = true
+    puts "looking for pseud #{import_work.new_pseud_id}"
+    new_work.pseuds << Pseud.find_by_id(import_work.new_pseud_id)
+    new_work.pseuds.each do |pseud|
+      puts "pseud id = #{pseud.id} name = #{pseud.name}"
+    end
+
+
+    new_work.revised_at = Date.today
+    new_work.created_at = Date.today
+    puts "revised = #{new_work.revised_at}"
+    #new_work.revised_at = import_work.updated
+    #new_work.created_at = import_work.published
+    puts "crated at  = #{new_work.created_at}"
+    new_work.fandom_string = @import_fandom
+    new_work.rating_string = "Not Rated"
+    new_work.warning_strings = "None"
+
+    puts "old work id = #{import_work.old_work_id}"
+    new_work.imported_from_url = "#{@archive_import_id}~~#{import_work.old_work_id}"
+
+    test_chapter = Chapter.new
+    test_chapter.content = "This is a test chapters"
+    test_chapter.title = "test title"
+    test_chapter.save(:validate=>false)
+
+    new_work.chapters << test_chapter
+    #new_work = add_chapters(new_work, import_work.old_work_id)
+
+    #debug info
+    new_work.chapters.each do |chap|
+      puts "#{chap.title}"
+      puts "#{chap.content}"
+    end
+
+    #assign to main import collection
+    new_work.collections << Collection.find(@new_collection_id)
+    if @categories_as_subcollections
+      collection_array = get_work_collections(import_work.categories)
+      collection_array.each do |cobj|
+        new_work.collections << cobj unless new_work.collections.include?(cobj)
+      end
+    end
+
+    new_work.save(:validate => false)
+
+    puts "New Work ID = #{new_work.id}"
+    return new_work
+  end
+
   def add_chapters2(ns, new_id, old_id)
     query = ""
     begin
@@ -595,6 +610,7 @@ class MassImportTool
           query = "Select * from #{@source_chapters_table} where csid = #{old_id}"
           r = @connection.query(query)
           puts "333"
+
           ix = 1
           r.each do |rr|
             c = ImportChapter.new()
