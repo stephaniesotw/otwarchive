@@ -518,6 +518,7 @@ class MassImportTool
           #debug info
           new_work.chapters.each do |chap|
             puts "#{chap.title}"
+            puts "#{chap.content}"
           end
 
           #assign to main import collection
