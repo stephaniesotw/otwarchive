@@ -575,7 +575,7 @@ class MassImportTool
     test_chapter = Chapter.new
     test_chapter.content = "This is a test chapters"
     test_chapter.title = "test title"
-    test_chapter.save(:validate=>false)
+
 
     new_work.chapters << test_chapter
     #new_work = add_chapters(new_work, import_work.old_work_id)
@@ -595,8 +595,8 @@ class MassImportTool
       end
     end
 
-    new_work.save(:validate => false)
-
+    new_work.save
+    puts new_work.errors
     puts "New Work ID = #{new_work.id}"
     return new_work
   end
