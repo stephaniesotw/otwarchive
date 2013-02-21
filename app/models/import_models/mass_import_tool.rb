@@ -314,7 +314,7 @@ class MassImportTool
       #Create Taglisit for this story
       puts "a created"
       my_tag_list = Array.new()
-      begin
+
         case @source_archive_type
           #storyline
           when 4
@@ -573,11 +573,7 @@ class MassImportTool
           puts "Error: 888: #{e}"
         end
 
-      rescue Exception => ex
-        puts " Error : " + ex.message
 
-      ensure
-      end
       i = i + 1
     end
     @connection.close()
