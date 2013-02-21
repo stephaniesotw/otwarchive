@@ -765,7 +765,7 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at =  Date.today
-            #new_work.chapters << c
+            new_work.chapters << c
 
             #self.post_chapters(c, @source_archive_type)
           end
