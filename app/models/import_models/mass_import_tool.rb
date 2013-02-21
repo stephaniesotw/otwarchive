@@ -525,7 +525,7 @@ class MassImportTool
           end
 
           new_work.save!
-         puts new_work.errors
+         puts "this is start new work errors:  #{new_work.errors} ===end new work errors"
         pause
 
         puts new_work.chapters.count
