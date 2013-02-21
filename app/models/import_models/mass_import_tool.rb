@@ -500,9 +500,12 @@ class MassImportTool
           new_work.pseuds.each do |pseud|
             puts "pseud id = #{pseud.id} name = #{pseud.name}"
           end
-          new_work.revised_at = ns.updated
+
+          #new_work.revised_at = ns.updated
+      new_work.revised_at =  Date.today
+      new_work.created_at =  Date.today
       puts "revised = #{new_work.revised_at}"
-          new_work.created_at = ns.published
+          #new_work.created_at = ns.published
       puts "crated at  = #{new_work.created_at}"
           new_work.fandom_string = @import_fandom
           new_work.rating_string = "Not Rated"
