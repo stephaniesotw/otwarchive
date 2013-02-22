@@ -138,7 +138,7 @@ class MassImportTool
       #storyline
       when 4
         #categories
-        r = @connection.query("Select caid, caname from #{@source_category_table}; ")
+        r = @connection.query("Select caid, caname from #{@source_categories_table}; ")
         r.each do |r1|
           nt = ImportTag.new()
           nt.tag_type = "Category"
