@@ -360,9 +360,9 @@ class MassImportTool
           ns.categories = row[4]
           ns.characters = row[6]
           ns.rating_integer = row[7]
-          rating_tag = ImportTag.new()
-          rating_tag.tag_type = "Freeform"
-          rating_tag.new_id = ns.rating_integer
+          #rating_tag = ImportTag.new()
+          #rating_tag.tag_type = "Freeform"
+          #rating_tag.new_id = ns.rating_integer
           my_tag_list.push(rating_tag)
           ns.published = row[8]
           ns.updated = row[9]
@@ -496,10 +496,10 @@ class MassImportTool
 
 
         puts "taglist count = #{my_tag_list.count}"
-        my_tag_list.each do |t|
-          sleep 3
-          add_work_taggings(new_work.id, t)
-        end
+        #my_tag_list.each do |t|
+        #  sleep 3
+        #  add_work_taggings(new_work.id, t)
+        #end
 
 
 
@@ -616,6 +616,7 @@ class MassImportTool
     puts "New Work ID = #{new_work.id}"
     return new_work
   end
+=begin
 
 
   def add_chapters2(ns, new_id, old_id)
@@ -669,6 +670,7 @@ class MassImportTool
 
     end
   end
+=end
 
   #copied and modified from mass import rake, stephanies 1/22/2012
   #Create archivist and collection if they don't already exist"
@@ -716,6 +718,7 @@ class MassImportTool
     end
   end
 
+=begin
   #Post Chapters Fix
   def post_chapters2(c, sourceType)
     begin
@@ -752,6 +755,7 @@ class MassImportTool
     end
 
   end
+=end
 
   #add chapters    takes chapters and adds them to import work object  , takes Work, old_work_id
   def add_chapters(new_work, old_work_id)
@@ -1095,16 +1099,20 @@ class MassImportTool
     return tl
   end
 
+=begin
   #return old new id from user_imports table based on old user id & source archive
   def get_new_user_id_from_imported(old_id, source_archive)
     puts "#{old_id}"
     return get_single_value_target("select user_id from user_imports where source_user_id = #{old_id} and source_archive_id = #{source_archive}")
   end
+=end
 
+=begin
   #get default pseud given userid
   def get_default_pseud_id(user_id)
     return get_single_value_target("select id from pseuds where user_id = #{user_id}")
   end
+=end
 
   #given valid user_id search for psued belonging to that user_id with matching penname
   def get_pseud_id_for_penname(user_id, penname)
@@ -1112,26 +1120,34 @@ class MassImportTool
     return get_single_value_target("select id from pseuds where user_id = #{user_id} and name = '#{penname}'")
   end
 
+=begin
   def get_new_work_id_fresh(source_work_id, source_archive_id)
     puts "13-#{source_work_id}~~#{source_archive_id}"
     return get_single_value_target("select id from works where imported_from_url = '#{source_work_id}~~#{source_archive_id}'")
   end
+=end
 
+=begin
   # Return new story id given old id and archive
   def get_new_work_id_from_old_id(source_archive_id, old_work_id) #
     puts "12-#{source_archive_id}-#{old_work_id}"
     return get_single_value_target(" select work_id from work_imports where source_archive_id #{source_archive_id} and old_work_id=#{old_work_id}")
   end
+=end
 
+=begin
   # Get New Author ID from old User ID & old archive ID
   def get_new_author_id_from_old(old_archive_id, old_user_id)
     return get_single_value_target(" Select user_id from user_imports where source_archive_id = #{old_archive_id} and source_user_id = #{old_user_id} ")
   end
+=end
 
+=begin
   #check for existing user by email address
   def get_user_id_from_email(emailaddress)
     return get_single_value_target("select id from users where email = '#{emailaddress}'")
   end
+=end
 
   #query and return a single value from database
   def get_single_value_target(query)
