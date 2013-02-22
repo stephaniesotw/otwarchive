@@ -1099,13 +1099,13 @@ class MassImportTool
     return tl
   end
 
-=begin
+
   #return old new id from user_imports table based on old user id & source archive
   def get_new_user_id_from_imported(old_id, source_archive)
     puts "#{old_id}"
     return get_single_value_target("select user_id from user_imports where source_user_id = #{old_id} and source_archive_id = #{source_archive}")
   end
-=end
+
 
 =begin
   #get default pseud given userid
@@ -1120,34 +1120,34 @@ class MassImportTool
     return get_single_value_target("select id from pseuds where user_id = #{user_id} and name = '#{penname}'")
   end
 
-=begin
+
   def get_new_work_id_fresh(source_work_id, source_archive_id)
     puts "13-#{source_work_id}~~#{source_archive_id}"
     return get_single_value_target("select id from works where imported_from_url = '#{source_work_id}~~#{source_archive_id}'")
   end
-=end
 
-=begin
+
+
   # Return new story id given old id and archive
   def get_new_work_id_from_old_id(source_archive_id, old_work_id) #
     puts "12-#{source_archive_id}-#{old_work_id}"
     return get_single_value_target(" select work_id from work_imports where source_archive_id #{source_archive_id} and old_work_id=#{old_work_id}")
   end
-=end
 
-=begin
+
+
   # Get New Author ID from old User ID & old archive ID
   def get_new_author_id_from_old(old_archive_id, old_user_id)
     return get_single_value_target(" Select user_id from user_imports where source_archive_id = #{old_archive_id} and source_user_id = #{old_user_id} ")
   end
-=end
 
-=begin
+
+
   #check for existing user by email address
   def get_user_id_from_email(emailaddress)
     return get_single_value_target("select id from users where email = '#{emailaddress}'")
   end
-=end
+
 
   #query and return a single value from database
   def get_single_value_target(query)
