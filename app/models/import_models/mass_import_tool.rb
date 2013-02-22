@@ -37,10 +37,10 @@ class MassImportTool
 
     #will error if not unique, just let it create it and assign it if you are unsure
     #Import Archive ID
-    @archive_import_id = 100
+    @archive_import_id = 102
 
     #Import reviews t/f
-    @import_reviews = true
+    @import_reviews = false
     #Create record for imported archive (false if already exists)
     @create_archive_import_record = true
     #Match Existing Authors by Email-Address
@@ -76,17 +76,17 @@ class MassImportTool
     #ID Of the newly created collection, filled with value automatically if create collection is true
     @new_collection_id = 123456789
     @create_collection = true
-    @new_collection_owner = "Stephanie"
+    @new_collection_owner = "StephanieTest"
     @new_collection_owner_pseud = "1010"
     @new_collection_title = "Imported Archive Name"
-    @new_collection_name = "shortname"
-    @new_collection_description = "Something here"
+    @new_collection_name = "whispers"
+    @new_collection_description = "Hermione Granger / Severus Snape Fics"
 
     #=========================================================
     #Destination Options / Settings
     #=========================================================
     @new_url = ""
-
+    @check_archivist_activated = true
     #If using ao3 cats, sort or skip
     @SortForAo3Categories = true
 
@@ -103,15 +103,15 @@ class MassImportTool
     #========================
     #Source Variables
     #========================
-    @source_base_url = ""
+    @source_base_url = "http://thepotionsmaster.net/whispers"
     #Source Archive Type
-    @source_archive_type = 3
+    @source_archive_type = 4
 
     #If archivetype being imported is efiction 3 >  then specify what class holds warning information
     @source_warning_class_id = 1
 
     #Holds Value for source table prefix
-    @source_table_prefix = "fanfiction_"
+    @source_table_prefix = "sl18_"
 
     ################# Self Defined based on above
     @source_ratings_table = nil #Source Ratings Table
@@ -290,6 +290,8 @@ class MassImportTool
     self.set_import_strings()
     #create collection & archivist
     self.create_archivist_and_collection
+
+
     #create import record
     create_import_record
 
@@ -703,6 +705,12 @@ class MassImportTool
     end
     @archivist_user_id = u.id
 
+    #ensure user is activated
+    if @check_archivist_activated
+    unless u.activated_at
+      u.activate
+    end
+    end
     # make the collection if it doesn't exist already
     c = Collection.find_or_initialize_by_name(@new_collection_name)
     if c.new_record?
