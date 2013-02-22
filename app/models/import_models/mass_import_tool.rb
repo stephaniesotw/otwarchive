@@ -37,7 +37,7 @@ class MassImportTool
 
     #will error if not unique, just let it create it and assign it if you are unsure
     #Import Archive ID
-    @archive_import_id = 102
+    @archive_import_id = 106
 
     #Import reviews t/f
     @import_reviews = false
@@ -53,7 +53,7 @@ class MassImportTool
     @subcategory_depth = 1
     #values "merge_top" "move_top" "drop" "merge all" "custom"
     @subcategory_remap_method = "merge_top"
-
+    #TODO implement modified subcat code
     #Message Values
     ####################################
     ##If true, send invites unconditionaly,
@@ -131,86 +131,45 @@ class MassImportTool
     @skip_rating_transform = false
   end
 
+  #helper function for get tag list, takes query, tagtype as string, taglist array of import tag
+  def get_tag_list_helper(query, tag_type, tl)
+    #categories
+    r = @connection.query(query)
+    r.each do |r1|
+      nt = ImportTag.new()
+      nt.tag_type = tag_type
+      nt.old_id = r1[0]
+      nt.tag = r1[1]
+      tl.push(nt)
+    end
+    return tl
+  end
+
   #get all possible tags from source
   def get_tag_list(tl)
-    taglist = tl
+    tag_list = tl
     case @source_archive_type
       #storyline
       when 4
-        #categories
-        r = @connection.query("Select caid, caname from #{@source_categories_table}; ")
-        r.each do |r1|
-          nt = ImportTag.new()
-          nt.tag_type = "Category"
-          nt.old_id = r1[0]
-          nt.tag = r1[1]
-          taglist.push(nt)
-        end
-        #subcategories
-        rr = @connection.query("Select subid, subname from #{@source_subcategories_table}; ")
-        unless rr.num_rows.nil? || rr.num_rows == 0
-          rr.each do |r2|
-            nt = ImportTag.new()
-            nt.tag_type = 99
-            nt.old_id = r2[0]
-            nt.tag = r2[1]
-            taglist.push(nt)
-          end
-        end
+        #Categories
+        tag_list = get_tag_list_helper("Select caid, caname from #{@source_categories_table}; ", "Category", tag_list)
+        tag_list = get_tag_list_helper("Select subid, subname from #{@source_subcategories_table}; ", 99, tag_list)
       #efiction 3
       when 3
         #classes
-        r = @connection.query("Select class_id, class_type, class_name from #{@source_classes_table}; ")
-        r.each do |r1|
-          nt = ImportTag.new()
-          if r1[1] == @source_warning_class_id
-            nt.tag_type = 6
-          else
-            nt.tag_type = "Freeform"
-          end
-          nt.old_id = r1[0]
-          nt.tag = r1[2]
-          taglist.push(nt)
-        end
+        tag_list = get_tag_list_helper("Select class_id, class_type, class_name from #{@source_classes_table}; ", "Freeform", tag_list)
         #categories
-        rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
-        rr.each do |r2|
-          nt = ImportTag.new()
-          nt.tag_type = "Category"
-          nt.old_id = r2[0]
-          nt.tag = r2[1]
-          taglist.push(nt)
-        end
+        tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
         #characters
-        rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
-        rrr.each do |r3|
-          nt = ImportTag.new()
-          nt.tag_type = "Character"
-          nt.old_id = r3[0]
-          nt.tag = r3[1]
-          taglist.push(nt)
-        end
+        tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
+
       when 2
         #categories
-        rr = @connection.query("Select catid, category from #{@source_categories_table}; ")
-        rr.each do |r2|
-          nt = ImportTag.new()
-          nt.tag_type = "Category"
-          nt.old_id = r2[0]
-          nt.tag = r2[1]
-          taglist.push(nt)
-        end
+        tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
         #characters
-        rrr = @connection.query("Select charid, charname from #{@source_characters_table}; ")
-        rrr.each do |r3|
-          nt = ImportTag.new()
-          nt.tag_type = "Character"
-          nt.old_id = r3[0]
-          nt.tag = r3[1]
-          taglist.push(nt)
-        end
+        tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
     end
-    return taglist
+    return tag_list
   end
 
   #ensure all source tags exist in target in some form
@@ -283,18 +242,13 @@ class MassImportTool
 
   ##################################################################################################
   # Main Worker Sub
-
   def import_data()
-
     puts "1) Setting Import Values"
     self.set_import_strings()
     #create collection & archivist
     self.create_archivist_and_collection
-
-
     #create import record
     create_import_record
-
     #Update Tags and get Taglist
     puts "Updating Tags"
     tag_list = Array.new()
@@ -403,23 +357,18 @@ class MassImportTool
         puts "didnt exist in this import"
         #see if user account exists in main archive by checking email,
         temp_author_id = get_user_id_from_email(a.email)
-
         if temp_author_id == 0
           #if not exist , add new user with user object, passing old author object
           new_a = ImportUser.new
           new_a = self.add_user(a)
-
           #pass values to new story object
           ns.penname = new_a.penname
           ns.new_user_id = new_a.new_user_id
-
           #debug info
           puts "newu 1"
           puts "newid = #{new_a.new_user_id}"
-
           #get newly created pseud id
           new_pseud_id = get_default_pseud_id(ns.new_user_id)
-
           #set the penname on newly created pseud to proper value
           update_record_target("update pseuds set name = '#{ns.penname}' where id = #{new_pseud_id}")
           begin
@@ -433,13 +382,11 @@ class MassImportTool
             puts "Error: 777: #{e}"
           end
           ns.new_pseud_id = new_pseud_id
-
         else
           #user exists, but is being imported
           #insert the mapping value
           puts "---existed"
           ns.penname = a.penname
-
           #check to see if penname exists as pseud for existing user
           temp_pseud_id = get_pseud_id_for_penname(temp_author_id, ns.penname)
           if temp_pseud_id == 0
@@ -466,9 +413,7 @@ class MassImportTool
             rescue Exception => e
               puts "Error: 777: #{e}"
             end
-
             # 'temp_pseud_id = get_pseud_id_for_penname(ns.new_user_id,ns.penname)
-
             update_record_target("update user_imports set pseud_id = #{temp_pseud_id} where user_id = #{ns.new_user_id} and source_archive_id = #{@archive_import_id}")
             puts "====A"
             ns.new_user_id = temp_pseud_id
@@ -476,63 +421,49 @@ class MassImportTool
             ns.new_pseud_id = temp_pseud_id
           end
         end
-
       else
         ns.penname = a.penname
         a.pseud_id = get_pseud_id_for_penname(ns.new_user_id, ns.penname)
         puts "#{a.pseud_id} this is the matching pseud id"
         ns.new_pseud_id = a.pseud_id
       end
-
       #insert work object
       puts "Making new work!!!!"
       new_work = create_save_work(ns)
-
       #add all chapters to work
       new_work = add_chapters(new_work, ns.old_work_id)
-
       #save all chapters for work
       save_chapters(new_work)
-
       #add_chapters2(new_work, new_work.id, ns.old_work_id)
-
-
-        puts "taglist count = #{my_tag_list.count}"
-        my_tag_list.each do |t|
-          sleep 1
-          add_work_taggings(new_work.id, t)
-        end
-
-
-
+      puts "taglist count = #{my_tag_list.count}"
+      my_tag_list.each do |t|
+        sleep 1
+        add_work_taggings(new_work.id, t)
+      end
       if @import_reviews
         #TODO Add import review code, convert to anon comments, when possible, if no email as some archive types support for anon comments then assign generic non existant email for comment
       end
-
       #create new work import
-      create_new_work_import(new_work,ns)
-
-
+      create_new_work_import(new_work, ns)
       i = i + 1
     end
     @connection.close()
   end
 
-
   #Create new work import, takes Work , ImportWork
-   def create_new_work_import(new_work,ns)
-     begin
-       new_wi = WorkImport.new
-       new_wi.work_id = new_work.id
-       new_wi.pseud_id = ns.new_user_id
-       new_wi.source_archive_id = @archive_import_id
-       new_wi.source_work_id = ns.old_work_id
-       new_wi.source_user_id = ns.old_user_id
-       new_wi.save!
-     rescue Exception => e
-       puts "Error creating new work import: #{e}"
-     end
-   end
+  def create_new_work_import(new_work, ns)
+    begin
+      new_wi = WorkImport.new
+      new_wi.work_id = new_work.id
+      new_wi.pseud_id = ns.new_user_id
+      new_wi.source_archive_id = @archive_import_id
+      new_wi.source_work_id = ns.old_work_id
+      new_wi.source_user_id = ns.old_user_id
+      new_wi.save!
+    rescue Exception => e
+      puts "Error creating new work import: #{e}"
+    end
+  end
 
   #save chapters, takes Work
   def save_chapters(new_work)
@@ -547,7 +478,6 @@ class MassImportTool
         puts cc.position
         cc.work_id = new_work.id
         cc.save
-
         cc.errors.full_messages
       end
       puts "chapter saved"
@@ -556,15 +486,12 @@ class MassImportTool
     end
   end
 
-
   #Create work and return once saved, takes ImportWork
   def create_save_work(import_work)
     new_work = Work.new
-
     new_work.title = import_work.title
     puts "Title to be = #{new_work.title}"
     new_work.summary = import_work.summary
-
     puts "summary to be = #{new_work.summary}"
     new_work.authors_to_sort_on = import_work.penname
     new_work.title_to_sort_on = import_work.title
@@ -575,8 +502,6 @@ class MassImportTool
     new_work.pseuds.each do |pseud|
       puts "pseud id = #{pseud.id} name = #{pseud.name}"
     end
-
-
     new_work.revised_at = Date.today
     new_work.created_at = Date.today
     puts "revised = #{new_work.revised_at}"
@@ -586,18 +511,12 @@ class MassImportTool
     new_work.fandom_string = @import_fandom
     new_work.rating_string = "Not Rated"
     new_work.warning_strings = "None"
-
     puts "old work id = #{import_work.old_work_id}"
     new_work.imported_from_url = "#{@archive_import_id}~~#{import_work.old_work_id}"
-
     test_chapter = Chapter.new
     test_chapter.content = "This is a test chapters"
     test_chapter.title = "test title"
-
-
     new_work.chapters << test_chapter
-
-
     #debug info
 =begin
     new_work.chapters.each do |chap|
@@ -619,9 +538,8 @@ class MassImportTool
     new_work = add_chapters(new_work, import_work.old_work_id)
     #attempt to add id to first chapter
     new_work.chapters.each do |c|
-
       c.work_id = new_work.id
-      c.save(:validate=>false)
+      c.save(:validate => false)
       puts "chapter save errors: #{c.errors}"
     end
 
@@ -629,61 +547,7 @@ class MassImportTool
     puts "New Work ID = #{new_work.id}"
     return new_work
   end
-=begin
 
-
-  def add_chapters2(ns, new_id, old_id)
-    query = ""
-    begin
-      case @source_archive_type
-        when 4
-          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_id} order by id asc"
-          query = "Select * from #{@source_chapters_table} where csid = #{old_id}"
-          r = @connection.query(query)
-          puts "333"
-
-          ix = 1
-          r.each do |rr|
-            c = ImportChapter.new()
-            c.new_work_id = new_id
-
-            c.title = rr[1]
-            c.date_posted = rr[4]
-            c.body = rr[3]
-            c.position = ix
-            self.post_chapters2(c, @source_archive_type)
-          end
-        when 3
-          query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_id}"
-          puts query
-          r = @connection.query(query)
-          puts "333 #{r.num_rows}"
-
-          r.each do |rr|
-            c = ImportChapter.new()
-            #c.new_work_id = ns.new_work_id     will be made automatically
-            #c.pseud_id = ns.pseuds[0]
-            c.title = rr[1]
-            #c.created_at  = rr[4]
-            #c.updated_at = rr[4]
-            c.body = rr[4]
-            c.position = rr[2]
-            c.summary = rr[3]
-
-            #ns.chapters << c
-            self.post_chapters2(c, @source_archive_type)
-          end
-
-
-      end
-    rescue Exception => ex
-      puts " Error : " + ex.message
-      puts "query = #{query}"
-
-
-    end
-  end
-=end
 
   #copied and modified from mass import rake, stephanies 1/22/2012
   #Create archivist and collection if they don't already exist"
@@ -692,7 +556,6 @@ class MassImportTool
     # make the archivist user if it doesn't exist already
     u = User.find_or_initialize_by_login(@archivist_login)
     if u.new_record?
-
       u.password = @archivist_password
       u.email = @archivist_email
       u.age_over_13 = "1"
@@ -703,15 +566,13 @@ class MassImportTool
     unless u.is_archivist?
       u.roles << Role.find_by_name("archivist")
       u.save
-
     end
     @archivist_user_id = u.id
-
     #ensure user is activated
     if @check_archivist_activated
-    unless u.activated_at
-      u.activate
-    end
+      unless u.activated_at
+        u.activate
+      end
     end
     # make the collection if it doesn't exist already
     c = Collection.find_or_initialize_by_name(@new_collection_name)
@@ -736,45 +597,6 @@ class MassImportTool
 
     end
   end
-
-=begin
-  #Post Chapters Fix
-  def post_chapters2(c, sourceType)
-    begin
-      case sourceType
-        when 4 #storyline
-          new_c = Chapter.new
-          new_c.work_id = c.new_work_id
-          new_c.created_at = c.date_posted
-          new_c.updated_at = c.date_posted
-          new_c.posted = 1
-          new_c.position = c.position
-          new_c.title = c.title
-          new_c.summary = c.summary
-          new_c.content = c.body
-          new_c.save!
-          puts "New chapter id #{new_c.id}"
-          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
-        when 3 #efiction
-          new_c = Chapter.new
-          new_c.work_id = c.new_work_id
-          new_c.created_at = c.date_posted
-          new_c.updated_at = c.date_posted
-          new_c.posted = 1
-          new_c.position = c.position
-          new_c.title = c.title
-          new_c.summary = c.summary
-          new_c.content = c.body
-          new_c.save!
-          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
-
-      end
-    rescue Exception => ex
-      puts "error in post chapters 2 #{ex}"
-    end
-
-  end
-=end
 
   #add chapters    takes chapters and adds them to import work object  , takes Work, old_work_id
   def add_chapters(new_work, old_work_id)
@@ -805,7 +627,6 @@ class MassImportTool
           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
           puts " chapterocunt #{r.num_rows} 333"
-
           r.each do |rr|
             c = new_work.chapters.build
             #c.new_work_id = ns.new_work_id     will be made automatically
@@ -822,7 +643,6 @@ class MassImportTool
             c.published_at = Date.today
             c.created_at = Date.today
             new_work.chapters << c
-
             #self.post_chapters(c, @source_archive_type)
           end
       end
@@ -847,7 +667,6 @@ class MassImportTool
     rescue Exception => ex
       puts "error in add new creatorship #{ex}"
     end
-
   end
 
   #take tag from mytaglist and add to taggings
@@ -864,8 +683,6 @@ class MassImportTool
         mytagging.taggable_type="Work"
         mytagging.save!
       end
-
-
     rescue Exception => ex
       puts "error add work taggings #{ex}"
     end
@@ -1118,20 +935,16 @@ class MassImportTool
     return tl
   end
 
-
   #return old new id from user_imports table based on old user id & source archive
   def get_new_user_id_from_imported(old_id, source_archive)
     puts "#{old_id}"
     return get_single_value_target("select user_id from user_imports where source_user_id = #{old_id} and source_archive_id = #{source_archive}")
   end
 
-
-
   #get default pseud given userid
   def get_default_pseud_id(user_id)
     return get_single_value_target("select id from pseuds where user_id = #{user_id}")
   end
-
 
   #given valid user_id search for psued belonging to that user_id with matching penname
   def get_pseud_id_for_penname(user_id, penname)
@@ -1139,13 +952,10 @@ class MassImportTool
     return get_single_value_target("select id from pseuds where user_id = #{user_id} and name = '#{penname}'")
   end
 
-
   def get_new_work_id_fresh(source_work_id, source_archive_id)
     puts "13-#{source_work_id}~~#{source_archive_id}"
     return get_single_value_target("select id from works where imported_from_url = '#{source_work_id}~~#{source_archive_id}'")
   end
-
-
 
   # Return new story id given old id and archive
   def get_new_work_id_from_old_id(source_archive_id, old_work_id) #
@@ -1153,20 +963,15 @@ class MassImportTool
     return get_single_value_target(" select work_id from work_imports where source_archive_id #{source_archive_id} and old_work_id=#{old_work_id}")
   end
 
-
-
   # Get New Author ID from old User ID & old archive ID
   def get_new_author_id_from_old(old_archive_id, old_user_id)
     return get_single_value_target(" Select user_id from user_imports where source_archive_id = #{old_archive_id} and source_user_id = #{old_user_id} ")
   end
 
-
-
   #check for existing user by email address
   def get_user_id_from_email(emailaddress)
     return get_single_value_target("select id from users where email = '#{emailaddress}'")
   end
-
 
   #query and return a single value from database
   def get_single_value_target(query)
@@ -1289,4 +1094,98 @@ class MassImportTool
     #initialize database connection object
     @connection = Mysql.new(@database_host, @database_username, @database_password, @database_name)
   end
+=begin
+  #Post Chapters Fix
+  def post_chapters2(c, sourceType)
+    begin
+      case sourceType
+        when 4 #storyline
+          new_c = Chapter.new
+          new_c.work_id = c.new_work_id
+          new_c.created_at = c.date_posted
+          new_c.updated_at = c.date_posted
+          new_c.posted = 1
+          new_c.position = c.position
+          new_c.title = c.title
+          new_c.summary = c.summary
+          new_c.content = c.body
+          new_c.save!
+          puts "New chapter id #{new_c.id}"
+          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
+        when 3 #efiction
+          new_c = Chapter.new
+          new_c.work_id = c.new_work_id
+          new_c.created_at = c.date_posted
+          new_c.updated_at = c.date_posted
+          new_c.posted = 1
+          new_c.position = c.position
+          new_c.title = c.title
+          new_c.summary = c.summary
+          new_c.content = c.body
+          new_c.save!
+          add_new_creatorship(new_c.id, "Chapter", c.pseud_id)
+
+      end
+    rescue Exception => ex
+      puts "error in post chapters 2 #{ex}"
+    end
+
+  end
+=end
+=begin
+
+
+  def add_chapters2(ns, new_id, old_id)
+    query = ""
+    begin
+      case @source_archive_type
+        when 4
+          puts "1121 == Select * from #{@source_chapters_table} where csid = #{old_id} order by id asc"
+          query = "Select * from #{@source_chapters_table} where csid = #{old_id}"
+          r = @connection.query(query)
+          puts "333"
+
+          ix = 1
+          r.each do |rr|
+            c = ImportChapter.new()
+            c.new_work_id = new_id
+
+            c.title = rr[1]
+            c.date_posted = rr[4]
+            c.body = rr[3]
+            c.position = ix
+            self.post_chapters2(c, @source_archive_type)
+          end
+        when 3
+          query="Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_id}"
+          puts query
+          r = @connection.query(query)
+          puts "333 #{r.num_rows}"
+
+          r.each do |rr|
+            c = ImportChapter.new()
+            #c.new_work_id = ns.new_work_id     will be made automatically
+            #c.pseud_id = ns.pseuds[0]
+            c.title = rr[1]
+            #c.created_at  = rr[4]
+            #c.updated_at = rr[4]
+            c.body = rr[4]
+            c.position = rr[2]
+            c.summary = rr[3]
+
+            #ns.chapters << c
+            self.post_chapters2(c, @source_archive_type)
+          end
+
+
+      end
+    rescue Exception => ex
+      puts " Error : " + ex.message
+      puts "query = #{query}"
+
+
+    end
+  end
+=end
+
 end
