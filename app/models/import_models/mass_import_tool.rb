@@ -594,13 +594,15 @@ class MassImportTool
 
 
     new_work.chapters << test_chapter
-    #new_work = add_chapters(new_work, import_work.old_work_id)
+    new_work = add_chapters(new_work, import_work.old_work_id)
 
     #debug info
+=begin
     new_work.chapters.each do |chap|
       puts "#{chap.title}"
       puts "#{chap.content}"
     end
+=end
 
     #assign to main import collection
     new_work.collections << Collection.find(@new_collection_id)
@@ -612,6 +614,13 @@ class MassImportTool
     end
 
     new_work.save
+    #attempt to add id to first chapter
+    new_work.chapters.each do |c|
+      c.work_id = new_work.id
+      c.save!
+      puts "chapter save errors: #{c.errors}"
+    end
+
     puts new_work.errors
     puts "New Work ID = #{new_work.id}"
     return new_work
