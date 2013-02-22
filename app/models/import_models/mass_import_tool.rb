@@ -619,8 +619,9 @@ class MassImportTool
     new_work = add_chapters(new_work, import_work.old_work_id)
     #attempt to add id to first chapter
     new_work.chapters.each do |c|
+
       c.work_id = new_work.id
-      c.save(validate=>false)
+      c.save(:validate=>false)
       puts "chapter save errors: #{c.errors}"
     end
 
