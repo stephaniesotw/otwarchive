@@ -294,12 +294,12 @@ class MassImportTool
     create_import_record
 
     #Update Tags and get Taglist
-    #puts "Updating Tags"
-    #tag_list = Array.new()
+    puts "Updating Tags"
+    tag_list = Array.new()
     #create list of all tags used in source
-    #tag_list = get_tag_list(tag_list)
+    tag_list = get_tag_list(tag_list)
     #check for tag existance on target archive
-    #tag_list = self.fill_tag_list(tag_list)
+    tag_list = self.fill_tag_list(tag_list)
 
     #pull source stories
     r = @connection.query("SELECT * FROM #{@source_stories_table} ;")
@@ -360,9 +360,9 @@ class MassImportTool
           ns.categories = row[4]
           ns.characters = row[6]
           ns.rating_integer = row[7]
-          #rating_tag = ImportTag.new()
-          #rating_tag.tag_type = "Freeform"
-          #rating_tag.new_id = ns.rating_integer
+          rating_tag = ImportTag.new()
+          rating_tag.tag_type = "Freeform"
+          rating_tag.new_id = ns.rating_integer
           my_tag_list.push(rating_tag)
           ns.published = row[8]
           ns.updated = row[9]
@@ -372,9 +372,9 @@ class MassImportTool
 
           end
           #fill taglist with import tags to be added
-          #my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
+          my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
           puts "Getting class tags: tag count = #{my_tag_list.count}"
-          #my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
+          my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
           if @categories_as_tags
             my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
             puts "Getting category tags: tag count = #{my_tag_list.count}"
@@ -496,10 +496,10 @@ class MassImportTool
 
 
         puts "taglist count = #{my_tag_list.count}"
-        #my_tag_list.each do |t|
-        #  sleep 3
-        #  add_work_taggings(new_work.id, t)
-        #end
+        my_tag_list.each do |t|
+          sleep 1
+          add_work_taggings(new_work.id, t)
+        end
 
 
 
