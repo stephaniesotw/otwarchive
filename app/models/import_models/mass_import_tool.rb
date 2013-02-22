@@ -372,9 +372,9 @@ class MassImportTool
 
           end
           #fill taglist with import tags to be added
-          my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
+          #my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
           puts "Getting class tags: tag count = #{my_tag_list.count}"
-          my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
+          #my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
           if @categories_as_tags
             my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
             puts "Getting category tags: tag count = #{my_tag_list.count}"
