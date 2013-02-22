@@ -1124,12 +1124,12 @@ class MassImportTool
   end
 
 
-=begin
+
   #get default pseud given userid
   def get_default_pseud_id(user_id)
     return get_single_value_target("select id from pseuds where user_id = #{user_id}")
   end
-=end
+
 
   #given valid user_id search for psued belonging to that user_id with matching penname
   def get_pseud_id_for_penname(user_id, penname)
