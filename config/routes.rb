@@ -126,7 +126,7 @@ Otwarchive::Application.routes.draw do
 
   match '/admin/login' => 'admin_sessions#new'
   match '/admin/logout' => 'admin_sessions#destroy'
-
+    match '/owned_tag_sets_controller/delete' => 'owned_tag_sets#destroy'
   namespace :admin do
     resources :activities, :only => [:index, :show]
     resources :settings
@@ -314,6 +314,7 @@ Otwarchive::Application.routes.draw do
 
   resources :external_works do
     collection do
+      get :compare
       get :compare
       post :merge
       get :fetch

@@ -294,12 +294,12 @@ class MassImportTool
     create_import_record
 
     #Update Tags and get Taglist
-    puts "Updating Tags"
-    tag_list = Array.new()
+    #puts "Updating Tags"
+    #tag_list = Array.new()
     #create list of all tags used in source
-    tag_list = get_tag_list(tag_list)
+    #tag_list = get_tag_list(tag_list)
     #check for tag existance on target archive
-    tag_list = self.fill_tag_list(tag_list)
+    #tag_list = self.fill_tag_list(tag_list)
 
     #pull source stories
     r = @connection.query("SELECT * FROM #{@source_stories_table} ;")
