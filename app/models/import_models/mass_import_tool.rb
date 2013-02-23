@@ -431,9 +431,9 @@ class MassImportTool
       puts "Making new work!!!!"
       new_work = create_save_work(ns)
       #add all chapters to work
-      new_work = add_chapters(new_work, ns.old_work_id)
+      #new_work = add_chapters(new_work, ns.old_work_id)
       #save all chapters for work
-      save_chapters(new_work)
+      #save_chapters(new_work)
       #add_chapters2(new_work, new_work.id, ns.old_work_id)
       puts "taglist count = #{my_tag_list.count}"
       my_tag_list.each do |t|
