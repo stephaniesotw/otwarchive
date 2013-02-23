@@ -534,15 +534,10 @@ class MassImportTool
       end
     end
 
-    new_work.save
+    new_work.save!
 
     #attempt to add id to first chapter
-    new_work.chapters.each do |c|
-      c.work_id = new_work.id
-      c.authors  << Pseud.find_by_id(import_work.new_pseud_id)
-      c.save(:validate => false)
-      puts "chapter save errors: #{c.errors}"
-    end
+
 
     puts new_work.errors
     puts "New Work ID = #{new_work.id}"
