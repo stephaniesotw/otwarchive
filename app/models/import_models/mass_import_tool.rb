@@ -498,10 +498,13 @@ class MassImportTool
     new_work.restricted = true
     new_work.posted = true
     puts "looking for pseud #{import_work.new_pseud_id}"
-    new_work.pseuds << Pseud.find_by_id(import_work.new_pseud_id)
+      #new_work.pseuds << Pseud.find_by_id(import_work.new_pseud_id)
+    new_work.authors = [Pseud.find_by_id(import_work.new_pseud_id)]
+=begin
     new_work.pseuds.each do |pseud|
       puts "pseud id = #{pseud.id} name = #{pseud.name}"
     end
+=end
     new_work.revised_at = Date.today
     new_work.created_at = Date.today
     puts "revised = #{new_work.revised_at}"
@@ -513,13 +516,7 @@ class MassImportTool
     new_work.warning_strings = "None"
     puts "old work id = #{import_work.old_work_id}"
     new_work.imported_from_url = "#{@archive_import_id}~~#{import_work.old_work_id}"
-    test_chapter = Chapter.new
-    test_chapter.content = "This is a test chapters"
-    test_chapter.title = "test title"
-
-    test_chapter.save
-
-    new_work.chapters << test_chapter
+    new_work = add_chapters(new_work, import_work.old_work_id)
     #debug info
 =begin
     new_work.chapters.each do |chap|
@@ -538,7 +535,7 @@ class MassImportTool
     end
 
     new_work.save
-    new_work = add_chapters(new_work, import_work.old_work_id)
+
     #attempt to add id to first chapter
     new_work.chapters.each do |c|
       c.work_id = new_work.id
@@ -630,9 +627,9 @@ class MassImportTool
 
           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
-          puts " chapterocunt #{r.num_rows} 333"
+          puts " chaptercount #{r.num_rows} "
           r.each do |rr|
-            c = Chapter.new
+            c = new_work.chapters.build()
             #c.new_work_id = ns.new_work_id     will be made automatically
             #c.pseud_id = ns.pseuds[0]
             c.title = rr[1]
@@ -646,8 +643,10 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
+=begin
             c.save(:validate=>false)
             new_work.chapters << c
+=end
             #self.post_chapters(c, @source_archive_type)
           end
       end

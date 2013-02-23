@@ -516,7 +516,14 @@ class Work < ActiveRecord::Base
 
   # Save chapter data when the work is updated
   def save_chapters
-    self.chapters.first.save(:validate => false)
+    if self.chapters.count > 1
+      self.chapters.each do |c|
+        c.save(:validate=>false)
+      end
+    else
+      self.chapters.first.save(:validate => false)
+    end
+
   end
 
   # If the work is posted, the first chapter should be posted too
@@ -524,6 +531,12 @@ class Work < ActiveRecord::Base
     if self.posted_changed?
       self.chapters.first.posted = self.posted
       self.chapters.first.save
+      if self.chapters.count > 1
+        self.chapters.each do |c|
+          c.posted = self.posted
+          c.save
+        end
+      end
   end
 end
 
