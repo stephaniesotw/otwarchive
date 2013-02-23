@@ -537,7 +537,7 @@ class MassImportTool
     new_work.save!
 
     #attempt to add id to first chapter
-
+     puts "post save chapter count = #{new_work.chapters.count}"
 
     puts new_work.errors
     puts "New Work ID = #{new_work.id}"
