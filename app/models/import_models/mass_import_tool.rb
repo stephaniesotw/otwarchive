@@ -516,7 +516,7 @@ class MassImportTool
     new_work.warning_strings = "None"
     puts "old work id = #{import_work.old_work_id}"
     new_work.imported_from_url = "#{@archive_import_id}~~#{import_work.old_work_id}"
-    new_work = add_chapters(new_work, import_work.old_work_id)
+    new_work = add_chapters(new_work, import_work.old_work_id,true)
     #debug info
 =begin
     new_work.chapters.each do |chap|
@@ -535,7 +535,7 @@ class MassImportTool
     end
 
     new_work.save!
-
+    add_chapters(new_work,old_work_id,false)
     #attempt to add id to first chapter
      puts "post save chapter count = #{new_work.chapters.size}"
 
