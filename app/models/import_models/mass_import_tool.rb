@@ -628,7 +628,7 @@ class MassImportTool
           r = @connection.query(query)
           puts " chaptercount #{r.num_rows} "
           r.each do |rr|
-            if first = true
+            if first == true
               c = new_work.chapters.build()
             else
               c = new_work.chapters.new
@@ -648,7 +648,9 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
-            c.save(:validate=>false)
+            if first == false
+              c.save(:validate=>false)
+            end
 
 =begin
             new_work.chapters << c
