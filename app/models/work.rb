@@ -510,8 +510,8 @@ class Work < ActiveRecord::Base
     if self.posted_changed?
       self.chapters.first.posted = self.posted
       self.chapters.first.save
-    end
   end
+end
 
   # Virtual attribute for first chapter
   def chapter_attributes=(attributes)
