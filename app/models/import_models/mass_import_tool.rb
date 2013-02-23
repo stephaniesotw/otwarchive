@@ -524,7 +524,7 @@ class MassImportTool
       puts "#{chap.content}"
     end
 =end
-
+    puts "chapters in new_work.chapters = #{new_work.chapters.count}"
     #assign to main import collection
     new_work.collections << Collection.find(@new_collection_id)
     if @categories_as_subcollections
