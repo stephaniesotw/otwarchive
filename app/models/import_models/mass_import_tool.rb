@@ -516,6 +516,8 @@ class MassImportTool
     test_chapter = Chapter.new
     test_chapter.content = "This is a test chapters"
     test_chapter.title = "test title"
+    test_chapter.save
+
     new_work.chapters << test_chapter
     #debug info
 =begin
