@@ -595,7 +595,7 @@ class MassImportTool
   end
 
   #add chapters    takes chapters and adds them to import work object  , takes Work, old_work_id
-  def add_chapters(new_work, old_work_id)
+  def add_chapters(new_work, old_work_id,first)
     begin
       case @source_archive_type
         when 4 #Storyline
@@ -619,12 +619,22 @@ class MassImportTool
             #self.post_chapters(c, @source_archive_type)
           end
         when 3 #efiction 3
-
+          if first == true
+            query = "Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id} and inorder = 1"
+          else
+            query = "Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id} and inorder  > 1"
+          end
           puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
-          r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
+          r = @connection.query(query)
           puts " chaptercount #{r.num_rows} "
           r.each do |rr|
-            c = new_work.chapters.build()
+            if first = true
+              c = new_work.chapters.build()
+            else
+              c = new_work.chapters.new
+
+            end
+
             #c.new_work_id = ns.new_work_id     will be made automatically
             #c.pseud_id = ns.pseuds[0]
             c.title = rr[1]
@@ -638,8 +648,8 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
-
-            c.save(:validate=>false)
+            c.save
+            new_work.save
 =begin
             new_work.chapters << c
 
