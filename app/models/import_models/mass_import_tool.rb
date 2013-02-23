@@ -648,8 +648,8 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
-            c.save
-            new_work.save
+            c.save(:validate=>false)
+
 =begin
             new_work.chapters << c
 
