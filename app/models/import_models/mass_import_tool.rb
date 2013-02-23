@@ -516,7 +516,7 @@ class MassImportTool
     test_chapter = Chapter.new
     test_chapter.content = "This is a test chapters"
     test_chapter.title = "test title"
-    test_chapter.authors  << Pseud.find_by_id(import_work.new_pseud_id)
+    test_chapter.pseuds  << Pseud.find_by_id(import_work.new_pseud_id)
     test_chapter.save
 
     new_work.chapters << test_chapter
