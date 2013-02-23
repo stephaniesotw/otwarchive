@@ -647,7 +647,7 @@ class MassImportTool
             #self.post_chapters(c, @source_archive_type)
           end
       end
-=end
+
 
 
       return new_work
