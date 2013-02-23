@@ -516,7 +516,7 @@ class MassImportTool
     test_chapter = Chapter.new
     test_chapter.content = "This is a test chapters"
     test_chapter.title = "test title"
-    test_chapter.pseuds  << Pseud.find_by_id(import_work.new_pseud_id)
+
     test_chapter.save
 
     new_work.chapters << test_chapter
@@ -632,7 +632,7 @@ class MassImportTool
           r = @connection.query("Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from #{@source_chapters_table} where sid = #{old_work_id}")
           puts " chapterocunt #{r.num_rows} 333"
           r.each do |rr|
-            c = new_work.chapters.build
+            c = Chapter.new
             #c.new_work_id = ns.new_work_id     will be made automatically
             #c.pseud_id = ns.pseuds[0]
             c.title = rr[1]
@@ -646,6 +646,7 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
+            c.save(:validate=>false)
             new_work.chapters << c
             #self.post_chapters(c, @source_archive_type)
           end
