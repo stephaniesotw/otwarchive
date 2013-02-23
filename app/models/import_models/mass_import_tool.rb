@@ -524,7 +524,7 @@ class MassImportTool
       puts "#{chap.content}"
     end
 =end
-    puts "chapters in new_work.chapters = #{new_work.chapters.count}"
+    puts "chapters in new_work.chapters = #{new_work.chapters.size}"
     #assign to main import collection
     new_work.collections << Collection.find(@new_collection_id)
     if @categories_as_subcollections
@@ -537,7 +537,7 @@ class MassImportTool
     new_work.save!
 
     #attempt to add id to first chapter
-     puts "post save chapter count = #{new_work.chapters.count}"
+     puts "post save chapter count = #{new_work.chapters.size}"
 
     puts new_work.errors
     puts "New Work ID = #{new_work.id}"
