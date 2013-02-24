@@ -650,7 +650,7 @@ class MassImportTool
             ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
             valid_string = ic.iconv(rr[4] + ' ')[0..-2]
             c.content = valid_string
-            c.position = rr[2]
+            #c.position = rr[2]
             c.summary = rr[3]
             c.posted = 1
             c.published_at = Date.today
