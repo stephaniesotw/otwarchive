@@ -650,7 +650,7 @@ class MassImportTool
             c.published_at = Date.today
             c.created_at = Date.today
             if first == false
-              c.save(:validate=>false)
+              c.save!
               new_work.save
             end
 
