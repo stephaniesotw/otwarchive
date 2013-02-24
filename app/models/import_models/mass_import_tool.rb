@@ -625,7 +625,7 @@ class MassImportTool
           else
             query = "Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id} and inorder  > 1"
           end
-          puts "1121 == Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id}"
+          puts "query"
           r = @connection.query(query)
           puts " chaptercount #{r.num_rows} "
           r.each do |rr|
@@ -651,6 +651,7 @@ class MassImportTool
             c.created_at = Date.today
             if first == false
               c.save(:validate=>false)
+              new_work.save
             end
 
 =begin
