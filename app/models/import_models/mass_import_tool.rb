@@ -432,6 +432,7 @@ class MassImportTool
       new_work = create_save_work(ns)
       #add all chapters to work
       new_work.expected_number_of_chapters = new_work.chapters.count
+       new_work.save
 
       #new_work = add_chapters(new_work, ns.old_work_id)
       #save all chapters for work
