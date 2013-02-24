@@ -535,7 +535,7 @@ class MassImportTool
     end
 
     new_work.save!
-    add_chapters(new_work,old_work_id,false)
+    add_chapters(new_work,import_work.old_work_id,false)
     #attempt to add id to first chapter
      puts "post save chapter count = #{new_work.chapters.size}"
 
