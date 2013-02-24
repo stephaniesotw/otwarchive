@@ -633,7 +633,7 @@ class MassImportTool
               c = new_work.chapters.build()
             else
               c = new_work.chapters.new
-
+              c.work_id = new_work.id
             end
 
             #c.new_work_id = ns.new_work_id     will be made automatically
