@@ -630,13 +630,16 @@ class MassImportTool
           puts "query"
           r = @connection.query(query)
           puts " chaptercount #{r.num_rows} "
+          position_holder = 2
           r.each do |rr|
             if first == true
               c = new_work.chapters.build()
+              c.position = 1
             else
               c = new_work.chapters.new
               c.work_id = new_work.id
               c.authors = new_work.authors
+              c.position = position_holder
             end
 
             #c.new_work_id = ns.new_work_id     will be made automatically
@@ -657,7 +660,7 @@ class MassImportTool
               new_work.save
             end
 
-=begin
+=begin      position_holder = position_holder + 1
             new_work.chapters << c
 
 =end
