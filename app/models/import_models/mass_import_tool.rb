@@ -27,7 +27,8 @@ class MassImportTool
     @archivist_password = "password"
     @archivist_email = "stephaniesmithstl@gmail.com"
     @archivist_user_id = 0
-
+    @archive_has_chapter_files = 0
+    @archive_chapters_filename = "chapters.zip"
     #Import Settings
     ####################
 
@@ -249,6 +250,12 @@ class MassImportTool
     self.create_archivist_and_collection
     #create import record
     create_import_record
+    #set file upload path with import id from previous step
+    @import_files_path = "#{rails.root.to_s}/imports/#{archive_id})"
+    #check that import directory exists if not create it
+    check_create_dir(@import_files_path)
+    #move_import_files
+
     #Update Tags and get Taglist
     puts "Updating Tags"
     tag_list = Array.new()
@@ -1119,7 +1126,24 @@ class MassImportTool
     #initialize database connection object
     @connection = Mysql.new(@database_host, @database_username, @database_password, @database_name)
   end
+  #file operations
+  #create archive directory
+  def check_create_dir(import_path)
+    unless File.directory?(import_path)
+      `mkdir #{import_path}`
+    end
+  end
+
+  #move files to proper locations
+  def move_import_files(db_filename,chapters_filename)
+    `mv #{@archive_chapters_filename} #{@import_files_path}`
+    `mv #{@sql_filename} #{@import_files_path}`
+  end
+
+
+
 =begin
+
   #Post Chapters Fix
   def post_chapters2(c, sourceType)
     begin
