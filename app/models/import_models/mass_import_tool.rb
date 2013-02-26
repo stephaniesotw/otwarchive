@@ -252,9 +252,9 @@ class MassImportTool
     create_import_record
     #set file upload path with import id from previous step
     @import_files_path = "#{rails.root.to_s}/imports/#{archive_id})"
-    #check that import directory exists if not create it
-    check_create_dir(@import_files_path)
-    #move_import_files
+    #check that import directory exists if not create it , do other import processes move extract etc
+    run_file_operations
+
 
     #Update Tags and get Taglist
     puts "Updating Tags"
@@ -510,11 +510,7 @@ class MassImportTool
     puts "looking for pseud #{import_work.new_pseud_id}"
       #new_work.pseuds << Pseud.find_by_id(import_work.new_pseud_id)
     new_work.authors = [Pseud.find_by_id(import_work.new_pseud_id)]
-=begin
-    new_work.pseuds.each do |pseud|
-      puts "pseud id = #{pseud.id} name = #{pseud.name}"
-    end
-=end
+
     new_work.revised_at = Date.today
     new_work.created_at = Date.today
     puts "revised = #{new_work.revised_at}"
@@ -704,16 +700,16 @@ class MassImportTool
   #take tag from mytaglist and add to taggings
   def add_work_taggings(work_id, new_tag)
     begin
-      mytagging = Tagging.new
+      my_tagging = Tagging.new
       puts "looking for tag with name #{new_tag.tag}"
       temptag = Tag.new
       temptag = Tag.find_by_name(new_tag.tag)
       unless temptag.name == nil
         puts "found tag with name #{temptag.name} and id #{temptag.id}"
-        mytagging.taggable_id = work_id
-        mytagging.tagger = temptag
-        mytagging.taggable_type="Work"
-        mytagging.save!
+        my_tagging.taggable_id = work_id
+        my_tagging.tagger = temptag
+        my_tagging.taggable_type="Work"
+        my_tagging.save!
       end
     rescue Exception => ex
       puts "error add work taggings #{ex}"
@@ -938,13 +934,13 @@ class MassImportTool
 
   ####
   #used with efiction 3 archives to get values to be gotten as tags
-  def get_source_work_tags(tl, classstr, mytype)
+  def get_source_work_tags(tl, class_str, my_type)
     query = ""
     new_tag_type = ""
-    classsplit = Array.new
-    classsplit = classstr.split(",")
-    classsplit.each do |x|
-      case mytype
+    class_split = Array.new
+    class_split = class_str.split(",")
+    class_split.each do |x|
+      case my_type
         when "characters"
           new_tag_type = "Character"
           query = "Select charid, charname from #{@source_characters_table} where charid = #{x}"
@@ -1126,6 +1122,7 @@ class MassImportTool
     #initialize database connection object
     @connection = Mysql.new(@database_host, @database_username, @database_password, @database_name)
   end
+
   #file operations
   #create archive directory
   def check_create_dir(import_path)
@@ -1134,14 +1131,48 @@ class MassImportTool
     end
   end
 
-  #move files to proper locations
-  def move_import_files(db_filename,chapters_filename)
-    `mv #{@archive_chapters_filename} #{@import_files_path}`
+  #move uploaded files, unzip them, transform the sql file, save it, execute it
+  def run_file_operations
+    check_create_dir(@import_files_path)
     `mv #{@sql_filename} #{@import_files_path}`
+    `unzip #{@import_files_path}/#{@sql_filename}`
+     transform_source_sql()
+     load_source_db()
+
+    if @archive_has_chapter_files
+      `mv #{@archive_chapters_filename} #{@import_files_path}`
+      `unzip #{@import_files_path}/#{@archive_chapters_filename}`
+      update_source_chapters
+    end
   end
 
 
+  #update each record in source db reading the chapter text file importing it into content field
+  def update_source_chapters()
+  #TODO Create Me
+  end
 
+  #read a file to a string
+  def read_file_to_string(filename)
+  #TODO Create Me /return string
+
+  end
+
+  def save_string_to_file(string,filename)
+    #todo save string to filename
+  end
+
+  #process source db sql file and save
+  def transform_source_sql()
+  sql_file = read_file_to_string("#{@import_files_path}/#{@sql_filename}")
+  sql_file = sql_file.gsub(@source_table_prefix,"#{@temp_table_prefix}#{@source_table_prefix}")
+  save_string_to_file(sql_file,"#{@import_files_path}/data_clean.sql")
+  end
+
+  #load cleaned source db file into mysql
+  def load_source_db()
+    `mysql -u #{@database_username} -p#{@database_password} #{@database_name} < #{@import_files_path}/data_clean.sql`
+  end
 =begin
 
   #Post Chapters Fix
