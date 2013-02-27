@@ -124,7 +124,8 @@ class MassImportTool
     @source_subcatagories_table = nil #Source Subcategories Table
     @source_categories_table = nil #Source Categories Table
     @source_author_query = nil #source author query
-
+    @source_series_table = nil
+    @source_inseries_table = nil
     #############
     #debug stuff
     @debug_update_source_tags = true
@@ -267,10 +268,14 @@ class MassImportTool
   # @param [integer] new_chapter_id
   def import_chapter_reviews(old_chapter_id, new_chapter_id)
     r = @connection.query("Select reviewer, uid,review,date,rating from #{@source_reviews_table} where chapid=#{old_chapter_id}")
-    r.each do |row|
-      email = get_single_value_target("Select email from #{@source_users_table} where uid = #{row[1]}")
-      create_chapter_comment(row[2], row[3], new_chapter_id, email, row[0], 0)
+    #only run if we have reviews
+    if r.num_rows >=1
+      r.each do |row|
+        email = get_single_value_target("Select email from #{@source_users_table} where uid = #{row[1]}")
+        create_chapter_comment(row[2], row[3], new_chapter_id, email, row[0], 0)
+      end
     end
+
   end
 
   #assign row data to import_Work object
@@ -345,7 +350,7 @@ class MassImportTool
   #create import record
   # @return [integer]  import archive id
   def create_import_record
-     update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
+    update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
     @source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url}',#{@archivist_user_id})")
     archive_import = ArchiveImport.find_by_source_base_url(@source_base_url)
     return archive_id.id
@@ -480,10 +485,14 @@ class MassImportTool
         sleep 1
         add_work_taggings(new_work.id, t)
       end
-      if @import_reviews
-        #TODO Add import review code, convert to anon comments, when possible, if no email as some archive types support for anon comments then assign generic non existant email for comment
-      end
 
+      #save first chapter reviews since cand do it in addchapters like rest
+      old_first_chapter_id = "Select chapid from  #{@source_chapters_table} where sid = #{ns.old_work_id} order by inorder asc Limit 1"
+      import_chapter_reviews(old_first_chapter_id,new_work.chapters.first.id)
+
+
+      #import series
+      import_series
       #create new work import
       create_new_work_import(new_work, ns)
       i = i + 1
@@ -544,6 +553,56 @@ class MassImportTool
     rescue Exception => ex
       puts error "3318: saving chapter #{ex}"
     end
+  end
+
+  # Create New Series Work
+  # @param [integer] series_id
+  # @param [integer] position
+  # @param [integer] work_id
+  def create_series_work(series_id, position, work_id)
+    sw = SerialWork.new
+    sw.position=position
+    sw.work_id=work_id
+    sw.series_id=series_id
+    sw.save
+    return sw.id
+  end
+
+  #import series objects
+  def import_series()
+    #create the series objects in new archive
+    r = @connection.query("Select seriesid,title,summary,uid,rating,classes,characters, isopen from #{@source_series_table}")
+    if r.num_rows >= 1
+      r.each do |row|
+        s = Series.new
+        s = create_series(row[1], row[2], row[7])
+        import_series_works(row[0], s.id)
+      end
+    end
+  end
+
+  #import works into new series
+  # @param [integer] old_series_id
+  # @param [integer] new_series_id
+  def import_series_works(old_series_id, new_series_id)
+    r = @connection.query("SELECT #{@source_inseries_table}.inorder, #{@source_inseries_table}.seriesid, work_imports.work_id
+    FROM work_imports INNER JOIN #{@source_inseries_table} ON #{@source_inseries_table}.sid = work_imports.source_work_id
+    WHERE #{@source_inseries_table}.seriesid = #{old_series_id} order by inorder asc")
+    r.each do |row|
+      work = Work.find(row[2])
+      work.series_attributes = {id: new_series_id}
+      work.save
+    end
+  end
+
+
+  def create_series(title, summary, completed)
+    s = Series.new
+    s.complete=completed
+    s.summary=summary
+    s.title = title
+    s.save
+    return s.id
   end
 
   #Create work and return once saved, takes ImportWork
@@ -822,6 +881,8 @@ class MassImportTool
         @source_stories_table = "#{@temp_table_prefix}#{@source_table_prefix}stories"
         @source_categories_table = "#{@temp_table_prefix}#{@source_table_prefix}categories"
         @source_characters_table = "#{@temp_table_prefix}#{@source_table_prefix}characters"
+        @source_series_table = "#{@temp_table_prefix}#{@source_table_prefix}series"
+        @source_inseries_table = "#{@temp_table_prefix}#{@source_table_prefix}inseries"
 
         @source_ratings_table = "#{@temp_table_prefix}#{@source_table_prefix}ratings"
         @source_classes_table = "#{@temp_table_prefix}#{@source_table_prefix}classes"
@@ -1096,7 +1157,7 @@ class MassImportTool
       connection2.close()
       puts ex.message
       puts "Error with #{query} : update_record_target"
-        return 0
+      return 0
     ensure
     end
   end
