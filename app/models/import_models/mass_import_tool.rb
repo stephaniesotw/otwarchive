@@ -1261,13 +1261,13 @@ class MassImportTool
   #move uploaded files, unzip them, transform the sql file, save it, execute it
   def run_file_operations
     check_create_dir(@import_files_path)
-    `mv #{@sql_filename} #{@import_files_path}`
+    `mv /tmp/#{@sql_filename} #{@import_files_path}`
     `unzip #{@import_files_path}/#{@sql_filename}`
     transform_source_sql()
     load_source_db()
 
     if @archive_has_chapter_files
-      `mv #{@archive_chapters_filename} #{@import_files_path}`
+      `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
       `unzip #{@import_files_path}/#{@archive_chapters_filename}`
       #add the content to the chapters in the database
       update_source_chapters
