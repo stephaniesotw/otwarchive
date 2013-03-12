@@ -387,7 +387,7 @@ class MassImportTool
     #create import record
     create_import_record
     #set file upload path with import id from previous step
-    @import_files_path = "#{Rails.root.to_s}/imports/#{archive_id}"
+    @import_files_path = "#{Rails.root.to_s}/imports/#{@archive_import_id}"
     #check that import directory exists if not create it , do other import processes move extract etc
     puts "2) Running File Operations"
     run_file_operations
