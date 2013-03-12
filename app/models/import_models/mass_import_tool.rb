@@ -13,7 +13,7 @@ class MassImportTool
     @database_username = "stephanies"
     @database_password = "Trustno1"
     @database_name = "stephanies_development"
-    @temp_table_prefix = ""
+    @temp_table_prefix = "testing"
     @apply_temp_prefix = 1
 
     #NOTE! change to nil for final version, as there will be no default
@@ -27,7 +27,7 @@ class MassImportTool
     @archivist_password = "password"
     @archivist_email = "stephaniesmithstl@gmail.com"
     @archivist_user_id = 0
-    @archive_has_chapter_files = 0
+    @archive_has_chapter_files = 1
     @archive_chapters_filename = "chapters.zip"
     #Import Settings
     ####################
