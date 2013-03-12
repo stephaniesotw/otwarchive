@@ -104,7 +104,7 @@ class MassImportTool
     #========================
     #Source Variables
     #========================
-    @source_base_url = "s"
+    @source_base_url = "http://thequidditchpitch.org"
     #Source Archive Type
     @source_archive_type = 3
 
@@ -352,8 +352,8 @@ class MassImportTool
   def create_import_record
     update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
     @source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url}',#{@archivist_user_id})")
-    archive_import = ArchiveImport.find_by_source_base_url(@source_base_url)
-    return archive_id.id
+    archive_import = ArchiveImport.find_by_old_base_url(@source_base_url)
+    return archive_import.id
   end
 
   #create new pseud
