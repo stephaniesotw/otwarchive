@@ -1304,6 +1304,9 @@ class MassImportTool
   #process source db sql file and save
   def transform_source_sql()
     sql_file = read_file_to_string("#{@import_files_path}/#{@sql_filename}")
+    ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+    valid_string = ic.iconv(sql_file + ' ')[0..-2]
+sql_file = valid_string
     sql_file = sql_file.gsub(@source_table_prefix, "#{@temp_table_prefix}#{@source_table_prefix}")
     save_string_to_file(sql_file, "#{@import_files_path}/data_clean.sql")
   end
