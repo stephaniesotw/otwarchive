@@ -362,7 +362,7 @@ class MassImportTool
   # @param [true/false] default
   # @param [string] description
   # @return [integer]  new pseud id
-  def create_new_pseud(user_id, penname, default, description,)
+  def create_new_pseud(user_id, penname, default, description)
     begin
       new_pseud = Pseud.new
       new_pseud.user_id = temp_author_id
