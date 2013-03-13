@@ -1281,7 +1281,7 @@ class MassImportTool
     rr = @connection.query("Select chapid,uid from #{@source_chapters_table}")
     rr.each do |r3|
       #read in chapter content
-      chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[1]}/#{r3[0]}.html")
+      chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[1]}/#{r3[0]}.txt")
       #update the source chapter record
       update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{r3[0]}")
     end
