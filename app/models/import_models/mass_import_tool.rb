@@ -1262,13 +1262,13 @@ class MassImportTool
   def run_file_operations
     check_create_dir(@import_files_path)
     `mv /tmp/#{@sql_filename} #{@import_files_path}`
-    `unzip #{@import_files_path}/#{@sql_filename}`
+    `unzip #{@import_files_path}/#{@sql_filename} -d #{@import_files_path}`
     transform_source_sql()
     load_source_db()
 
     if @archive_has_chapter_files
       `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
-      `unzip #{@import_files_path}/#{@archive_chapters_filename}`
+      `unzip #{@import_files_path}/#{@archive_chapters_filename} -d #{@import_files_path}`
       #add the content to the chapters in the database
       update_source_chapters
     end
@@ -1278,7 +1278,7 @@ class MassImportTool
   #update each record in source db reading the chapter text file importing it into content field
   def update_source_chapters()
     #select source chapters from database
-    rr = @connection.query("Select chapid,sid from #{@source_chapters_table}")
+    rr = @connection.query("Select chapid,uid from #{@source_chapters_table}")
     rr.each do |r3|
       #read in chapter content
       chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[1]}/#{r3[0]}.html")
