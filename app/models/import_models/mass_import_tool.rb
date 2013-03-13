@@ -1282,6 +1282,8 @@ class MassImportTool
     rr.each do |r3|
       #read in chapter content
       chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[1]}/#{r3[0]}.txt")
+      chapter_content = Mysql.escape_string(chapter_content)
+
       #update the source chapter record
       update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{r3[0]}")
     end
