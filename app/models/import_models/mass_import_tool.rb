@@ -1280,12 +1280,16 @@ class MassImportTool
     #select source chapters from database
     rr = @connection.query("Select chapid,uid from #{@source_chapters_table}")
     rr.each do |r3|
-      #read in chapter content
-      chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[1]}/#{r3[0]}.txt")
-      chapter_content = Mysql.escape_string(chapter_content)
+      pathname = "#{@import_files_path}/stories/#{r3[0]}"
+      Dir.foreach(pathname) do
+      |f|
+        chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[0]}/#{f}")
+        chapter_content = Mysql.escape_string(chapter_content)
+        #update the source chapter record
+        chapterid = f.gsub(".txt","")
 
-      #update the source chapter record
-      update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{r3[0]}")
+        update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
+      end
     end
   end
 
