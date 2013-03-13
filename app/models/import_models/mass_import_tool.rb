@@ -1278,7 +1278,7 @@ class MassImportTool
   #update each record in source db reading the chapter text file importing it into content field
   def update_source_chapters()
     #select source chapters from database
-    rr = @connection.query("Select chapid,uid from #{@source_chapters_table}")
+    rr = @connection.query("Select distinct uid from #{@source_chapters_table}")
     rr.each do |r3|
       pathname = "#{@import_files_path}/stories/#{r3[0]}"
       Dir.foreach(pathname) do
