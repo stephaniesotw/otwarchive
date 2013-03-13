@@ -1283,6 +1283,8 @@ class MassImportTool
       pathname = "#{@import_files_path}/stories/#{r3[0]}"
       Dir.foreach(pathname) do
       |f|
+        next if f = ".."
+        next if f = "."
         chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[0]}/#{f}")
         chapter_content = Mysql.escape_string(chapter_content)
         #update the source chapter record
