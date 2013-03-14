@@ -1292,7 +1292,7 @@ class MassImportTool
         chapter_content = Mysql.escape_string(chapter_content)
         #update the source chapter record
         chapterid = f.gsub(".txt","")
-
+        puts "reading chapter: #{chapterid}"
         update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
       end
     end
