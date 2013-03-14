@@ -1275,6 +1275,7 @@ class MassImportTool
       #add the content to the chapters in the database
 
       update_source_chapters
+      PUTS "GOT PAST UPDATE SOURCE CHAPTERS WTH!"
     end
   rescue Exception => ex
     puts "error in file opperations 2 #{ex}"
