@@ -1268,13 +1268,18 @@ class MassImportTool
     `unzip #{@import_files_path}/#{@sql_filename} -d #{@import_files_path}`
     transform_source_sql()
     load_source_db()
-
+  begin
     if @archive_has_chapter_files
       `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
       `unzip #{@import_files_path}/#{@archive_chapters_filename} -d #{@import_files_path}`
       #add the content to the chapters in the database
+
       update_source_chapters
     end
+  rescue Exception => ex
+    puts "error in file opperations 2 #{ex}"
+  end
+
   end
 
 
