@@ -295,7 +295,7 @@ class MassImportTool
         rating_tag = ImportTag.new()
         rating_tag.tag_type = "Freeform"
         rating_tag.new_id = ns.rating_integer
-        my_tag_list.push(rating_tag)
+        ns.tag_list.push(rating_tag)
         ns.published = row[5]
         cattag = ImportTag.new()
         subcattag = ImportTag.new()
@@ -308,8 +308,8 @@ class MassImportTool
         end
         cattag.new_id = row[6]
         subcattag.new_id =row[11]
-        my_tag_list.push(cattag)
-        my_tag_list.push(subcattag)
+        ns.tag_list.push(cattag)
+        ns.tag_list.push(subcattag)
         ns.updated = row[9]
         ns.completed = row[12]
         ns.hits = row[10]
@@ -327,7 +327,7 @@ class MassImportTool
         rating_tag = ImportTag.new()
         rating_tag.tag_type = "Freeform"
         rating_tag.new_id = ns.rating_integer
-        my_tag_list.push(rating_tag)
+        ns.tag_list.push(rating_tag)
         ns.published = row[8]
         ns.updated = row[9]
         ns.completed = row[14]
@@ -336,12 +336,12 @@ class MassImportTool
 
         end
         #fill taglist with import tags to be added
-        my_tag_list = get_source_work_tags(my_tag_list, ns.classes, "classes")
-        puts "Getting class tags: tag count = #{my_tag_list.count}"
-        my_tag_list = get_source_work_tags(my_tag_list, ns.characters, "characters")
+        ns.tag_list = get_source_work_tags(ns.tag_list, ns.classes, "classes")
+        puts "Getting class tags: tag count = #{ns.tag_list.count}"
+        ns.tag_list = get_source_work_tags(ns.tag_list, ns.characters, "characters")
         if @categories_as_tags
-          my_tag_list = get_source_work_tags(my_tag_list, ns.categories, "categories")
-          puts "Getting category tags: tag count = #{my_tag_list.count}"
+          ns.tag_list = get_source_work_tags(ns.tag_list, ns.categories, "categories")
+          puts "Getting category tags: tag count = #{ns.tag_list.count}"
         end
     end
     return ns
@@ -411,8 +411,11 @@ class MassImportTool
       a = ImportUser.new()
       #Create Taglisit for this story
       my_tag_list = Array.new()
+      ns.tag_list = my_tag_list
+
       #assign data to import work object
       ns = assign_row_import_work(ns, row)
+      my_tag_list = ns.tag_list
       ns.source_archive_id = @archive_import_id
       puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
       #goto next if no chapters
