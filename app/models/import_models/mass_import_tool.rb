@@ -252,7 +252,7 @@ class MassImportTool
   # @param [string] name
   # @param [integer] pseud_id
   def create_chapter_comment(content, date, chap_id, email, name, pseud)
-    new_comment as Comment.new
+    new_comment = Comment.new
     new_comment.commentable_type="Chapter"
     new_comment.content=content
     new_comment.created_at=date
