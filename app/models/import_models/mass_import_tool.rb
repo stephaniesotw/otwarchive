@@ -365,8 +365,8 @@ class MassImportTool
   def create_new_pseud(user_id, penname, default, description)
     begin
       new_pseud = Pseud.new
-      new_pseud.user_id = temp_author_id
-      new_pseud.name = a.penname
+      new_pseud.user_id = user_id
+      new_pseud.name = penname
       new_pseud.is_default = true
       new_pseud.description = "Imported"
       new_pseud.save!
