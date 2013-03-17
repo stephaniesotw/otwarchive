@@ -140,11 +140,11 @@ class MassImportTool
   def get_tag_list_helper(query, tag_type, tl)
     #categories
     r = @connection.query(query)
-    r.each do |r1|
+    r.each do |row|
       nt = ImportTag.new()
       nt.tag_type = tag_type
-      nt.old_id = r1[0]
-      nt.tag = r1[1]
+      nt.old_id = row[0]
+      nt.tag = row[1]
       tl.push(nt)
     end
     return tl
@@ -174,6 +174,8 @@ class MassImportTool
         tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
         #characters
         tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
+      else
+        puts "Error: (get_tag_list): Invalid source archive type"
     end
     return tag_list
   end
@@ -196,8 +198,8 @@ class MassImportTool
           temp_new_tag.save
           temp_tag.new_id = temp_new_tag.id
         else
-          r.each do |r|
-            temp_tag.new_id = r[0]
+          r.each do |row_a|
+            temp_tag.new_id = row_a[0]
           end
         end
       else
@@ -210,8 +212,8 @@ class MassImportTool
             temp_new_tag.save
             temp_tag.new_id = temp_new_tag.id
           else
-            r.each do |r|
-              temp_tag.new_id = r[0]
+            r.each do |row|
+              temp_tag.new_id = row[0]
             end
           end
         end
@@ -250,7 +252,7 @@ class MassImportTool
   # @param [integer] chap_id
   # @param [string] email
   # @param [string] name
-  # @param [integer] pseud_id
+  # @param [integer] pseud
   def create_chapter_comment(content, date, chap_id, email, name, pseud)
     new_comment = Comment.new
     new_comment.commentable_type="Chapter"
@@ -343,6 +345,8 @@ class MassImportTool
           ns.tag_list = get_source_work_tags(ns.tag_list, ns.categories, "categories")
           puts "Getting category tags: tag count = #{ns.tag_list.count}"
         end
+      else
+        puts "Error: (assign_row_import_work): Invalid source archive type"
     end
     return ns
   end
@@ -367,8 +371,8 @@ class MassImportTool
       new_pseud = Pseud.new
       new_pseud.user_id = user_id
       new_pseud.name = penname
-      new_pseud.is_default = true
-      new_pseud.description = "Imported"
+      new_pseud.is_default = default
+      new_pseud.description = description
       new_pseud.save!
       return new_pseud.id
     rescue Exception => e
@@ -453,7 +457,7 @@ class MassImportTool
         else
           #user exists, but is being imported
           #insert the mapping value
-          puts "---existed"
+          puts "Debug: User existed in Target Archive"
           ns.penname = a.penname
           #check to see if penname exists as pseud for existing user
           temp_pseud_id = get_pseud_id_for_penname(temp_author_id, ns.penname)
@@ -744,7 +748,7 @@ class MassImportTool
             #self.post_chapters(c, @source_archive_type)
           end
         when 3 #efiction 3
-          if first == true
+          if first
             query = "Select chapid,title,inorder,notes,storytext,endnotes,sid,uid from  #{@source_chapters_table} where sid = #{old_work_id} order by inorder asc Limit 1"
           else
             first_chapter_index = get_single_value_target("Select inorder from  #{@source_chapters_table} where sid = #{old_work_id} order by inorder asc Limit 1")
@@ -754,7 +758,7 @@ class MassImportTool
           puts " chaptercount #{r.num_rows} "
           position_holder = 2
           r.each do |rr|
-            if first == true
+            if first
               c = new_work.chapters.build()
               c.position = 1
             else
@@ -773,7 +777,7 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
-            if first == false
+            if !first
               c.save!
               new_work.save
               #get reviews for all chapters but chapter 1, all chapter 1 reviews done in separate step post work import
@@ -781,6 +785,8 @@ class MassImportTool
               import_chapter_reviews(rr[0], c.id)
             end
           end
+        else
+          puts "Error: (add_chapters): Invalid source archive type"
       end
 
       return new_work
@@ -908,6 +914,8 @@ class MassImportTool
 
       when 5 #otwarchive
         @source_users_table = "#{@temp_table_prefix}#{@source_table_prefix}users"
+      else
+        puts "Error: (set_import_settings): Invalid source archive type"
     end
   end
 
@@ -921,25 +929,25 @@ class MassImportTool
     r = @connection.query("#{@source_author_query} #{source_user_id}")
     @connection
 
-    r.each do |r|
+    r.each do |row|
       a.old_user_id = source_user_id
-      a.realname = r[0]
+      a.realname = row[0]
       a.source_archive_id = @archive_import_id
-      a.penname = r[1]
-      a.email = r[2]
-      a.bio = r[3]
-      a.joindate = r[4]
-      a.password = r[5]
+      a.penname = row[1]
+      a.email = row[2]
+      a.bio = row[3]
+      a.joindate = row[4]
+      a.password = row[5]
       if @source_archive_type == 2 || @source_archive_type == 4
-        a.website = r[6]
-        a.aol = r[7]
-        a.msn = r[8]
-        a.icq = r[9]
+        a.website = row[6]
+        a.aol = row[7]
+        a.msn = row[8]
+        a.icq = row[9]
         a.bio = self.build_bio(a).bio
         a.yahoo = ""
         if @source_archive_type == 2
-          a.yahoo = r[10]
-          a.is_adult = r[11]
+          a.yahoo = row[10]
+          a.is_adult = row[11]
         end
       end
     end
@@ -1074,13 +1082,15 @@ class MassImportTool
         when "categories"
           new_tag_type = "Freeform"
           query = "Select catid, category, parentcatid from #{@source_categories_table} where catid = #{x}"
+        else
+          puts "Error: (get_source_work_tags): Invalid tag  type"
       end
       r = @connection.query(query)
-      r.each do |r|
+      r.each do |row|
         nt = ImportTag.new()
         nt.tag_type= new_tag_type
-        nt.old_id = r[0]
-        nt.tag = r[1]
+        nt.old_id = row[0]
+        nt.tag = row[1]
         tl.push(nt)
       end
     end
@@ -1123,7 +1133,7 @@ class MassImportTool
     return get_single_value_target(" Select user_id from user_imports where source_archive_id = #{old_archive_id} and source_user_id = #{old_user_id} ")
   end
 
-  #check for existing user by email address
+  #check for existing user by email address, returns id
   def get_user_id_from_email(emailaddress)
     return get_single_value_target("select id from users where email = '#{emailaddress}'")
   end
@@ -1205,15 +1215,16 @@ class MassImportTool
 
     case settings[:archive_type]
       when "efiction3"
-        set_import_strings(3)
+        @source_archive_type = 3
       when "storyline18"
-        set_import_strings(4)
+        @source_archive_type = 4
       when "efiction1"
-        set_import_strings(1)
+        @source_archive_type = 1
       when "efiction2"
-        set_import_strings(2)
+        @source_archive_type = 2
       when "otwarchive"
-        set_import_strings(5)
+        @source_archive_type = 5
+
     end
 
     #Overrides for abnormal / non-typical imports (advanced use only)
@@ -1275,9 +1286,8 @@ class MassImportTool
       `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
       `unzip #{@import_files_path}/#{@archive_chapters_filename} -d #{@import_files_path}`
       #add the content to the chapters in the database
-
       update_source_chapters
-      PUTS "GOT PAST UPDATE SOURCE CHAPTERS WTH!"
+
     end
   rescue Exception => ex
     puts "error in file opperations 2 #{ex}"
@@ -1304,6 +1314,7 @@ class MassImportTool
         update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
       end
     end
+    puts "6a) Source Chapter Data Reconstructed"
   end
 
   #read a file to a string
@@ -1311,6 +1322,7 @@ class MassImportTool
   def read_file_to_string(filename)
 #    file_path = "#{@import_files_path}/#{filename}"
     text = File.read(filename)
+    return text
   end
 
   #save string to file
