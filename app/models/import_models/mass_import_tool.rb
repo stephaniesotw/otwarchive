@@ -494,13 +494,15 @@ class MassImportTool
       import_chapter_reviews(old_first_chapter_id,new_work.chapters.first.id)
 
 
-      #import series
-      import_series
+
       #create new work import
       create_new_work_import(new_work, ns)
       i = i + 1
     end
+    #import series
+    import_series
     @connection.close()
+
   end
 
   #create user import
@@ -604,7 +606,7 @@ class MassImportTool
     s.complete=completed
     s.summary=summary
     s.title = title
-    s.save
+    s.save!
     return s.id
   end
 
