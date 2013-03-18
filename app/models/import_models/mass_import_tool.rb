@@ -1,5 +1,7 @@
 # encoding=utf-8
 class MassImportTool
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::TagHelper #tag_options needed by auto_link
   require "mysql"
 
   def initialize()
