@@ -1359,7 +1359,7 @@ class MassImportTool
 
      rr.each do |row|
        c = Chapter.find(row[0])
-       c.storytext = simple_format(c.storytext)
+       c.content = simple_format(c.content)
        c.save!
 
 
