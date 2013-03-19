@@ -503,6 +503,7 @@ class MassImportTool
 
       #create new work import
       create_new_work_import(new_work, ns)
+      format_chapters(new_work.id)
       i = i + 1
     end
     #import series
@@ -1332,7 +1333,7 @@ class MassImportTool
         puts "reading chapter: #{chapterid}"
         update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
       end
-      format_chapters
+
     end
     puts "6a) Source Chapter Data Reconstructed"
   end
@@ -1353,8 +1354,8 @@ class MassImportTool
   end
 
 
-   def format_chapters
-     rr = @connection.query("Select work_id from work_imports where source_archive_id = #{@archive_import_id}")
+   def format_chapters(workid)
+     rr = @connection.query("Select id from chapters where work_id = #{workid}")
 
      rr.each do |row|
        c = Chapter.find(row[0])
