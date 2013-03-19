@@ -1321,17 +1321,18 @@ class MassImportTool
         next if f == ".."
         next if f == "."
         chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[0]}/#{f}")
-        chapter_content = Nokogiri::HTML.parse(chapter_content, nil, encoding) rescue ""
+        #chapter_content = Nokogiri::HTML.parse(chapter_content, nil, encoding) rescue ""
 
         #chapter_content = simple_format(chapter_content)
         chapter_content = Mysql.escape_string(chapter_content)
-        ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-        chapter_content = ic.iconv(chapter_content + ' ')[0..-2]
+        #ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+       # chapter_content = ic.iconv(chapter_content + ' ')[0..-2]
         #update the source chapter record
         chapterid = f.gsub(".txt","")
         puts "reading chapter: #{chapterid}"
         update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
       end
+      format_chapters
     end
     puts "6a) Source Chapter Data Reconstructed"
   end
@@ -1350,6 +1351,20 @@ class MassImportTool
   def save_string_to_file(string, filename)
     File.open(filename, 'w') { |f| f.write(string) }
   end
+
+
+   def format_chapters
+     rr = @connection.query("Select work_id from work_imports where source_archive_id = #{@archive_import_id}")
+
+     rr.each do |row|
+       c = Chapter.find(row[0])
+       c.storytext = simple_format(c.storytext)
+       c.save!
+
+
+     end
+
+   end
 
   #process source db sql file and save
   def transform_source_sql()
