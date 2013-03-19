@@ -81,9 +81,9 @@ class MassImportTool
     @create_collection = true
     @new_collection_owner = "StephanieTest"
     @new_collection_owner_pseud = "1010"
-    @new_collection_title = "Imported Archive t Name"
-    @new_collection_name = "whispers"
-    @new_collection_description = "Hermione Granger / Severus Snape Fics"
+    @new_collection_title = "The Quidditch Pitch Test"
+    @new_collection_name = "tqptest"
+    @new_collection_description = "The Quidditch Pitch Test"
 
     #=========================================================
     #Destination Options / Settings
@@ -482,6 +482,9 @@ class MassImportTool
         ns.new_pseud_id = a.pseud_id
       end
       #insert work object
+
+      next if new_work.chapters[0].content.length < 5
+
       puts "Making new work!!!!"
       new_work = create_save_work(ns)
 
