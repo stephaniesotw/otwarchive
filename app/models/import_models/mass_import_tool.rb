@@ -638,9 +638,10 @@ class MassImportTool
     new_work.authors = [Pseud.find_by_id(import_work.new_pseud_id)]
     new_work.revised_at = Date.today
     new_work.created_at = Date.today
+
+    new_work.revised_at = import_work.updated
+    new_work.created_at = import_work.published
     puts "revised = #{new_work.revised_at}"
-    #new_work.revised_at = import_work.updated
-    #new_work.created_at = import_work.published
     puts "crated at  = #{new_work.created_at}"
     new_work.fandom_string = @import_fandom
     new_work.rating_string = "Not Rated"
