@@ -483,10 +483,18 @@ class MassImportTool
       end
       #insert work object
 
-      next if new_work.chapters[0].content.length < 5
+
 
       puts "Making new work!!!!"
-      new_work = create_save_work(ns)
+      new_work = prepare_work(ns)
+      next if new_work.chapters[0].content.length < 5
+      new_work.save!
+      add_chapters(new_work, import_work.old_work_id, false)
+      #attempt to add id to first chapter
+      puts "post save chapter count = #{new_work.chapters.size}"
+
+      puts new_work.errors
+      puts "New Work ID = #{new_work.id}"
 
       #add all chapters to work
       new_work.expected_number_of_chapters = new_work.chapters.count
@@ -620,7 +628,7 @@ class MassImportTool
   #Create work and return once saved, takes ImportWork
   # @return [Work] returns newly created work object
   # @param [ImportWork]  import_work
-  def create_save_work(import_work)
+  def prepare_work(import_work)
     new_work = Work.new
     new_work.title = import_work.title
     puts "Title to be = #{new_work.title}"
@@ -663,13 +671,7 @@ class MassImportTool
       end
     end
 
-    new_work.save!
-    add_chapters(new_work, import_work.old_work_id, false)
-    #attempt to add id to first chapter
-    puts "post save chapter count = #{new_work.chapters.size}"
 
-    puts new_work.errors
-    puts "New Work ID = #{new_work.id}"
     return new_work
   end
 
