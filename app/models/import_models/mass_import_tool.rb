@@ -494,15 +494,12 @@ class MassImportTool
 
       puts "taglist count = #{my_tag_list.count}"
       my_tag_list.each do |t|
-        sleep 1
         add_work_taggings(new_work.id, t)
       end
 
       #save first chapter reviews since cand do it in addchapters like rest
       old_first_chapter_id = get_single_value_target("Select chapid from  #{@source_chapters_table} where sid = #{ns.old_work_id} order by inorder asc Limit 1")
       import_chapter_reviews(old_first_chapter_id,new_work.chapters.first.id)
-
-
 
       #create new work import
       create_new_work_import(new_work, ns)
