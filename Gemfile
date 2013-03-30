@@ -10,6 +10,9 @@ gem 'rails', '3.0.19'
 # Database
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'mysql2'
+ gem 'avatars_for_rails'
+gem 'social_cheesecake'
+gem 'mailboxer'
 
 # Version of redis-rb gem
 # We are currently running Redis 2.6.4 (12/6/2012)
