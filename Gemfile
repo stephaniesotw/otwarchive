@@ -10,7 +10,7 @@ gem 'rails', '3.0.19'
 # Database
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'mysql2'
- gem 'avatars_for_rails'
+
 gem 'social_cheesecake'
 gem 'mailboxer'
 gem 'devise'
