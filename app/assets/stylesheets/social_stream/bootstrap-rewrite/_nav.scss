@@ -1,0 +1,24 @@
+//
+// Navs
+// --------------------------------------------------
+
+
+// BASE CLASS
+// ----------
+
+.nav {
+  margin: 0 0 10px 0;
+  list-style: none;
+}
+
+.navbar{
+  margin-bottom: 12px;
+}
+
+.navbar .nav > li > a {
+  float: none;
+  padding: 10px 15px 10px;
+  color: $gray;
+  text-decoration: none;
+  text-shadow: 0 1px 0 white;
+}

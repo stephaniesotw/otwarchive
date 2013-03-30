@@ -1,0 +1,12 @@
+<section class="content">
+  <div class="case">        
+    <header class="first-line-large">
+      <%= link_to object.name, object %>
+    </header>
+
+    <section class="second-line">
+      <%= t 'time.ago', time: time_ago_in_words(object.updated_at) %>
+    </section>
+  </div>
+</section>
+

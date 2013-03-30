@@ -1,0 +1,15 @@
+<% toolbar :profile, :subject => current_subject %>
+
+<% content_for :title do%>
+  <%= current_subject.name %>
+<% end%>
+
+<% sidebar %>
+
+<%= location(
+ 	link_to(t('menu.information'), [current_subject,:profile]),	
+ 	link_to(t('avatar.other'), avatars_path)
+) %>
+
+<%= render :partial => 'list' %>
+<%= render :partial => 'form' %>

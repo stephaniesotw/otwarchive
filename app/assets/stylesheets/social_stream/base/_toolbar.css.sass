@@ -1,0 +1,115 @@
+#toolbar 
+  .contact-button
+    .btn-group
+      width: 100%
+      margin-top: 6px
+      .btn
+        width: 100% !important
+        @extend .btn-blue
+        @extend .border-radius-5
+        &:hover
+          .caret
+            border-top-color: $white
+            border-bottom-color: $white
+            @include transition(border 1s, color, 1s)
+        .caret 
+          border-top-color: $gray
+          border-bottom-color: $gray
+          margin-left: 14px
+          &:hover
+            border-top-color: $white
+            border-bottom-color: $white
+            @include transition(background 1s, color, 1s)
+
+  .icon_navbar-message-blue,
+  .icon_tool16-info
+    margin-right: 4px
+  ul.buttons
+    background: $white
+    li
+      @extend .btn-blue
+      @include border-radius(5px)
+      &:hover
+        a
+          color: $white
+          @include transition(color 1s)
+      a
+        &:hover
+          color: $white
+  .contacts-toolbar
+    @extend .hidden-phone
+    margin-top: 20px
+    h4
+      display: inline
+    .line
+      display: inline-block
+      border-bottom: 1px solid #888
+      @include size (2px, 49%)
+    .content
+      margin-top: 8px
+      .contact
+        padding: 1px 7px 3px 7px
+        a
+          margin-left: 6%
+          margin-right: 5%
+      .contacts-more
+        @extend .pull-right
+        margin-top: 6px
+.toolbar-messages
+  .toolbar_menu
+    ul
+      margin-top: 20px
+      li
+        padding: 5px
+        margin-bottom: 10px
+        a
+          color: $grayLighter
+          &:hover
+            background-color: transparent
+            color: $blue
+        a.active
+          color: $blue
+
+#avatar_profile,
+.logo_home
+  font-size: 26px
+  line-height: 49px
+  text-overflow: ellipsis
+  overflow: hidden
+  img
+    @extend .border-radius-5
+    width: 150px
+  h5 
+    a
+      text-decoration: none
+      color: $black
+      text-aling: center
+  .subject-name
+    @extend .hidden-tablet 
+    @extend .hidden-phone
+ 
+  .logo_caption
+    font-size: 15px
+    text-align: center
+    @extend .hidden-phone
+    @extend .hidden-tablet
+  input, select
+    @include makeColumnoMargin(2, 0)
+
+  .contact
+    width: 140px
+    padding-top: 0px
+    margin-top: -10p 0 0 16px
+    img
+      margin: 14px 10px 0 0
+
+
+
+.btn-blue
+  img,
+  .icon_navbar-message-blue,
+  .icon_tool16-info
+    margin-right: 4px
+
+       
+

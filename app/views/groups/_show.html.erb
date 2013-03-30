@@ -1,0 +1,9 @@
+<section id="group">
+  <%= render partial: 'toolbar/profile', locals: { subject: @group } %>
+
+  <%= render :partial => "activities/index",
+             :locals  => { section: @group,
+                           owner:   @group } %>
+
+  <%= render partial: 'sidebar/show' %>
+</section>

@@ -1,0 +1,30 @@
+<section id="forgot-pass">
+  <section class="forgot-img">
+    <img class="forgot-img" src="/assets/forgot.jpg">
+  </section>
+  <section class="forgot">
+    <header>
+    <h2>
+      <%= t('devise.passwords.forgot') %>
+    </h2>
+
+    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
+      <%= devise_error_messages! %>
+      <h4>
+        <%= t('devise.passwords.instructions') %>
+      </h4>
+    </header>
+
+    <section class="div_password">
+      <%= f.label :email %>
+
+      <%= f.text_field :email, :class => "form_tag" %>
+        
+      <%= f.submit t('action.send'), :class =>"btn" %>
+      
+      <hr class="soften">
+
+      <%= render :partial => "devise/shared/links" %>
+    </section>
+    <% end %>
+</section>

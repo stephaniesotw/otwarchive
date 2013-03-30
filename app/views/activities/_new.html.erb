@@ -1,0 +1,26 @@
+<% if can? :create, new_post(receiver) %>
+  <article class="wall_input" data-relation-text="<%= t "activity.privacy.contact.#{ receiver == current_subject ? :myself : :outside }.#{ receiver.class.to_s.underscore }", receiver: receiver.name %>">
+    <%= form_for Post.new(owner_id: Actor.normalize_id(receiver)), remote: true do |f| %>
+      <%= f.hidden_field :owner_id %>
+    
+      <%= f.text_area :text, placeholder: t('post.input'), maxlength: Post::MAXIMUM_LENGTH %>
+      <section class="wall_input-actions">
+        <%= f.submit t('activity.share'), class: "btn" %>
+
+        <% SocialStream.activity_forms.each do |element| %>
+          <%= render partial: "#{ element.to_s.pluralize }/new_activity",
+                     locals: { f: f, receiver: receiver } %>
+        <% end %>
+
+        <%= f.select "relation_ids", options_for_select(current_subject.activity_relations_for(receiver).sort.map{ |r| [ r.name, r.id ] }), {}, { multiple: true } %> 
+      </section>
+      <% end %>
+  </article>
+ 
+
+  <%= javascript_tag do %>
+    $(function(){  
+      SocialStream.Wall.show();  
+    });
+  <% end %>
+<% end %>

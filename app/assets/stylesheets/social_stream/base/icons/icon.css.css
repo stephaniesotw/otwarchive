@@ -1,0 +1,341 @@
+/**************general for incons *************/
+
+[class^="icon_"],   [class*="icon_"] {
+  display: inline-block;
+  vertical-align: text-top;
+  background-repeat: no-repeat;
+  *margin-right: .3em;
+}
+
+
+/**************FILES 70px *************/
+
+[class^="icon_file_70-"],   [class*="icon_file_70-"] {
+  width: 70px;
+  height: 70px;
+  background-image: url("icons/files_ico-70.png");
+}
+
+
+.icon_file_70-default { background-position: -0  -42px;}
+.icon_file_70-xls     { background-position: -10px -10px;}
+.icon_file_70-doc     { background-position: -90px -10px;}
+.icon_file_70-ppt     { background-position: -170px -10px;}
+.icon_file_70-pdf     { background-position: -250px -10px;}
+.icon_file_70-sla     { background-position: -330px -10px;}
+.icon_file_70-rtf     { background-position: -410px -10px;}
+.icon_file_70-txt     { background-position: -10px -90px;}
+.icon_file_70-odt     { background-position: -90px -90px;}
+.icon_file_70-ods     { background-position: -170px -90px;}
+.icon_file_70-rtf     { background-position: -250px -90px;}
+.icon_file_70-odp     { background-position: -330px -90px;}
+.icon_file_70-ps      { background-position: -410px -90px;}
+.icon_file_70-rar     { background-position: -10px -170px;}
+.icon_file_70-zip     { background-position: -90px -170px;}
+.icon_file_70-link    { background-position: -170px -170px;}
+.icon_file_70-embeb   { background-position: -250px -170px;}
+.icon_file_70-flv-1   { background-position: -330px -170px;}
+.icon_file_70-mp4     { background-position: -10px -250px;}
+.icon_file_70-wemb    { background-position: -90px -250px;}
+.icon_file_70-flv-2   { background-position: -170px -250px;}
+.icon_file_70-avi     { background-position: -250px -250px;}
+.icon_file_70-mov     { background-position: -330px -250px;}
+.icon_file_70-webma   { background-position: -410px -250px;}
+.icon_file_70-bpm     { background-position: -10px -336px;}
+.icon_file_70-xcf     { background-position: -90px -336px;}
+.icon_file_70-jpeg    { background-position: -170px -336px;}
+.icon_file_70-gif     { background-position: -250px -336px;}
+.icon_file_70-png     { background-position: -330px -336px;}
+.icon_file_70-tiff    { background-position: -410px -336px;}
+.icon_file_70-mp3     { background-position: -10px -410px;}
+.icon_file_70-wav     { background-position: -90px -410px;}
+.icon_file_70-ogg     { background-position: -170px -410px;}
+.icon_file_70-aif     { background-position: -250px -410px;}
+
+
+
+/*..................hover 70.......................
+.icon_file_70-default:hover { background-position: -0  -42px;}
+.icon_file_70-xls:hover     { background-position: -10px -490px;}
+.icon_file_70-doc:hover     { background-position: -90px -490px;}
+.icon_file_70-ppt:hover     { background-position: -170px -490px;}
+.icon_file_70-pdf:hover     { background-position: -250px -490px;}
+.icon_file_70-sla:hover     { background-position: -330px -490px;}
+.icon_file_70-rtf:hover     { background-position: -410px -490px;}
+.icon_file_70-txt:hover     { background-position: -10px -570px;}
+.icon_file_70-odt:hover     { background-position: -90px -570px;}
+.icon_file_70-ods:hover     { background-position: -170px -570px;}
+.icon_file_70-rtf:hover     { background-position: -250px -570px;}
+.icon_file_70-odp:hover     { background-position: -330px -570px;}
+.icon_file_70-ps:hover      { background-position: -410px -570px;}
+.icon_file_70-rar:hover     { background-position: -10px -650px;}
+.icon_file_70-zip :hover    { background-position: -90px -650px;}
+.icon_file_70-link:hover    { background-position: -170px -650px;}
+.icon_file_70-embeb:hover   { background-position: -250px -650px;}
+.icon_file_70-flv-1:hover   { background-position: -330px -650px;}
+.icon_file_70-mp4:hover     { background-position: -10px -730px;}
+.icon_file_70-wemb:hover    { background-position: -90px -730px;}
+.icon_file_70-flv-2:hover   { background-position: -170px -730px;}
+.icon_file_70-avi:hover     { background-position: -250px -730px;}
+.icon_file_70-mov:hover     { background-position: -330px -730px;}
+.icon_file_70-webma:hover   { background-position: -410px -730px;}
+.icon_file_70-bpm:hover     { background-position: -10px -810px;}
+.icon_file_70-xcf:hover     { background-position: -90px -810px;}
+.icon_file_70-jpeg:hover    { background-position: -170px -810px;}
+.icon_file_70-gif:hover     { background-position: -250px -810px;}
+.icon_file_70-png:hover     { background-position: -330px -810px;}
+.icon_file_70-tiff:hover    { background-position: -410px -810px;}
+.icon_file_70-mp3:hover     { background-position: -10px -890px;}
+.icon_file_70-wav:hover     { background-position: -90px -890px;}
+.icon_file_70-ogg:hover     { background-position: -170px -890px;}
+.icon_file_70-aif:hover     { background-position: -250px -890px;}
+
+*/
+
+/**************FILES 50px *************/
+
+
+[class^="file_50-"],   [class*="file_50-"] {
+  width: 51px;
+  height: 55px;
+  line-height: 32px;
+  background-image: url("icons/files_ico-50.png");
+}
+
+
+.icon_file_50-default { background-position: 0  -42px;}
+.icon_file_50-xls     { background-position: -10px -10px;}
+.icon_file_50-doc     { background-position: -70px -10px;}
+.icon_file_50-ppt     { background-position: -130px -10px;}
+.icon_file_50-pdf     { background-position: -190px -10px;}
+.icon_file_50-sla     { background-position: -260px -10px;}
+.icon_file_50-rtf     { background-position: -310px -10px;}
+.icon_file_50-txt     { background-position: -10px -70px;}
+.icon_file_50-odt     { background-position: -70px -70px;}
+.icon_file_50-ods     { background-position: -130px -70px;}
+.icon_file_50-rtf     { background-position: -190px -70px;}
+.icon_file_50-odp     { background-position: -260px -70px;}
+.icon_file_50-ps      { background-position: -310px -70px;}
+.icon_file_50-rar     { background-position: -10px -130px;}
+.icon_file_50-zip     { background-position: -70px -130px;}
+.icon_file_50-link    { background-position: -130px -130px;}
+.icon_file_50-embeb   { background-position: -190px -130px;}
+.icon_file_50-flv-1   { background-position: -260px -130px;}
+.icon_file_50-mp4     { background-position: -10px -190px;}
+.icon_file_50-wemb    { background-position: -70px -190px;}
+.icon_file_50-flv-2   { background-position: -130px -190px;}
+.icon_file_50-avi     { background-position: -190px -190px;}
+.icon_file_50-mov     { background-position: -260px -190px;}
+.icon_file_50-webma   { background-position: -310px -190px;}
+.icon_file_50-bpm     { background-position: -10px -260px;}
+.icon_file_50-xcf     { background-position: -70px -260px;}
+.icon_file_50-jpeg    { background-position: -130px -250px;}
+.icon_file_50-gif     { background-position: -190px -260px;}
+.icon_file_50-png     { background-position: -250px -255px;}
+.icon_file_50-tiff    { background-position: -310px -260px;}
+.icon_file_50-mp3     { background-position: -10px -310px;}
+.icon_file_50-wav     { background-position: -70px -310px;}
+.icon_file_50-ogg     { background-position: -130px -310px;}
+.icon_file_50-aif     { background-position: -190px -310px;}
+
+
+/*..................hover 50.......................
+.icon_file_50-default:hover { background-position: 0  -42px;}
+.icon_file_50-xls:hover     { background-position: -10px -60px;}
+.icon_file_50-doc:hover     { background-position: -70px -60px;}
+.icon_file_50-ppt:hover     { background-position: -130px -60px;}
+.icon_file_50-pdf:hover     { background-position: -190px -60px;}
+.icon_file_50-sla:hover     { background-position: -260px -60px;}
+.icon_file_50-rtf:hover     { background-position: -310px -60px;}
+.icon_file_50-txt:hover     { background-position: -10px -120px;}
+.icon_file_50-odt:hover     { background-position: -70px -120px;}
+.icon_file_50-ods:hover     { background-position: -130px -120px;}
+.icon_file_50-rtf:hover     { background-position: -190px -120px;}
+.icon_file_50-odp:hover     { background-position: -260px -120px;}
+.icon_file_50-ps:hover      { background-position: -310px -120px;}
+.icon_file_50-rar:hover     { background-position: -10px -180px;}
+.icon_file_50-zip:hover     { background-position: -70px -180px;}
+.icon_file_50-link:hover    { background-position: -130px -180px;}
+.icon_file_50-embeb:hover   { background-position: -190px -180px;}
+.icon_file_50-flv-1:hover   { background-position: -260px -180px;}
+.icon_file_50-mp4:hover     { background-position: -10px -240px;}
+.icon_file_50-wemb:hover    { background-position: -70px -240px;}
+.icon_file_50-flv-2:hover   { background-position: -130px -240px;}
+.icon_file_50-avi:hover     { background-position: -190px -240px;}
+.icon_file_50-mov:hover     { background-position: -260px -240px;}
+.icon_file_50-webma:hover   { background-position: -310px -240px;}
+.icon_file_50-bpm:hover     { background-position: -10px -300px;}
+.icon_file_50-xcf:hover     { background-position: -70px -300px;}
+.icon_file_50-jpeg:hover    { background-position: -130px -290px;}
+.icon_file_50-gif:hove      { background-position: -190px -300px;}
+.icon_file_50-png:hover     { background-position: -250px -295px;}
+.icon_file_50-tiff:hover    { background-position: -310px -300px;}
+.icon_file_50-mp3:hover     { background-position: -10px -360px;}
+.icon_file_50-wav:hover     { background-position: -70px -360px;}
+.icon_file_50-ogg:hover     { background-position: -130px -360px;}
+.icon_file_50-aif:hover     { background-position: -190px -360px;}
+
+....*/
+
+/**************NAVBAR HEADER *************/
+
+[class^="_navbar"], [class*="_navbar-"] {
+  background-image: url("icons/navbar_ico-20.png");
+  height:22px;
+  width:22px;
+}
+
+
+.icon_navbar-home         { background-position: -16px -38px;}
+.icon_navbar-message      { background-position: -55px -38px;}
+.icon_navbar-contacts     { background-position: -96px -38px;}
+.icon_navbar-notification { background-position:-136px -38px;}
+.icon_navbar-resources    { background-position:-175px -38px;}
+.icon_navbar-calendar     { background-position:-214px -38px;}
+.icon_navbar-settings     { background-position:-252px -37px;}
+
+
+/*..................hover navbar.......................*/
+
+.icon_navbar-home:hover         { background-position: -16px -8px;}
+.icon_navbar-message:hover      { background-position: -55px -8px;}
+.icon_navbar-contacts:hover     { background-position: -96px -8px;}
+.icon_navbar-notification:hover { background-position:-136px -8px;}
+.icon_navbar-resources:hover    { background-position:-175px -8px;}
+.icon_navbar-calendar:hover     { background-position:-214px -8px;}
+.icon_navbar-settings:hover     { background-position:-252px -7px;}
+
+
+
+
+
+/*.................. icon message 20 x 20 px......................*/
+
+[class^="message-"], [class*="message-"] {
+  height:31px;
+  width:52px;
+  background-image: url("icons/mess_ico-50.png");
+  line-height:52px;
+}
+
+.icon_message-new     { background-position: -9px -50px;}
+.icon_message-sentbox { background-position: -68px -49px;}
+.icon_message-inbox   { background-position: -129px -50px;}
+.icon_message-trash   { background-position: -188px -50px;}
+
+/*hover*/
+.icon_message-new:hover     { background-position: -9px -10px;}
+.icon_message-sentbox:hover { background-position: -68px -10px;}
+.icon_message-inbox:hover  { background-position: -129px -10px;}
+.icon_message-trash:hover  { background-position: -188px -10px;}
+
+
+
+
+/*...................................tool 16x16*/
+
+li{list-style-type:none}
+
+[class^="tool16-"], [class*="tool16-"] {
+
+  background-image: url("icons/tools_ico-16.png");
+  height:16px;
+  width:16px;
+  line-height:16px;
+}
+
+
+.icon_tool16-ok       { background-position: -13px -135px;}
+.icon_tool16-less     { background-position: -42px -135px;}
+.icon_tool16-more     { background-position: -72px -135px;}
+.icon_tool16-multipli { background-position: -102px -135px;}
+.icon_tool16-play     { background-position: -132px -135px;}
+.icon_tool16-pause    { background-position: -162px -135px;}
+.icon_tool16-advance  { background-position: -192px -135px;}
+.icon_tool16-rewind   { background-position: -222px -135px;}
+
+.icon_tool16-arrow_1      { background-position: -12px -160px;}
+.icon_tool16-arrow_2      { background-position: -42px -160px;}
+.icon_tool16-arrow_3      { background-position: -72px -160px;}
+.icon_tool16-arrow_4      { background-position: -102px -160px;}
+.icon_tool16-volume_up    { background-position: -132px -160px;}
+.icon_tool16-volume_down  { background-position: -162px -160px;}
+.icon_tool16-quit_volumen { background-position: -192px -160px;}
+.icon_tool16-on           { background-position: -222px -160px;}
+
+.icon_tool16-edit      { background-position: -12px -185px;}
+.icon_tool16-tools     { background-position: -42px -185px;}
+.icon_tool16-save      { background-position: -72px -185px;}
+.icon_tool16-trash     { background-position: -102px -185px;}
+.icon_tool16-adjunt    { background-position: -132px -185px;}
+.icon_tool16-amplify   { background-position: -162px -185px;}
+.icon_tool16-reduce    { background-position: -192px -185px;}
+.icon_tool16-searcher  { background-position: -222px -185px;}
+
+
+.icon_tool16-private   { background-position: -10px -211px;}
+.icon_tool16-public    { background-position: -40px -211px;}
+.icon_tool16-phone     { background-position: -70px -211px;}
+.icon_tool16-tag       { background-position: -100px -211px;}
+.icon_tool16-question  { background-position: -130px -211px;}
+.icon_tool16-recharge  { background-position: -160px -211px;}
+.icon_tool16-like      { background-position: -190px -87px;}
+.icon_tool16-unlike    { background-position: -220px -211px;}
+
+.icon_tool16-print  { background-position: -12px -235px;}
+.icon_tool16-sms    { background-position: -42px -235px;}
+.icon_tool16-qrcode { background-position: -72px -235px;}
+.icon_tool16-embed  { background-position: -102px -235px;}
+.icon_tool16-branch { background-position: -132px -235px;}
+.icon_tool16-rss    { background-position: -162px -235px;}
+.icon_tool16-info   { background-position: -192px -235px;}
+.icon_tool16-span   { background-position: -222px -235px;}
+
+
+/*..................hover navbar.......................*/
+
+.icon_tool16-ok:hover       { background-position: -13px -10px;}
+.icon_tool16-less:hover     { background-position: -42px -10px;}
+.icon_tool16-more:hover     { background-position: -72px -10px;}
+.icon_tool16-multipli:hover { background-position: -102px -10px;}
+.icon_tool16-play:hover     { background-position: -132px -10px;}
+.icon_tool16-pause:hover    { background-position: -162px -10px;}
+.icon_tool16-advance:hover  { background-position: -192px -10px;}
+.icon_tool16-rewind:hover   { background-position: -222px -10px;}
+
+.icon_tool16-arrow_1:hover      { background-position: -12px -36px;}
+.icon_tool16-arrow_2:hover      { background-position: -42px -36px;}
+.icon_tool16-arrow_3:hover      { background-position: -72px -36px;}
+.icon_tool16-arrow_4:hover      { background-position: -102px -36px;}
+.icon_tool16-volume_up:hover    { background-position: -132px -36px;}
+.icon_tool16-volume_down:hover  { background-position: -162px -36px;}
+.icon_tool16-quit_volumen:hover { background-position: -192px -36px;}
+.icon_tool16-on:hover           { background-position: -222px -36px;}
+
+.icon_tool16-edit:hover       { background-position: -12px -60px;}
+.icon_tool16-tools:hover      { background-position: -42px -60px;}
+.icon_tool16-save:hover       { background-position: -72px -60px;}
+.icon_tool16-trash:hover      { background-position: -102px -60px;}
+.icon_tool16-adjunt:hover     { background-position: -132px -60px;}
+.icon_tool16-amplify:hover    { background-position: -162px -60px;}
+.icon_tool16-reduce:hover     { background-position: -192px -60px;}
+.icon_tool16-searcher:hover   { background-position: -222px -60px;}
+
+
+.icon_tool16-private:hover   { background-position: -10px -87px;}
+.icon_tool16-public:hover    { background-position: -40px -87px;}
+.icon_tool16-phone:hover     { background-position: -70px -87px;}
+.icon_tool16-tag:hover       { background-position: -100px -87px;}
+.icon_tool16-question:hover  { background-position: -130px -87px;}
+.icon_tool16-recharge:hover  { background-position: -160px -87px;}
+.icon_tool16-like:hover      { background-position: -190px -211px;}
+.icon_tool16-unlike:hover    { background-position: -220px -87px;}
+
+.icon_tool16-print:hover  { background-position: -12px -110px;}
+.icon_tool16-sms:hover    { background-position: -42px -110px;}
+.icon_tool16-qrcode:hover { background-position: -72px -110px;}
+.icon_tool16-embed:hover  { background-position: -102px -110px;}
+.icon_tool16-branch:hover { background-position: -132px -110px;}
+.icon_tool16-rss:hover    { background-position: -162px -110px;}
+.icon_tool16-info:hover   { background-position: -192px -110px;}
+.icon_tool16-span:hover   { background-position: -222px -110px;}

@@ -1,0 +1,12 @@
+<nav id="explore-header" class="table" cellpadding="10" data-toggle="buttons-radio">
+  <% [
+        [ 'explore', explore_path ],
+        [ 'participants', explore_path('participants') ],
+        [ 'resources', explore_path('resources') ],
+        [ 'timeline', explore_path('timeline') ],
+        [ 'search', search_path ]
+      ].each do |e| %>
+
+        <div class="btn <%= explore_button_class e[0] %> section" data-target="#<%= e[0] %>" data-toggle="tab" data-path="<%= e[1] %>" <%= 'data-loaded="true"' if current_explore_section?(e[0]) %>><%= t "explore.header.#{ e[0] }" %></div>
+  <% end %>
+</nav>

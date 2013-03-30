@@ -1,0 +1,9 @@
+<section id="home">
+  <%= render partial: 'toolbar/home' %>
+
+  <%= render :partial => "activities/index",
+             :locals => { section: :home,
+                          owner: current_subject } %>
+
+  <%= render partial: 'sidebar/show' %>
+</secion>

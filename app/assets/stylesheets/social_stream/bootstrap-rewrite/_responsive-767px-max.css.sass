@@ -1,0 +1,473 @@
+//
+// Responsive: Landscape phone to desktop/tablet
+// --------------------------------------------------
+
+
+@media (max-width: 767px)
+
+  header.navbar
+    ul.nav
+      margin-top: 13px
+      padding-left: 3%
+      li
+        a
+          padding: 7px 8px 7px !important
+    
+  footer
+    z-index: 10
+    background-color: $white
+    position: fixed
+    width: 100% !important
+    margin-left: -20px !important
+    padding-top: 20px !important
+
+
+
+
+  #home
+    #toolbar
+      .send-message
+        margin-top: 10px
+        a
+          padding: 4px 27px
+          @include border-radius(5px)
+        
+    .activities
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+
+
+
+
+  #user,
+  #group
+    #toolbar
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      .user
+        float: left
+      .send-message
+        margin-top: 10px
+        a
+          padding: 4px 27px
+          @include border-radius(5px)
+        .logo_home,
+        #avatar_profile
+          float: left
+      ul.buttons
+        @include grid-core-span(7, $fluidGridColumnWidth, $fluidGridGutterWidth)
+        display: inline-block
+        float: left
+        margin-left: 8%
+        margin-top: 4px
+        background: $white
+        li
+          margin-bottom: 7px
+          margin-left: 0px
+          a
+            @include grid-core-span(5, $fluidGridColumnWidth, $fluidGridGutterWidth)
+            &:hover
+              text-decoration: none
+
+    .activities
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+
+
+
+
+  #profile
+    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+    margin-left: 0px
+
+    #profile-info
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      float: none
+      margin: 0px auto 0px
+      .tags,
+      .personal,
+      .comunication-info,
+      .experience,
+      .avatar
+        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+        .update
+          @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+
+
+
+  #relation_customs
+    #toolbar
+    h2
+      background-color: #c4c4c4
+      color: $white
+      font-weight: bold
+      padding-left: 10px
+      border-top-left-radius: 10px
+      border-top-right-radius: 10px
+      margin-bottom: 0px !important
+    .relation_list
+      @include grid-core-span(5, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      border-left: (1px solid #c4c4c4)
+      margin-left: 0
+      padding-left: 30px
+      #new_relation
+        margin-top: 20px
+    #permissions
+      @include grid-core-span(6, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      border-right: (1px solid #c4c4c4)
+      float: right
+      margin-left: 10px
+      .postit
+        background-image: none
+        width: auto
+        height: auto
+        padding: 38px 19px 0 0
+    .relation_list,
+    #permissions
+      h4
+        margin-top: 20px
+
+
+
+  #settings
+    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+    border-left: 1px solid #c4c4c4
+    border-right: 1px solid #c4c4c4
+    border-bottom: 1px solid #c4c4c4
+    border-radius: 10px
+    #toolbar
+    h2
+      background-color: #c4c4c4
+      color: $white
+      font-weight: bold
+      padding-left: 10px
+      border-top-left-radius: 10px
+      border-top-right-radius: 10px
+      margin-bottom: 0px !important
+    header
+      border-bottom: 1px solid #c4c4c4
+      text-align: center
+
+
+
+
+  #conversation
+    h2
+    input
+      &[type="submit"]
+        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+
+
+
+
+  #converstions,
+  #conversation,
+  #new_message
+    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+    margin-left: 0px
+    float: none
+    #toolbar
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      background-color: $white
+      @include border-radius(5px)
+      ul
+        @include grid-core-span(8, $fluidGridColumnWidth, $fluidGridGutterWidth)
+        height: 60px
+        margin-left: auto
+        margin-right: auto
+        margin-top: 13px
+        padding-left: 3%
+        li
+          @include grid-core-span(3, $fluidGridColumnWidth, $fluidGridGutterWidth)
+          display: inline
+          margin-bottom: 0px
+          float: left
+          margin-top: 12px
+          a
+            width: auto
+            text-align: center
+    form.new_message
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+    .conversations
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-top: 26px
+      .conversation
+        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+        .content_left
+          width: 60px
+          margin-right: 13px
+          margin-left: 0px
+        .content_right
+          width: 80%
+          .action
+            float: right
+            margin: -20px -45px 0 0
+    
+  #conversation 
+    .conversation_full
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+  #new_message
+    label
+      margin-bottom: 0px
+      margin-top: 6px
+    .select2-container
+      width: 100%
+    input
+      &[type="text"]
+        width: 98%
+    
+
+
+
+  #contacts
+    .contacts
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      float: left
+      margin-left: 0
+      .tab-content
+        .contact
+          margin: 4px 22px 4px 18px
+          .avatar
+            width: 45px !important
+          .info
+            font-size: 11px
+            color: #ccc
+            z-index: 1
+          .add
+            margin-top: 2px
+
+
+
+
+  #documents
+    input
+      &[type="text"]
+        float: right
+
+
+
+
+  #frontpage
+    .explanation
+      h3
+        font-size: 15px
+        line-height: 24px
+        text-align: right
+      h4
+        font-size: 13px
+        text-align: right
+    
+    #sign_in
+      @include grid-core-span(5, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 12%
+      margin-top: 18px
+      padding: 0
+      h3
+        margin: 17px 12px 20px 0
+      form.new_user
+        padding: 0 10px
+        .login_data
+          #user_mail,
+          #user_password
+            width: 96%
+        
+
+
+
+  #registration
+    .div_registration
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+      margin-top: 18px
+      padding: 0
+      h3
+        margin: 17px 12px 20px 0
+      #new_user
+        .reg-labels
+          padding: 0 10px
+          .login_data
+            input
+              &[type="password"]
+                width: 96% !important
+            input
+              &[type="text"]
+                width: 96% !importantv
+
+
+
+  #forgot-pass
+    .forgot
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+      margin-top: 18px
+      padding: 0 10px
+      h3
+        margin: 17px 12px 20px 0
+
+      .div_password
+        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+        padding: 0px
+        .form_tag
+          width: 96% !important
+          input
+            &[type="submit"]
+              float: right
+
+  #explore-content
+    .sub-content-medium,
+    .sub-content-full,
+    .sub-content-small,
+    .sub-content-mini,
+    .sub-content-medium-offset,
+    .sub-content-full-offset,
+    .sub-content-small-offset,
+    .sub-content-mini-offset
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin: 0px !important
+      margin-bottom: 20px !important
+      .content
+        width: 96%
+        margin-bottom: 10px
+        .case
+          margin: 3px 0 0 8px
+    .timeline
+      .media
+        .avatar
+          float: left
+    #search
+      margin-top: 0px
+      width: 100%
+      .input-xlarge
+        width: 70% 
+        margin-left: 3px
+
+// UP TO LANDSCAPE PHONE
+// ---------------------
+
+@media (max-width: 480px)
+
+  header.navbar
+    ul 
+      li
+        a 
+          padding: 6px 8px 6px
+
+  #home,
+  #user,
+  #group
+    #toolbar
+      .send-message
+        margin-top: 10px
+        a
+          padding: 4px 27px
+          @include border-radius(5px)
+      .contact-button
+        .btn-group
+          width: 100%
+          margin-top: 6px
+          .btn
+            width: 100% !important
+      ul.buttons
+        @include grid-core-span(6, $fluidGridColumnWidth, $fluidGridGutterWidth)
+    .activities
+      .wall_input
+        #new_post
+          input
+            &[type="text"] 
+              padding-left: 5%
+              padding-right: 5%
+              width: 89%
+          .wall_input-actions
+            .btn-group
+              margin-top: 10px
+
+
+  #sidebar
+    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+    margin-left: 2%
+
+
+
+  #relation_customs
+    .relation_list
+      padding-left: 10px
+
+
+
+  #converstions,
+  #conversation
+    .toolbar-home
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      ul.nav
+        li
+          display: inline
+          margin-bottom: 0px
+          float: left
+          margin-top: 17px
+    .conversations      
+      .conversation
+        margin-top: 26px
+        .content_left
+          margin-right: 2px
+        .content_right 
+          width: 69%
+          .actions
+            margin: -20px -45px 0 0
+
+
+  .conversation_full
+    margin: 0 auto
+    h3
+      font-size: 23px
+      white-space: normal
+    .messages
+      .media
+        .pull-left
+          float: left
+    .action
+      margin-top: -30px
+
+#new_message
+  .select2-container
+    width: 102%
+
+
+
+  #frontpage
+    #sign_in
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-left: 0
+      padding: 0
+      h3
+        margin: 17px 12px 20px 0
+      form.new_user
+        padding: 0 10px
+        .login_data
+          input
+            &[type="password"]
+              width: 96%
+          input
+            &[type="text"]
+              width: 96%
+
+
+
+  #registration
+    .div_registration
+      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+      margin-top: 18px
+      padding: 0
+
+    #new_user
+      .reg-labels
+        padding: 0 10px
+        .form_tag
+          width: 96%
+        input
+          &[type="email"]
+            width: 96%
+
+
+  #explore-content
+    #search
+      width: 99

@@ -1,0 +1,50 @@
+.headerFront
+  .logo
+    display: inline
+    margin-top: 4px
+  .brand
+    display: inline-block
+header
+  .navbar-inner
+    .logo,
+    .logo-responsive
+      float: left
+      padding-top: 4px
+    .logo
+      @extend .hidden-phone
+      @extend .hidden-tablet
+    .logo-responsive
+      @extend .hidden-desktop
+    .search-mobile
+      @extend .hidden-desktop
+      float: left
+      margin-top: 17px
+      margin-left: 4px
+    .search-nav
+      float: left
+      width: 152px
+      margin-top: 5px 0 0 20px
+    .explore-nav
+      @extend .hidden-phone
+      height: 50px
+      width: 94px
+      float: left
+      margin-top: 19px
+
+.nav
+  img
+    width: 20px
+  .name
+    @extend .hidden-phone
+    vertical-align: bottom
+  .calendar_icon
+    @extend .hidden-desktop
+
+
+.dropdown
+  margin-top: 7px
+  .dropdown-menu
+    margin: 6px -142px 0
+    
+  .dropdown-toggle
+    margin-right: 5px

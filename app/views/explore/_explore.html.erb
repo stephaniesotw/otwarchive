@@ -1,0 +1,19 @@
+<section class="sub-content-medium">
+  <header>
+    <%= t 'explore.explore.most_popular' %>
+  </header>
+
+  <%= render partial: 'explore/trending',
+             collection: ActivityObject.not_actor.popular.first(6),
+             as: :object %>
+</section>
+
+<section class="sub-content-small">
+  <header>
+    <%= t 'explore.explore.most_followed' %>
+  </header>
+
+  <%= render partial: 'explore/followed',
+             collection: Actor.followed.first(6),
+             as: :actor %>
+</section>

@@ -1,0 +1,9 @@
+<% content_for :title do %>
+  <%=t('settings.one')%>
+<% end %>
+
+<section id="settings">
+  <%= render partial: 'toolbar/profile', locals: { subject: current_subject } %>
+
+  <%= render :partial => 'index' %>
+</section>

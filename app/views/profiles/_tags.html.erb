@@ -1,0 +1,26 @@
+<section class="tags">
+  <header>
+    <%= render partial: 'edit_icon' %>
+    <h4>
+      <%= t('profile.tags.other') %>
+    </h4>
+  </header>
+
+
+  <div class="briefing">
+    <% if @profile.subject.tag_list.count > 0 %>
+      <%= tag_list @profile.subject %>
+    <% else %>
+      <%= render partial: 'empty' %>
+    <% end %>
+  </div>
+
+  <% if can?(:update, @profile) %>
+    <div class="update">
+      <%= form_for(@profile, :url => [ @profile.subject, :profile ]) do |f| %>
+        <%= f.text_field :tag_list, "data-path" => tags_path(format: :json) %>
+        <%= f.submit :class => "btn" %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

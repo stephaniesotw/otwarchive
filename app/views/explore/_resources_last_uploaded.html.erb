@@ -1,0 +1,11 @@
+<section class="content">
+  <div class="case">
+    <nav class="first-line-large">
+      <%= link_to object.object.title, object.object %>
+    </nav>
+    <section class="second-line">
+      <%= t 'explore.resources.uploaded_since', time: l(object.created_at) %>
+    </section>
+  </div>
+</section>
+

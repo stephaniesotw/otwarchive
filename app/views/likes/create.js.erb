@@ -1,0 +1,2 @@
+$(".like_<%= dom_id(@like.object) %>").html("<%= escape_javascript(render partial: 'activities/like', locals: { activity: @like.object }) %>");
+

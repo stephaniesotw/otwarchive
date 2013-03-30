@@ -1,0 +1,12 @@
+<% if (sgs = current_subject.suggestions(2)).present? %>
+  <section id="suggestions" data-path="<%= suggestion_contacts_path %>">
+    <header>
+      <h4>
+        <%=t('contact.suggestion.other') %>
+      </h4>
+    </header>
+    <article class="contents">
+    <%= render :partial => "contacts/contact", :collection => sgs, :locals => { destroy_params: { reject: true } } %>
+    </article>
+  </section>
+<%end%>

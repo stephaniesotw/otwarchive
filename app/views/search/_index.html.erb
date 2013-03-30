@@ -1,0 +1,37 @@
+<section id="search" class="sub-content-full">
+  <h4>
+    <%= t 'explore.search.title' %>
+  </h4>
+  <!-- TODO
+  <div class="btn-group" data-toggle="buttons-checkbox">
+      <button type="button" class="btn">todo</button>
+      <button type="button" class="btn">usuarios</button>
+      <button type="button" class="btn">instituciones</button>
+      <button type="button" class="btn">publicaciones</button>
+      <button type="button" class="btn">comentarios</button>
+      <button type="button" class="btn">imagenes</button>
+      <button type="button" class="btn">videos</button>
+      <button type="button" class="btn">audios</button>
+      <button type="button" class="btn">ficheros</button>
+    </div>
+  -->
+  <%= form_tag search_path, method: :get do %>
+     <%= select_tag 'type', options_for_select(SocialStream::Search.options_for_type_select, params[:type]) %>
+
+     <%= text_field_tag :q, params[:q], class: "input-xlarge", placeholder: t('explore.search.placeholder') %>
+     <%= submit_tag t('explore.search.submit'), class: "btn btn-large" %>
+  <% end %>
+
+  <article id="search-results">
+    <%= render partial: 'search/results' %>
+
+    <% if @search_result.size > SearchController::RESULTS_SEARCH_PER_PAGE %>
+      <%= render partial: 'layouts/more',
+                 locals: { path: search_path(q: params[:q], type: params[:type]) } %>
+    <% end %>
+
+    <%= javascript_tag do %>
+      SocialStream.Search.show();
+    <% end %>
+  </article>
+</section>

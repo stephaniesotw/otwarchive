@@ -1,0 +1,13 @@
+<section class="relation_list" data-permissions_path="<%= permissions_path %>">
+  <h4>
+    <%= t 'relation_custom.list.title' %>
+  </h4>
+
+  <%= render list %>
+   
+  <div id="new_relation">
+    <%= link_to t('relation_custom.new'), '#', class: 'new' %>
+
+    <%= render :partial => 'relation/customs/form' %>
+  </div> 
+</section>

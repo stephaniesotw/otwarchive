@@ -1,0 +1,12 @@
+<% content_for :title do %>
+  <%= current_subject.name %>
+<% end %>
+
+<section id="notifications">
+
+  <%= render partial: 'toolbar/home'  %>
+
+  <%= render :partial => 'index' %>
+
+  <%= render partial: 'sidebar/show' %>
+</section>
