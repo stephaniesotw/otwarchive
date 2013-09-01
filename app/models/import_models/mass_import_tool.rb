@@ -52,6 +52,7 @@ class MassImportTool
     #category mapping
     #================
     @categories_as_subcollections = false
+    #Categories as subcollections isn't supported at Ao3, left for later use by other archives
     @categories_as_tags = true
     @subcategory_depth = 1
     #values "merge_top" "move_top" "drop" "merge all" "custom"
@@ -422,6 +423,7 @@ class MassImportTool
       #assign data to import work object
       ns = assign_row_import_work(ns, row)
       my_tag_list = ns.tag_list
+      #Set source archive id for new story / work object
       ns.source_archive_id = @archive_import_id
       puts "attempting to get new user id, user: #{ns.old_user_id}, source: #{ns.source_archive_id}"
       #goto next if no chapters
@@ -534,7 +536,7 @@ class MassImportTool
       new_ui.save!
       return new_ui.id
     rescue Exception => e
-      puts "Error: 777: #{e}"
+      puts "Error: 777: function create_user_import #{e}"
       return 0
     end
   end
@@ -553,7 +555,7 @@ class MassImportTool
       new_wi.save!
       return new_wi.id
     rescue Exception => e
-      puts "Error creating new work import: #{e}"
+      puts "Error in function create_new_work import: #{e}"
       return 0
     end
   end
@@ -571,7 +573,7 @@ class MassImportTool
       end
       puts "chapter saved"
     rescue Exception => ex
-      puts error "3318: saving chapter #{ex}"
+      puts error "3318: saving chapter - error in function save_chapters #{ex}"
     end
   end
 
