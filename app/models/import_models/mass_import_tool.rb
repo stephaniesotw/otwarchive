@@ -165,11 +165,11 @@ class MassImportTool
     tag_list = tl
     case @source_archive_type
       when 4 #storyline
-        #Categories
+             #Categories
         tag_list = get_tag_list_helper("Select caid, caname from #{@source_categories_table}; ", "Category", tag_list)
         tag_list = get_tag_list_helper("Select subid, subname from #{@source_subcategories_table}; ", 99, tag_list)
       when 3 #efiction 3
-        #classes
+             #classes
         tag_list = get_tag_list_helper("Select class_id, class_type, class_name from #{@source_classes_table}; ", "Freeform", tag_list)
         #categories
         tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
@@ -177,7 +177,7 @@ class MassImportTool
         tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
 
       when 2 #efiction 2
-        #categories
+             #categories
         tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
         #characters
         tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
@@ -511,7 +511,7 @@ class MassImportTool
 
       #save first chapter reviews since cand do it in addchapters like rest
       old_first_chapter_id = get_single_value_target("Select chapid from  #{@source_chapters_table} where sid = #{ns.old_work_id} order by inorder asc Limit 1")
-      import_chapter_reviews(old_first_chapter_id,new_work.chapters.first.id)
+      import_chapter_reviews(old_first_chapter_id, new_work.chapters.first.id)
 
       #create new work import
       create_new_work_import(new_work, ns)
@@ -1028,7 +1028,7 @@ class MassImportTool
               ic = ImportCategory.new
               ic.category_name=r3[2].gsub(/\s+/, "")
               ic.new_id= 0
-                  ic.old_id=r3[0]
+              ic.old_id=r3[0]
               ic.new_parent_id=@new_collection_id
               ic.old_parent_id=r3[1]
               ic.title=r3[2]
@@ -1056,7 +1056,7 @@ class MassImportTool
               ic = ImportCategory.new
               ic.category_name=r3[2].gsub(/\s+/, "")
               ic.new_id= 0
-                  ic.old_id=r3[0]
+              ic.old_id=r3[0]
               ic.old_parent_id=r3[1]
               ic.title=r3[2]
               ic.description=r3[3]
@@ -1302,18 +1302,16 @@ class MassImportTool
     `unzip #{@import_files_path}/#{@sql_filename} -d #{@import_files_path}`
     transform_source_sql()
     load_source_db()
-  begin
-    if @archive_has_chapter_files
-      `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
-      `unzip #{@import_files_path}/#{@archive_chapters_filename} -d #{@import_files_path}`
-      #add the content to the chapters in the database
-      update_source_chapters
-
+    begin
+      if @archive_has_chapter_files
+        `mv /tmp/#{@archive_chapters_filename} #{@import_files_path}`
+        `unzip #{@import_files_path}/#{@archive_chapters_filename} -d #{@import_files_path}`
+        #add the content to the chapters in the database
+        update_source_chapters
+      end
+    rescue Exception => ex
+      puts "error in file opperations 2 #{ex}"
     end
-  rescue Exception => ex
-    puts "error in file opperations 2 #{ex}"
-  end
-
   end
 
   # File actionpack/lib/action_view/helpers/text_helper.rb, line 266
@@ -1323,8 +1321,8 @@ class MassImportTool
     start_tag = tag('p', html_options, true)
     text = sanitize(text) unless options[:sanitize] == false
     text = text.to_str
-    text.gsub!(/\r\n?/, "\n")                    # \r\n and \r -> \n
-    text.gsub!(/\n\n+/, "</p>\n\n#{start_tag}")  # 2+ newline  -> paragraph
+    text.gsub!(/\r\n?/, "\n") # \r\n and \r -> \n
+    text.gsub!(/\n\n+/, "</p>\n\n#{start_tag}") # 2+ newline  -> paragraph
     text.gsub!(/([^\n]\n)(?=[^\n])/, '\1<br />') # 1 newline   -> br
     text.insert 0, start_tag
     text.html_safe.safe_concat("</p>")
@@ -1342,13 +1340,12 @@ class MassImportTool
         next if f == "."
         chapter_content = read_file_to_string("#{@import_files_path}/stories/#{r3[0]}/#{f}")
         #chapter_content = Nokogiri::HTML.parse(chapter_content, nil, encoding) rescue ""
-
         #chapter_content = simple_format(chapter_content)
         chapter_content = Mysql.escape_string(chapter_content)
         #ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-       # chapter_content = ic.iconv(chapter_content + ' ')[0..-2]
+        # chapter_content = ic.iconv(chapter_content + ' ')[0..-2]
         #update the source chapter record
-        chapterid = f.gsub(".txt","")
+        chapterid = f.gsub(".txt", "")
         puts "reading chapter: #{chapterid}"
         update_record_target("update #{@source_chapters_table} set storytext = \"#{chapter_content}\" where chapid = #{chapterid}")
       end
@@ -1372,19 +1369,15 @@ class MassImportTool
     File.open(filename, 'w') { |f| f.write(string) }
   end
 
+  def format_chapters(workid)
+    rr = @connection.query("Select id from chapters where work_id = #{workid}")
+    rr.each do |row|
+      c = Chapter.find(row[0])
+      c.content = simple_format(c.content)
+      c.save!
+    end
 
-   def format_chapters(workid)
-     rr = @connection.query("Select id from chapters where work_id = #{workid}")
-
-     rr.each do |row|
-       c = Chapter.find(row[0])
-       c.content = simple_format(c.content)
-       c.save!
-
-
-     end
-
-   end
+  end
 
   #process source db sql file and save
   def transform_source_sql
@@ -1392,7 +1385,7 @@ class MassImportTool
     ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
     valid_string = ic.iconv(sql_file + ' ')[0..-2]
     sql_file = valid_string
-    sql_file = sql_file.gsub("TYPE=MyISAM","")
+    sql_file = sql_file.gsub("TYPE=MyISAM", "")
     sql_file = sql_file.gsub(@source_table_prefix, "#{@temp_table_prefix}#{@source_table_prefix}")
     save_string_to_file(sql_file, "#{@import_files_path}/data_clean.sql")
   end
