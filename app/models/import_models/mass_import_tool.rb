@@ -288,6 +288,7 @@ class MassImportTool
   end
 
   #assign row data to import_Work object
+  # @param [import_work] ns
   def assign_row_import_work(ns, row)
     case @source_archive_type
       #storyline
@@ -392,11 +393,11 @@ class MassImportTool
   # Main Worker Sub
   def import_data
     puts "1) Setting Import Values"
-    self.set_import_strings()
+    self.set_import_strings(@source_archive_type)
     #create collection & archivist
     self.create_archivist_and_collection
     #create import record
-    create_import_record
+    self.create_import_record
     #set file upload path with import id from previous step
     @import_files_path = "#{Rails.root.to_s}/imports/#{@archive_import_id}"
     #check that import directory exists if not create it , do other import processes move extract etc
@@ -488,9 +489,6 @@ class MassImportTool
         ns.new_pseud_id = a.pseud_id
       end
       #insert work object
-
-
-
       puts "Making new work!!!!"
       new_work = prepare_work(ns)
       next if new_work.chapters[0].content.length < 5
@@ -621,14 +619,22 @@ class MassImportTool
     end
   end
 
-
+  #create series
+  # @param [string] title
+  # @param [string] summary
+  # @param [boolean] completed
+  # @return [integer] new series id
   def create_series(title, summary, completed)
-    s = Series.new
-    s.complete=completed
-    s.summary=summary
-    s.title = title
-    s.save!
-    return s.id
+    begin
+      s = Series.new
+      s.complete=completed
+      s.summary=summary
+      s.title = title
+      s.save!
+      return s.id
+    rescue
+      return 0
+    end
   end
 
   #Create work and return once saved, takes ImportWork
@@ -876,8 +882,8 @@ class MassImportTool
 
   # Set Archive Strings and values basedo on archive type, based on the predinined values used
   # with the particular source archive software
-  def set_import_strings
-    case @source_archive_type
+  def set_import_strings(source_archive_type)
+    case source_archive_type
       when 1 # efiction 1
         @source_chapters_table = "#{@temp_table_prefix}#{@source_table_prefix}chapters"
         @source_reviews_table = "#{@temp_table_prefix}#{@source_table_prefix}reviews"
@@ -1021,7 +1027,7 @@ class MassImportTool
             rr.each do |r3|
               ic = ImportCategory.new
               ic.category_name=r3[2].gsub(/\s+/, "")
-              ic.new_id=
+              ic.new_id= 0
                   ic.old_id=r3[0]
               ic.new_parent_id=@new_collection_id
               ic.old_parent_id=r3[1]
@@ -1049,7 +1055,7 @@ class MassImportTool
             rr.each do |r3|
               ic = ImportCategory.new
               ic.category_name=r3[2].gsub(/\s+/, "")
-              ic.new_id=
+              ic.new_id= 0
                   ic.old_id=r3[0]
               ic.old_parent_id=r3[1]
               ic.title=r3[2]
@@ -1323,6 +1329,7 @@ class MassImportTool
     text.insert 0, start_tag
     text.html_safe.safe_concat("</p>")
   end
+
   #update each record in source db reading the chapter text file importing it into content field
   def update_source_chapters
     #select source chapters from database
@@ -1384,9 +1391,8 @@ class MassImportTool
     sql_file = read_file_to_string("#{@import_files_path}/#{@sql_filename}")
     ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
     valid_string = ic.iconv(sql_file + ' ')[0..-2]
-sql_file = valid_string
-    sql_file =  sql_file.gsub("TYPE=MyISAM","")
-
+    sql_file = valid_string
+    sql_file = sql_file.gsub("TYPE=MyISAM","")
     sql_file = sql_file.gsub(@source_table_prefix, "#{@temp_table_prefix}#{@source_table_prefix}")
     save_string_to_file(sql_file, "#{@import_files_path}/data_clean.sql")
   end
