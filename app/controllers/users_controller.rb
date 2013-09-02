@@ -216,6 +216,11 @@ class UsersController < ApplicationController
 
   end
 
+  def finalize_import
+    @user.age_over_13 = params[:user][:age_over_13]
+    @user.terms_of_service = params[:user][:terms_of_service]
+  end
+
   def activate
     if params[:id].blank?
       setflash; flash[:error] = ts("Your activation key is missing.")

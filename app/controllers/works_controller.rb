@@ -814,13 +814,24 @@ public
   def load_pseuds
     @allpseuds = (current_user.pseuds + (@work.authors ||= []) + @work.pseuds).uniq
     @pseuds = current_user.pseuds
-    @coauthors = @allpseuds.select{ |p| p.user.id != current_user.id}
+    @coauthors = @allpseuds.select do |p|
+      p.user.id != current_user.id
+    end
     to_select = @work.authors.blank? ? @work.pseuds.blank? ? [current_user.default_pseud] : @work.pseuds : @work.authors
     @selected_pseuds = to_select.collect {|pseud| pseud.id.to_i }.uniq
   end
 
   def load_work
     @work = Work.find_by_id(params[:id])
+    puts @work.redirect_work_id
+    Rails.logger.debug @work.redirect_work_id
+
+    if @work.redirect_work_id > 1
+      params[:id] = @work.redirect_work_id
+      @work = Work.find(@work.redirect_work_id)
+
+    end
+
     if @work.nil?
       setflash; flash[:error] = ts("Sorry, we couldn't find the work you were looking for.")
       redirect_to root_path and return
@@ -834,8 +845,11 @@ public
   # Sets values for @work, @chapter, @coauthor_results, @pseuds, and @selected_pseuds
   # and @tags[category]
   def set_instance_variables
-    if params[:id] # edit, update, preview, manage_chapters
-      @work ||= Work.find(params[:id])
+   if params[:id] # edit, update, preview, manage_chapters
+
+     @work = Work.find(params[:id])
+
+
       @previous_published_at = @work.first_chapter.published_at
       @previous_backdate_setting = @work.backdate
       if params[:work]  # editing, save our changes

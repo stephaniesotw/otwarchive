@@ -10,7 +10,7 @@ gem 'rails', '3.2.13'
 # Database
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'mysql2'
-
+gem 'mysql'
 # Version of redis-rb gem
 # We are currently running Redis 2.6.4 (12/6/2012)
 gem 'redis', ">=3.0"
@@ -86,6 +86,7 @@ end
 # Deploy with Capistrano
 gem 'capistrano-gitflow_version', '>=0.0.3', :require => false
 gem 'rvm-capistrano'
+
 
 group :production do
   # Use unicorn as the web server
