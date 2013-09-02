@@ -6,12 +6,12 @@ class Opendoors::ImportsController < ApplicationController
   def index
     @admin_import = AdminImport.new
 
-    @nmi = MassImportTool.new()
+    @nmi = MassImportTool.new
   end
 
 
   def create
-    @nmi = MassImportTool.new()
+    @nmi = MassImportTool.new
     @nmi.import_data
 =begin
     unless params[:admin_import] == nil

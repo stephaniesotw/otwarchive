@@ -2,9 +2,9 @@
 class MassImportTool
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::TagHelper #tag_options needed by auto_link
-  require "mysql"
+  require 'mysql'
 
-  def initialize()
+  def initialize
     #Import Class Version Number
     @version = 1
     #################################################
@@ -38,29 +38,32 @@ class MassImportTool
     @import_name = "New Import"
     @import_fandom = "Harry Potter"
 
-    #will error if not unique, just let it create it and assign it if you are unsure
+    #Create record for imported archive (false if already exists)
+    @create_archive_import_record = true
+
+    #will error if not unique, just let it automatically create it and assign it if you are unsure
     #Import Archive ID
     @archive_import_id = 106
 
-    #Import reviews t/f
+    #Import Reviews (true / false)
     @import_reviews = false
-    #Create record for imported archive (false if already exists)
-    @create_archive_import_record = true
+
     #Match Existing Authors by Email-Address
     @match_existing_authors = true
 
     #category mapping
     #================
-    @categories_as_subcollections = false
-    #Categories as subcollections isn't supported at Ao3, left for later use by other archives
+    @categories_as_sub_collections = false
+    #Categories as sub-collections isn't supported at Ao3, left for later use by other archives
     @categories_as_tags = true
     @subcategory_depth = 1
     #values "merge_top" "move_top" "drop" "merge all" "custom"
     @subcategory_remap_method = "merge_top"
     #TODO implement modified subcat code
+    #NOTE: THE ABOVE CAN WAIT AS subcats are not in the ao3 workings, will be available for future use
     #Message Values
     ####################################
-    ##If true, send invites unconditionaly,
+    ##If true, send invites unconditionally,
     # if false add them to the que to be sent when it gets to it, could be delayed.
     @bypass_invite_que = true
 
@@ -71,15 +74,17 @@ class MassImportTool
     @send_individual_messages = false
 
     @new_user_email_id = 0
-    @new_user_notice_id = 0
     @existing_user_email_id = 0
+
+    @new_user_notice_id = 0
     @existing_user_notice_id = 0
 
     #New Collection Values
     #####################################
     #ID Of the newly created collection, filled with value automatically if create collection is true
-    @new_collection_id = 123456789
+
     @create_collection = true
+    @new_collection_id = 123456789
     @new_collection_owner = "StephanieTest"
     @new_collection_owner_pseud = "1010"
     @new_collection_title = "The Quidditch Pitch Test"
@@ -107,6 +112,7 @@ class MassImportTool
     #========================
     #Source Variables
     #========================
+    "Old Archive URL"
     @source_base_url = "http://thequidditchpitch.org"
     #Source Archive Type
     @source_archive_type = 3
@@ -127,8 +133,8 @@ class MassImportTool
     @source_subcatagories_table = nil #Source Subcategories Table
     @source_categories_table = nil #Source Categories Table
     @source_author_query = nil #source author query
-    @source_series_table = nil
-    @source_inseries_table = nil
+    @source_series_table = nil #Source Series Table
+    @source_inseries_table = nil #Source inseries Table
     #############
     #debug stuff
     @debug_update_source_tags = true
@@ -158,13 +164,11 @@ class MassImportTool
   def get_tag_list(tl)
     tag_list = tl
     case @source_archive_type
-      #storyline
-      when 4
+      when 4 #storyline
         #Categories
         tag_list = get_tag_list_helper("Select caid, caname from #{@source_categories_table}; ", "Category", tag_list)
         tag_list = get_tag_list_helper("Select subid, subname from #{@source_subcategories_table}; ", 99, tag_list)
-      #efiction 3
-      when 3
+      when 3 #efiction 3
         #classes
         tag_list = get_tag_list_helper("Select class_id, class_type, class_name from #{@source_classes_table}; ", "Freeform", tag_list)
         #categories
@@ -172,13 +176,13 @@ class MassImportTool
         #characters
         tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
 
-      when 2
+      when 2 #efiction 2
         #categories
         tag_list = get_tag_list_helper("Select catid, category from #{@source_categories_table}; ", "Freeform", tag_list)
         #characters
         tag_list = get_tag_list_helper("Select charid, charname from #{@source_characters_table}; ", "Character", tag_list)
       else
-        puts "Error: (get_tag_list): Invalid source archive type"
+        puts "Error: (get_tag_list): Invalid or source archive type, or type not currently implemented"
     end
     return tag_list
   end
@@ -386,7 +390,7 @@ class MassImportTool
 
   ##################################################################################################
   # Main Worker Sub
-  def import_data()
+  def import_data
     puts "1) Setting Import Values"
     self.set_import_strings()
     #create collection & archivist
@@ -415,7 +419,7 @@ class MassImportTool
       #create new ImportWork Object
       ns = ImportWork.new()
       #create new importuser object
-      a = ImportUser.new()
+      #a = ImportUser.new()
       #Create Taglisit for this story
       my_tag_list = Array.new()
       ns.tag_list = my_tag_list
@@ -444,7 +448,7 @@ class MassImportTool
         temp_author_id = get_user_id_from_email(a.email)
         if temp_author_id == 0
           #if not exist , add new user with user object, passing old author object
-          new_a = ImportUser.new
+          #new_a = ImportUser.new
           new_a = self.add_user(a)
           #pass values to new story object
           ns.penname = new_a.penname
@@ -591,12 +595,12 @@ class MassImportTool
   end
 
   #import series objects
-  def import_series()
+  def import_series
     #create the series objects in new archive
     r = @connection.query("Select seriesid,title,summary,uid,rating,classes,characters, isopen from #{@source_series_table}")
     if r.num_rows >= 1
       r.each do |row|
-        s = Series.new
+        #s = Series.new
         s = create_series(row[1], row[2], row[7])
         import_series_works(row[0], s.id)
       end
@@ -666,7 +670,7 @@ class MassImportTool
     puts "chapters in new_work.chapters = #{new_work.chapters.size}"
     #assign to main import collection
     new_work.collections << Collection.find(@new_collection_id)
-    if @categories_as_subcollections
+    if @categories_as_sub_collections
       collection_array = get_work_collections(import_work.categories)
       collection_array.each do |cobj|
         new_work.collections << cobj unless new_work.collections.include?(cobj)
@@ -720,7 +724,7 @@ class MassImportTool
 
     @new_collection_id = c.id
     puts "Archivist #{u.login} set up and owns collection #{c.name}."
-    if @categories_as_subcollections
+    if @categories_as_sub_collections
       puts "Creating sub collections"
       convert_categories_to_collections(0)
     end
@@ -785,7 +789,7 @@ class MassImportTool
             c.posted = 1
             c.published_at = Date.today
             c.created_at = Date.today
-            if !first
+            unless first
               c.save!
               new_work.save
               #get reviews for all chapters but chapter 1, all chapter 1 reviews done in separate step post work import
@@ -1003,7 +1007,7 @@ class MassImportTool
       temp_collection = Collection.find(new_collection_id)
       temp_array.push(temp_collection)
     end
-    collection_string = temp_array
+    #collection_string = temp_array
     return temp_array
   end
 
@@ -1064,6 +1068,9 @@ class MassImportTool
               nci.save!
             end
           when 4
+          else
+            #shouldnt happen
+            #TODO EXIT FUNCTION LOG ERROR
         end
 
     end
@@ -1077,7 +1084,7 @@ class MassImportTool
   def get_source_work_tags(tl, class_str, my_type)
     query = ""
     new_tag_type = ""
-    class_split = Array.new
+    #class_split = Array.new
     class_split = class_str.split(",")
     class_split.each do |x|
       case my_type
@@ -1208,7 +1215,7 @@ class MassImportTool
     @import_name = settings[:import_name]
     @import_id = settings[:import_id]
     @import_reviews = settings[:import_reviews]
-    @categories_as_subcollections = settings[:categories_as_subcollections]
+    @categories_as_sub_collections = settings[:categories_as_sub_collections]
     #collection values
     @create_collection = settings[:create_collection]
     @new_collection_description = settings[:new_collection_description]
@@ -1317,7 +1324,7 @@ class MassImportTool
     text.html_safe.safe_concat("</p>")
   end
   #update each record in source db reading the chapter text file importing it into content field
-  def update_source_chapters()
+  def update_source_chapters
     #select source chapters from database
     rr = @connection.query("Select distinct uid from #{@source_chapters_table}")
     rr.each do |r3|
@@ -1373,7 +1380,7 @@ class MassImportTool
    end
 
   #process source db sql file and save
-  def transform_source_sql()
+  def transform_source_sql
     sql_file = read_file_to_string("#{@import_files_path}/#{@sql_filename}")
     ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
     valid_string = ic.iconv(sql_file + ' ')[0..-2]
@@ -1385,7 +1392,7 @@ sql_file = valid_string
   end
 
   #load cleaned source db file into mysql
-  def load_source_db()
+  def load_source_db
     `mysql -u #{@database_username} -p#{@database_password} #{@database_name} < #{@import_files_path}/data_clean.sql`
   end
 

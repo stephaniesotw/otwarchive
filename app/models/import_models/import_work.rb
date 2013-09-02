@@ -5,7 +5,6 @@ class ImportWork
   include ActiveModel::Validations
   extend ActiveModel::Translation
 
-
   attr_accessor :old_work_id
   attr_accessor :new_work_id
   attr_accessor :author_string
@@ -28,7 +27,6 @@ class ImportWork
   attr_accessor :updated
   attr_accessor :completed
   attr_accessor :chapters
-
   attr_accessor :characters
   attr_accessor :hits
   attr_accessor :rating

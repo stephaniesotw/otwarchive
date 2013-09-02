@@ -1,10 +1,11 @@
 class ArchiveImport < ActiveRecord::Base
-  attr_accessor :old_url_link
-  attr_accessor :new_url_link
-  attr_accessor :archivist_link
   has_many :users
   has_many :collections
   has_many :email_templates
+  attr_accessor :old_url_link
+  attr_accessor :new_url_link
+  attr_accessor :archivist_link
+
 
   # @return [Object]
   def initialize

@@ -4,7 +4,6 @@ class ImportCategory
   include ActiveModel::Validations
   extend ActiveModel::Translation
 
-
   attr_accessor :old_id
   attr_accessor :new_id
   attr_accessor :description
