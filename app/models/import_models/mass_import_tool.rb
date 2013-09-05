@@ -294,10 +294,10 @@ class MassImportTool
       when 4   ## storyline
         ns.source_archive_id = @archive_import_id
         ns.old_work_id = row[0]
-        puts ns.old_work_id
+        #puts ns.old_work_id
         ns.title = row[1]
         #debug info
-        puts ns.title
+        #puts ns.title
         ns.summary = row[2]
         ns.old_user_id = row[3]
         ns.rating_integer = row[4]
@@ -324,7 +324,6 @@ class MassImportTool
         ns.hits = row[10]
 
       when 3    ## efiction 3
-        puts "got the when3"
         ns.old_work_id = row[0]
         ns.title = row[1]
         ns.summary = row[2]
@@ -443,7 +442,7 @@ class MassImportTool
       ## get import user object from source database
       a = self.get_import_user_object_from_source(ns.old_user_id)
       if ns.new_user_id == 0
-        puts "didnt exist in this import"
+        puts "user didnt exist in this import session"
         ## see if user account exists in main archive by checking email,
         temp_author_id = get_user_id_from_email(a.email)
         if temp_author_id == 0

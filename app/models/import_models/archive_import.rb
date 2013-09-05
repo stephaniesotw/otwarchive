@@ -6,7 +6,6 @@ class ArchiveImport < ActiveRecord::Base
   attr_accessor :new_url_link
   attr_accessor :archivist_link
 
-
   # @return [Object]
   def initialize
 

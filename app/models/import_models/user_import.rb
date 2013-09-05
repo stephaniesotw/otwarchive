@@ -4,7 +4,6 @@ class UserImport < ActiveRecord::Base
   include ActiveModel::Validations
   extend ActiveModel::Translation
 
-
   attr_accessor :source_user_id
   attr_accessor :user_id
   attr_accessor :source_archive_id

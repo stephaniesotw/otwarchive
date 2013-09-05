@@ -4,7 +4,6 @@ class WorkImport < ActiveRecord::Base
   include ActiveModel::Validations
   extend ActiveModel::Translation
 
-
   attr_accessor :source_user_id
   attr_accessor :work_id
   attr_accessor :source_work_id
