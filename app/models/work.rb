@@ -168,9 +168,9 @@ class Work < ActiveRecord::Base
   end
 
   def validate_published_at
-    unless self.first_chapter.published_at
+    if !self.first_chapter.published_at
       self.first_chapter.published_at = Date.today
-      elsif self.first_chapter.published_at > Date.today
+    elsif self.first_chapter.published_at > Date.today
       errors.add(:base, ts("Publication date can't be in the future."))
       return false
     end
@@ -401,9 +401,7 @@ class Work < ActiveRecord::Base
       self.restricted = false
     end
   end
-
-  def unrestricted; !self.restricted
-  end
+  def unrestricted; !self.restricted; end
 
   def unrevealed?(user=User.current_user)
     # eventually here is where we check if it's in a challenge that hasn't been made public yet
@@ -470,12 +468,12 @@ class Work < ActiveRecord::Base
   # ensure published_at date is correct: reset its value for non-backdated works
   # "chapter" arg should be the unsaved session instance of the work's first chapter
   def reset_published_at(chapter)
-    unless self.backdate
+    if !self.backdate
       if self.backdate_changed? # work was backdated but now it's not
-                                # so reset its date to our best guess at its original pub date:
+        # so reset its date to our best guess at its original pub date:
         chapter.published_at = self.created_at.to_date
       else # pub date may have changed without user's explicitly setting backdate option
-           # so reset it to the previous value:
+        # so reset it to the previous value:
         chapter.published_at = chapter.published_at_was || Date.today
       end
     end
@@ -492,11 +490,11 @@ class Work < ActiveRecord::Base
 
   # Virtual attribute for series
   def series_attributes=(attributes)
-    unless attributes[:id].blank?
+    if !attributes[:id].blank?
       old_series = Series.find(attributes[:id])
       self.series << old_series unless (old_series.blank? || self.series.include?(old_series))
       self.adjust_series_restriction
-      elsif !attributes[:title].blank?
+    elsif !attributes[:title].blank?
       new_series = Series.new
       new_series.title = attributes[:title]
       new_series.restricted = self.restricted
@@ -728,14 +726,14 @@ class Work < ActiveRecord::Base
     admin_settings = Rails.cache.fetch("admin_settings"){AdminSetting.first}
     filter = tag.canonical? ? tag : tag.merger
     if filter
-      unless self.filters.include?(filter)
+      if !self.filters.include?(filter)
         if meta
           self.filter_taggings.create(:filter_id => filter.id, :inherited => true)
         else
           self.filters << filter
         end
         filter.reset_filter_count
-        elsif !meta
+      elsif !meta
         ft = self.filter_taggings.where(["filter_id = ?", filter.id]).first
         ft.update_attribute(:inherited, false)
       end
