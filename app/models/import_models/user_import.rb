@@ -1,3 +1,4 @@
+# UserImport AR Model
 class UserImport < ActiveRecord::Base
   extend ActiveModel::Naming
   include ActiveModel::Conversion

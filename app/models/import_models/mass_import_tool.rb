@@ -1,4 +1,6 @@
 # encoding=utf-8
+# Mass Import Tool
+# Questions? Ask Stephanie =)
 class MassImportTool
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::TagHelper #tag_options needed by auto_link
@@ -232,7 +234,9 @@ class MassImportTool
     return tl
   end
 
+
   #create child collection, set archivist as owner, takes name, parentid, descrip,title
+  # todo add bool to archive settings for allow child collections and restrict based on value
   # @param [string] name
   # @param [integer] parent_id
   # @param [string] description
@@ -289,6 +293,7 @@ class MassImportTool
 
   #assign row data to import_Work object
   # @param [import_work] ns
+  # @param [mysql_row] row
   def assign_row_import_work(ns, row)
     case @source_archive_type
       when 4   ## storyline
@@ -341,7 +346,7 @@ class MassImportTool
         ns.completed = row[14]
         ns.hits = row[18]
         if !@source_warning_class_id == nil
-
+                             #todo why did you have this here? steph 9-9-13
         end
         ## fill taglist with import tags to be added
         ns.tag_list = get_source_work_tags(ns.tag_list, ns.classes, "classes")
@@ -360,6 +365,7 @@ class MassImportTool
   #create import record
   # @return [integer]  import archive id
   def create_import_record
+    # todo update to use ar new method and save since is proper ar class now, make sure it returns new value after save - steph 9-9-13
     update_record_target("insert into archive_imports (name,archive_type_id,old_base_url,associated_collection_id,new_user_notice_id,existing_user_notice_id,existing_user_email_id,new_user_email_id,new_url,archivist_user_id)  values ('#{@import_name}',#{@source_archive_type},'#{
     @source_base_url}',#{@new_collection_id},#{@new_user_notice_id},#{@existing_user_notice_id},#{@new_user_email_id},#{@existing_user_email_id},'#{@new_url}',#{@archivist_user_id})")
     archive_import = ArchiveImport.find_by_old_base_url(@source_base_url)
@@ -697,6 +703,7 @@ class MassImportTool
       u.email = @archivist_email
       u.age_over_13 = "1"
       u.terms_of_service = "1"
+      #below line might not be needed
       u.password_confirmation = @archivist_password
     end
     ##if user isnt an archivist make it so
@@ -866,6 +873,7 @@ class MassImportTool
       new_user.email = a.email
       new_user.login = login_temp
       new_user.password = a.password
+      #below line might not be needed
       new_user.password_confirmation = a.password
       new_user.age_over_13 = "1"
       new_user.save!

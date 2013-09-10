@@ -1,4 +1,4 @@
-#Mass Importer Object
+#Internal ImportChapter Object
 class ImportChapter
   extend ActiveModel::Naming
   include ActiveModel::Conversion

@@ -1,4 +1,4 @@
-#Object for use during mass imports
+#Internal ImportWork Object
 class ImportWork
   extend ActiveModel::Naming
   include ActiveModel::Conversion

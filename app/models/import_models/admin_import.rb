@@ -1,3 +1,4 @@
+#todo figure out what this class was for steph 9-9-13
 class AdminImport
   extend ActiveModel::Naming
   include ActiveModel::Conversion

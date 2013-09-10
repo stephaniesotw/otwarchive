@@ -1,4 +1,4 @@
-#Used with mass importer
+#Internal ImportTag Object
 class ImportTag
   extend ActiveModel::Naming
   include ActiveModel::Conversion

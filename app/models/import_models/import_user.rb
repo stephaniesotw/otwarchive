@@ -1,4 +1,4 @@
-#Used with mass importer
+#Internal ImportUser Object
 class ImportUser
 extend ActiveModel::Naming
 include ActiveModel::Conversion

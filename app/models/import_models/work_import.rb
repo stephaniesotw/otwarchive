@@ -1,3 +1,4 @@
+# WorkImport AR Model
 class WorkImport < ActiveRecord::Base
   extend ActiveModel::Naming
   include ActiveModel::Conversion
@@ -9,4 +10,5 @@ class WorkImport < ActiveRecord::Base
   attr_accessor :source_work_id
   attr_accessor :pseud_id
   attr_accessor :source_archive_id
+  attr_accessor :source_url
 end
